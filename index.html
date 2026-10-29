@@ -575,7 +575,7 @@ details.week[open] summary .chev{transform:rotate(90deg)}
       </div>
       <button class="pill bignext" id="rc-next">Starta</button>
       <div class="racebtns"><button class="pill ghost" id="rc-undo" disabled>Ångra</button><button class="pill ghost" id="rc-reset" disabled>Avbryt</button></div>
-      <div class="cues"><button class="chip" id="cue-sound">Ljud och vibration</button><button class="chip" id="cue-voice">Röst</button></div>
+      <div class="cues"><button class="chip" id="cue-sound">Ljud</button><button class="chip" id="cue-voice">Röst</button><button class="chip" id="cue-hap">Vibration</button></div>
     </div>
     <div id="rc-result"></div>
 
@@ -727,7 +727,7 @@ const CLS={
 };
 
 /* ============ Inställningar ============ */
-const DEF={k:"open",g:"m",fmt:"singel",target:90,date:"",per:4,split:{},age:null,maxhr:null,test:null,onboarded:false,share:false,partner:null,hour:18,days:null,moves:{},cues:{sound:true,voice:true}};
+const DEF={k:"open",g:"m",fmt:"singel",target:90,date:"",per:4,split:{},age:null,maxhr:null,test:null,onboarded:false,share:false,partner:null,hour:18,days:null,moves:{},cues:{sound:true,voice:true,haptic:true}};
 let set=Object.assign({},DEF);
 try{const s=JSON.parse(localStorage.getItem("hyrox-set")||"null");if(s)set=Object.assign(set,s)}catch(e){}
 if(!set.split)set.split={};if(!set.moves)set.moves={};if(!set.cues)set.cues={sound:true,voice:true};
@@ -779,7 +779,7 @@ function countUp(el){
   requestAnimationFrame(step);
 }
 function confetti(){
-  if(RM())return;const c=$("#confetti"),x=c.getContext("2d");if(!x)return;
+  HAPTIC("success");if(RM())return;const c=$("#confetti"),x=c.getContext("2d");if(!x)return;
   const dpr=window.devicePixelRatio||1;c.width=innerWidth*dpr;c.height=innerHeight*dpr;x.scale(dpr,dpr);
   const cs=getComputedStyle(document.documentElement);const cols=["--accent","--accent2","--green","--green2","--cyan","--cyan2"].map(v=>cs.getPropertyValue(v).trim()||"#ff2d55");
   const P=Array.from({length:110},()=>({x:innerWidth/2+(Math.random()-.5)*80,y:innerHeight*.42,vx:(Math.random()-.5)*11,vy:-Math.random()*13-4,r:Math.random()*6+3,a:Math.random()*6,va:(Math.random()-.5)*.35,c:cols[Math.floor(Math.random()*cols.length)],s:Math.random()<.5}));
@@ -1497,19 +1497,31 @@ $("#rc-reset").onclick=()=>{const b=$("#rc-reset");
   if(RACE&&!RACE.end&&!b.dataset.c){b.dataset.c=1;b.textContent="Avbryt loppet?";setTimeout(()=>{delete b.dataset.c;renderRace()},2500);return}
   delete b.dataset.c;RACE=null;saveRace();clearInterval(tick);releaseWake();renderRace()};
 
+
+/* Haptisk feedback: vibration på Android, iPhone via systemets brytar-klick (iOS 18+) */
+const HAPTIC=(()=>{let lab=null;
+  const ios=()=>{try{if(!lab){const i=document.createElement("input");i.type="checkbox";i.setAttribute("switch","");i.id="hx-sw";i.style.cssText="position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;left:-9px;top:-9px";lab=document.createElement("label");lab.htmlFor="hx-sw";lab.style.cssText=i.style.cssText;document.body.append(i,lab)}lab.click()}catch(e){}};
+  const pat={light:8,medium:16,heavy:28,success:[12,60,18],warn:[30,60,30],tick:5};
+  return function(kind){if(set.cues&&set.cues.haptic===false)return;const p=pat[kind]||8;
+    try{if(navigator.vibrate&&navigator.vibrate(p))return}catch(e){}
+    const n=Array.isArray(p)?2:1;ios();if(n>1)setTimeout(ios,90)}})();
+document.addEventListener("click",e=>{const b=e.target.closest("button,a.pill,a.tab,a.tile,.chip,[data-st],[data-edit],[data-pk]");if(!b||b.disabled)return;
+  const heavy=b.id==="rc-next"||b.classList.contains("pill")&&!b.classList.contains("ghost");
+  HAPTIC(b.classList.contains("tab")?"tick":heavy?"medium":"light")},true);
 /* Ljud, vibration och röst */
 let ACX=null;
 function beep(f,ms,at){try{ACX=ACX||new (window.AudioContext||window.webkitAudioContext)();const o=ACX.createOscillator(),g=ACX.createGain(),t=ACX.currentTime+(at||0);
   o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.25,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+ms/1000);o.connect(g).connect(ACX.destination);o.start(t);o.stop(t+ms/1000+.02)}catch(e){}}
 function cue(kind){if(!set.cues.sound)return;
-  if(kind==="tap"){beep(880,120);try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}}
-  if(kind==="over"){beep(520,180);beep(520,180,.25);try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}}
+  if(kind==="tap"){beep(880,120)}
+  if(kind==="over"){beep(520,180);beep(520,180,.25);HAPTIC("warn")}}
 function say(t){if(!set.cues.voice)return;try{const u=new SpeechSynthesisUtterance(t);u.lang="sv-SE";u.rate=1.05;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
 function spokenTime(sec){sec=Math.round(sec);const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return `${h?h+" timme"+(h>1?"r":"")+" ":""}${m} minuter${!h?" "+s+" sekunder":""}`}
 function spokenDelta(d){d=Math.round(d);if(Math.abs(d)<3)return "Exakt enligt plan";const a=Math.abs(d),m=Math.floor(a/60),s=a%60;return `${m?m+" minut"+(m>1?"er":"")+" ":""}${s?s+" sekunder ":""}${d<0?"före":"efter"}`}
-function renderCues(){$("#cue-sound").setAttribute("aria-pressed",!!set.cues.sound);$("#cue-voice").setAttribute("aria-pressed",!!set.cues.voice)}
+function renderCues(){$("#cue-hap").setAttribute("aria-pressed",set.cues.haptic!==false);$("#cue-sound").setAttribute("aria-pressed",!!set.cues.sound);$("#cue-voice").setAttribute("aria-pressed",!!set.cues.voice)}
 $("#cue-sound").onclick=()=>{set.cues.sound=!set.cues.sound;saveSet();renderCues();if(set.cues.sound)cue("tap")};
 $("#cue-voice").onclick=()=>{set.cues.voice=!set.cues.voice;saveSet();renderCues();if(set.cues.voice)say("Rösten är på")};
+$("#cue-hap").onclick=()=>{set.cues.haptic=set.cues.haptic===false;saveSet();renderCues();HAPTIC("medium")};
 renderCues();
 
 /* Packlista */
@@ -1569,7 +1581,8 @@ if(!set.onboarded)setTimeout(()=>{if(!location.hash||location.hash==="#hem")open
 (()=>{const sp=document.getElementById("splash");if(!sp)return;let done=false;
   const end=()=>{if(done)return;done=true;sp.remove();const v=document.querySelector(".view.on");if(v&&!RM()){v.classList.remove("on");void v.offsetWidth;v.classList.add("on")}
     if(!location.hash||location.hash==="#hem")["#h-days","#h-target","#h-pace","#h-week","#h-streak","#h-total"].forEach(id=>countUp($(id)))};
-  sp.addEventListener("click",()=>{sp.classList.add("skip");setTimeout(end,260)});
+  const hz=[[0,"light"],[950,"medium"],[1100,"success"]].map(([ms,k])=>setTimeout(()=>{if(!done&&!RM())HAPTIC(k)},ms));
+  sp.addEventListener("click",()=>{HAPTIC("success");hz.forEach(clearTimeout);sp.classList.add("skip");setTimeout(end,260)});
   sp.addEventListener("animationend",e=>{if(e.target===sp)end()});
   setTimeout(end,RM()?900:2000);
 })();
