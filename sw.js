@@ -1,6 +1,6 @@
 /* Varv – offlineläge: sidan och ikonerna sparas så att appen fungerar utan nät. */
-const CACHE="varv-v1";
-const FILES=["./","index.html","manifest.webmanifest","icons/icon.svg","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","icons/favicon-32.png"];
+const CACHE="varv-v2";
+const FILES=["./","index.html","manifest.webmanifest","icons/icon.svg","icons/varv-180.png","icons/varv-192.png","icons/varv-512.png","icons/varv-32.png"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(n=>n!==CACHE).map(n=>caches.delete(n)))).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",e=>{
