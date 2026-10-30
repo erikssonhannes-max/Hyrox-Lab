@@ -353,6 +353,38 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 .strava .acts{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .src{font-size:.72rem;font-weight:600;color:var(--accent);margin-left:6px}
 
+/* Tävlingar och profil */
+.evhero{background:var(--hot);border-radius:var(--r);padding:22px;display:grid;gap:4px;color:#fff;box-shadow:0 18px 36px -20px var(--glow);margin-bottom:16px;position:relative;overflow:hidden}
+.evhero::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%);pointer-events:none}
+.evhero .k{font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
+.evhero h3{font-size:2.1rem;letter-spacing:-.04em;line-height:1.05}
+.evhero p{opacity:.92;font-size:.95rem}
+.evbig{display:flex;align-items:baseline;gap:8px;margin-top:8px}
+.evbig b{font-size:3.2rem;font-weight:800;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
+.evbig span{opacity:.9}
+.evhero .pill{background:#fff;color:#e0123f;justify-self:start;box-shadow:none;margin-top:10px}
+.evmonth{font-size:.85rem;font-weight:600;color:var(--muted);margin:22px 0 8px 4px}
+.evmonth:first-letter{text-transform:uppercase}
+.evd{display:grid;place-items:center;align-content:center;gap:1px;line-height:1}
+.evd b{font-size:1.15rem;color:var(--ink);font-weight:700}
+.evd small{font-size:.62rem;color:var(--accent);text-transform:uppercase;font-weight:700;letter-spacing:.03em}
+.evtag{display:inline-block;margin-left:8px;font-size:.64rem;font-weight:700;padding:2px 7px;border-radius:980px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;vertical-align:2px;letter-spacing:.02em}
+.evtag.me{background:var(--green)}
+.ev-live{color:var(--accent);font-weight:700}
+#ev-seg{margin:4px 0 0}
+details.more summary{cursor:pointer;color:var(--link);font-size:.95rem;list-style:none;padding:2px 0}
+details.more summary::-webkit-details-marker{display:none}
+details.more[open] summary{margin-bottom:6px}
+.avatar-btn{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:max(16px,env(safe-area-inset-right,0px));z-index:30;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.85rem;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));text-decoration:none;overflow:hidden;box-shadow:0 0 0 2px var(--bg),0 6px 14px -6px var(--glow)}
+.avatar-btn img,.pf-av img,.pf-mini img{width:100%;height:100%;object-fit:cover;display:block}
+.pf-top{padding-top:22px}
+.pf-head{display:grid;justify-items:center;text-align:center;gap:8px;padding:12px 0 22px}
+.pf-av{width:104px;height:104px;border-radius:50%;display:grid;place-items:center;overflow:hidden;color:#fff;font-size:2.4rem;font-weight:700;letter-spacing:-.02em;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 18px 36px -18px var(--glow)}
+.pf-head h1{font-size:clamp(1.8rem,7vw,2.3rem);letter-spacing:-.04em}
+.pf-mini{overflow:hidden;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+#pf-set{gap:18px}
+label.row{display:grid}
+a.row{color:inherit;text-decoration:none}
 /* Animationer */
 @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes pop{0%{transform:scale(.6)}100%{transform:scale(1)}}
@@ -360,7 +392,7 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 @keyframes wipe{from{clip-path:inset(0 100% 0 0 round 12px)}to{clip-path:inset(0 0 0 0 round 12px)}}
 @media (prefers-reduced-motion:no-preference){
   .view.on{animation:none}
-  .view.on .pagehead>*, .view.on .hero .wrap>*, .view.on .wrap>.today, .view.on .wrap>.sechead, .view.on .wrap>.tiles>*, .view.on .wrap>.group, .view.on .wrap>.card, .view.on .wrap>.prs>*, .view.on .wrap>.weeks>*, .view.on .wrap>.clock, .view.on .wrap>.divchip, .view.on .wrap>#dbl-wrap, .view.on .wrap>#coach-wrap, .view.on .wrap>#adapt, .view.on .wrap>#comm, .view.on .wrap>#strava, .view.on .wrap>#garmin{animation:up .55s var(--ease) both}
+  .view.on .pagehead>*, .view.on .hero .wrap>*, .view.on .wrap>.today, .view.on .wrap>.sechead, .view.on .wrap>.tiles>*, .view.on .wrap>.group, .view.on .wrap>.card, .view.on .wrap>.prs>*, .view.on .wrap>.weeks>*, .view.on .wrap>.clock, .view.on .wrap>.divchip, .view.on .wrap>#dbl-wrap, .view.on .wrap>#coach-wrap, .view.on .wrap>#adapt, .view.on .wrap>#comm, .view.on .wrap>#strava, .view.on .wrap>#garmin, .view.on .wrap>#tv-kal, .view.on .wrap>#tv-seg, .view.on .wrap>.pf-head, .view.on .wrap>#log-new, .view.on .wrap>#h-next, .view.on .wrap>#h-med{animation:up .55s var(--ease) both}
   .view.on .tiles>*:nth-child(2),.view.on .prs>*:nth-child(2),.view.on .weeks>*:nth-child(2),.view.on .hero .wrap>*:nth-child(2),.view.on .pagehead>*:nth-child(2){animation-delay:.05s}
   .view.on .tiles>*:nth-child(3),.view.on .prs>*:nth-child(3),.view.on .weeks>*:nth-child(3),.view.on .hero .wrap>*:nth-child(3),.view.on .pagehead>*:nth-child(3){animation-delay:.1s}
   .view.on .tiles>*:nth-child(4),.view.on .prs>*:nth-child(4),.view.on .hero .wrap>*:nth-child(4){animation-delay:.15s}
@@ -455,25 +487,11 @@ details.week[open] summary .chev{transform:rotate(90deg)}
       <a class="tile tap" href="#plan"><b id="h-pace">–</b><span>snittempo per km</span></a>
       <a class="tile tap" href="#logg"><b id="h-week">0/4</b><span>pass denna vecka</span></a>
       <a class="tile tap" href="#logg"><b id="h-streak">0</b><span>veckor i rad</span></a>
-      <a class="tile wide tap" href="#logg"><b id="h-total">0 min</b><span>total träningstid i loggen</span></a>
-      <a class="tile wide tap" href="#plan"><b id="h-med">–</b><span id="h-medl">mot mediantiden</span></a>
     </div>
+    <p class="small" id="h-med" style="margin-top:10px"></p>
 
-    <div class="sechead"><h2>Loppet i siffror</h2></div>
-    <div class="tiles">
-      <div class="tile"><b>8 km</b><span>löpning, 8 varv à 1 km</span></div>
-      <div class="tile"><b>8</b><span>stationer i fast ordning</span></div>
-      <div class="tile"><b>1:28</b><span>mediantid, Open herr</span></div>
-      <div class="tile"><b>1:36</b><span>mediantid, Open dam</span></div>
-    </div>
-    <p class="small" style="margin-top:10px">Mediantider från en analys av omkring 700 000 resultat. Klockan går hela tiden, även i Roxzone där du byter mellan löpning och station.</p>
-
-    <div class="sechead"><h2>Tävlingar i Norden</h2><a href="https://hyrox.com" target="_blank" rel="noopener">hyrox.com</a></div>
-    <div class="group">
-      <div class="row"><div class="badge">DEC</div><div><h3>Helsingfors</h3><p>Finland</p></div><span class="amt">18–20 dec 2026</span></div>
-      <div class="row"><div class="badge">JUN</div><div><h3>Stockholm</h3><p>Sverige</p></div><span class="amt">18–21 juni 2027</span></div>
-    </div>
-    <p class="small" style="margin-top:10px">Enligt säsongskalendern 2026/27. Datum kan ändras, kontrollera på hyrox.com innan du bokar.</p>
+    <div class="sechead"><h2>Nästa tävling</h2><a href="#race" data-tv-go="kal">Alla tävlingar</a></div>
+    <div class="group" id="h-next"></div>
   </div>
 </section>
 
@@ -481,6 +499,13 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 <section class="view" id="v-stationer">
   <div class="wrap">
     <div class="pagehead"><span class="eyebrow">Banan</span><h1>Stationerna.</h1><p>Tryck på en station för teknik, misstag, regler och övningar.</p></div>
+    <div class="tiles" style="margin-bottom:10px">
+      <div class="tile"><b>8 km</b><span>löpning, 8 varv à 1 km</span></div>
+      <div class="tile"><b>8</b><span>stationer i fast ordning</span></div>
+      <div class="tile"><b>1:28</b><span>mediantid, Open herr</span></div>
+      <div class="tile"><b>1:36</b><span>mediantid, Open dam</span></div>
+    </div>
+    <p class="small" style="margin-bottom:16px">Mediantider från en analys av omkring 700 000 resultat. Klockan går hela tiden, även i Roxzone där du byter mellan löpning och station.</p>
     <button class="divchip" data-open="division" style="margin-bottom:14px"><span class="divtxt">Open · Herr · Singel</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6l4 4 4-4"/></svg></button>
     <div class="group" id="course"></div>
     <p class="small" style="margin-top:10px">Vikter enligt Hyrox regelböcker för singel och doubles, säsong 25/26. Slädens egen vikt ingår.</p>
@@ -511,11 +536,8 @@ details.week[open] summary .chev{transform:rotate(90deg)}
     <div class="card">
       <div class="target"><span class="t" id="p-time">1:30:00</span><span class="small">Måltid</span></div>
       <input type="range" id="p-range" min="55" max="150" step="1" value="90" aria-label="Måltid i minuter">
-      <div class="grid2">
-        <div class="field"><label for="p-date">Tävlingsdag</label><input type="date" id="p-date"></div>
-        <div class="field"><span class="lbl">Pass per vecka</span><b id="p-per" style="font-size:1.05rem;padding-top:10px">4 pass</b></div>
-      </div>
-      <div class="field"><span class="lbl">Träningsdagar, välj 3–5</span><div class="daypick" id="p-days"></div></div>
+      <div class="field"><label for="p-date">Tävlingsdag</label><input type="date" id="p-date"><a class="small" href="#race" data-tv-go="kal" style="color:var(--link);text-decoration:none">Välj bland kommande tävlingar ›</a></div>
+      <div class="field"><span class="lbl" id="p-dayl">Träningsdagar</span><div class="daypick" id="p-days"></div></div>
       <div class="chiprow">
         <button class="divchip" data-open="division"><span class="divtxt">Open · Herr · Singel</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6l4 4 4-4"/></svg></button>
         <button class="divchip" data-open="test">Starttest</button>
@@ -527,7 +549,7 @@ details.week[open] summary .chev{transform:rotate(90deg)}
     <div class="card">
       <div class="stack" id="p-stack" aria-hidden="true"></div>
       <div class="legend"><span><i style="background:var(--run)"></i>Löpning <b id="l-run"></b></span><span><i style="background:var(--sta)"></i>Stationer <b id="l-sta"></b></span><span><i style="background:var(--rox)"></i>Roxzone <b id="l-rox"></b></span></div>
-      <div class="splits" id="p-splits"></div>
+      <details class="more"><summary>Visa alla 16 splittider</summary><div class="splits" id="p-splits"></div></details>
       <p class="small">Uppskattning utifrån hur tiden brukar fördelas. Använd den som riktmärke.</p>
     </div>
 
@@ -560,7 +582,10 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 <!-- ================= RACE ================= -->
 <section class="view" id="v-race">
   <div class="wrap">
-    <div class="pagehead"><span class="eyebrow">Racedag</span><h1>Tidtagning.</h1><p>Tryck efter varje moment och se direkt om du ligger före eller efter planen. Fungerar även för simuleringar på gymmet.</p></div>
+    <div class="pagehead"><span class="eyebrow">Tävla</span><h1 id="tv-h">Tävlingar.</h1><p id="tv-p"></p></div>
+    <div class="seg" id="tv-seg" role="group" aria-label="Visa" style="margin-bottom:16px"><button data-tv="kal">Tävlingar</button><button data-tv="run">Racedag</button></div>
+    <div id="tv-kal"></div>
+    <div id="tv-run" hidden>
 
     <div class="clock">
       <span class="seglbl" id="rc-lbl">Redo</span>
@@ -592,6 +617,7 @@ details.week[open] summary .chev{transform:rotate(90deg)}
       <div class="row"><div class="badge">3</div><div><h3>Ät och drick i tid</h3><p>Ett lätt mål 2–3 timmar före start och vatten i Roxzone.</p></div><span></span></div>
       <div class="row"><div class="badge">4</div><div><h3>Dela upp wall balls</h3><p>Bestäm set i förväg och håll dig till dem, även när det tar emot.</p></div><span></span></div>
     </div>
+    </div>
   </div>
 </section>
 
@@ -599,6 +625,7 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 <section class="view" id="v-logg">
   <div class="wrap">
     <div class="pagehead"><span class="eyebrow">Framsteg</span><h1>Träningslogg.</h1><p class="small" id="store-note">Laddar…</p></div>
+    <button class="pill block" id="log-new" style="margin-bottom:12px">Logga pass</button>
     <div class="card strava" id="strava" hidden></div>
 
     <div class="card">
@@ -622,7 +649,46 @@ details.week[open] summary .chev{transform:rotate(90deg)}
     <div class="sechead"><h2>Gemenskap</h2></div>
     <div id="comm"></div>
 
-    <div class="sechead"><h2>Nytt pass</h2></div>
+
+    <div class="sechead"><h2>Historik</h2><span class="small" id="hist-count"></span></div>
+    <div class="filters" id="filters"></div>
+    <div class="group" id="hist"></div>
+  </div>
+</section>
+<!-- ================= PROFIL ================= -->
+<section class="view" id="v-profil">
+  <div class="wrap">
+    <div class="pf-top"><button class="linkbtn" id="pf-back">‹ Tillbaka</button></div>
+    <div class="pf-head"><div class="pf-av" id="pf-av"></div><h1 id="pf-name">Din profil</h1><p class="small" id="pf-sub"></p>
+      <button class="divchip" data-open="division"><span class="divtxt">Open · Herr · Singel</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6l4 4 4-4"/></svg></button></div>
+    <div class="tiles" id="pf-stats"></div>
+    <div class="sechead"><h2>Konto</h2></div>
+    <div class="group" id="pf-acc"></div>
+    <div class="sechead"><h2>Om mig</h2></div>
+    <div class="card">
+      <div class="field"><label for="pf-in-name">Namn</label><input type="text" id="pf-in-name" autocomplete="name" maxlength="60"></div>
+      <div class="grid2"><div class="field"><label for="pf-in-age">Ålder</label><input type="number" id="pf-in-age" inputmode="numeric" min="14" max="90" placeholder="30"></div>
+      <div class="field"><label for="pf-in-max">Maxpuls</label><input type="number" id="pf-in-max" inputmode="numeric" min="120" max="230" placeholder="Valfritt"></div></div>
+      <div class="chiprow"><button class="divchip" data-open="test">Gör om starttestet</button><button class="divchip" data-open="hr">Pulszoner</button></div>
+    </div>
+    <div class="sechead"><h2>Ljud och känsla</h2></div>
+    <div class="card" id="pf-set"></div>
+    <div class="sechead"><h2>Kopplingar</h2></div>
+    <div class="group" id="pf-con"></div>
+    <div class="sechead"><h2>Dina data</h2></div>
+    <div class="group">
+      <button class="row" id="pf-exp"><span class="badge">↓</span><div><h3>Exportera mina data</h3><p>Pass, rekord och inställningar som en fil.</p></div><span class="chev">›</span></button>
+      <label class="row" for="pf-imp-file" style="cursor:pointer"><span class="badge">↑</span><div><h3>Importera data</h3><p>Läs in en tidigare export från VARV.</p></div><span class="chev">›</span></label>
+      <button class="row" id="pf-del"><span class="badge" style="color:var(--bad)">✕</span><div><h3 style="color:var(--bad)">Radera alla data</h3><p>Tar bort pass, rekord och inställningar.</p></div><span></span></button>
+    </div>
+    <input type="file" id="pf-imp-file" accept="application/json,.json" hidden>
+    <p class="small" style="text-align:center;margin-top:24px">VARV. 1.0 · Fristående app, ingen koppling till HYROX.</p>
+  </div>
+</section>
+</main>
+<a class="avatar-btn" id="avatar-btn" href="#profil" aria-label="Din profil"><span>V</span></a>
+
+<div id="log-holder" hidden>
     <form class="card" id="logform">
       <div class="grid2">
         <div class="field"><label for="f-date">Datum</label><input type="date" id="f-date" required></div>
@@ -636,14 +702,7 @@ details.week[open] summary .chev{transform:rotate(90deg)}
       <div class="field"><label for="f-note">Anteckning</label><input type="text" id="f-note" placeholder="Till exempel: 5 × 1 km på 4:50"></div>
       <button class="pill block" type="submit">Spara pass</button>
     </form>
-
-    <div class="sechead"><h2>Historik</h2><span class="small" id="hist-count"></span></div>
-    <div class="filters" id="filters"></div>
-    <div class="group" id="hist"></div>
-  </div>
-</section>
-</main>
-
+</div>
 <canvas id="confetti" aria-hidden="true"></canvas>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="scrim" id="scrim" hidden></div>
@@ -653,7 +712,7 @@ details.week[open] summary .chev{transform:rotate(90deg)}
   <a class="tab" href="#hem" data-v="hem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Hem</a>
   <a class="tab" href="#stationer" data-v="stationer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="12" rx="9" ry="6"/><circle cx="3" cy="12" r="1.6" fill="currentColor"/><circle cx="21" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="6" r="1.6" fill="currentColor"/><circle cx="12" cy="18" r="1.6" fill="currentColor"/></svg>Stationer</a>
   <a class="tab" href="#plan" data-v="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14h3M8 17h6"/></svg>Plan</a>
-  <a class="tab" href="#race" data-v="race"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M10 2.5h4M18.5 6l1.5-1.5"/></svg>Race<span class="live" id="tab-live" hidden></span></a>
+  <a class="tab" href="#race" data-v="race"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 2.5l4.5 8 4.5-8"/><circle cx="12" cy="15.5" r="5.5"/><path d="M12 13.2v4.6"/></svg>Tävla<span class="live" id="tab-live" hidden></span></a>
   <a class="tab" href="#logg" data-v="logg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Logg</a>
 </nav></div>
 
@@ -727,7 +786,7 @@ const CLS={
 };
 
 /* ============ Inställningar ============ */
-const DEF={k:"open",g:"m",fmt:"singel",target:90,date:"",per:4,split:{},age:null,maxhr:null,test:null,onboarded:false,share:false,partner:null,hour:18,days:null,moves:{},cues:{sound:true,voice:true,haptic:true}};
+const DEF={k:"open",g:"m",fmt:"singel",target:90,date:"",per:4,split:{},age:null,maxhr:null,test:null,onboarded:false,share:false,partner:null,hour:18,days:null,moves:{},cues:{sound:true,voice:true,haptic:true},name:"",since:"",evr:"norden",tsub:"kal"};
 let set=Object.assign({},DEF);
 try{const s=JSON.parse(localStorage.getItem("hyrox-set")||"null");if(s)set=Object.assign(set,s)}catch(e){}
 if(!set.split)set.split={};if(!set.moves)set.moves={};if(!set.cues)set.cues={sound:true,voice:true};
@@ -775,7 +834,8 @@ function countUp(el){
   else if((m=txt.match(/^(\d+):(\d\d)$/))){const tot=+m[1]*60+ +m[2];f=p=>{const v=Math.round(tot*p);return `${Math.floor(v/60)}:${String(v%60).padStart(2,"0")}`}}
   else if((m=txt.match(/^(\d+) min$/)))f=p=>`${Math.round(+m[1]*p)} min`;
   else return;
-  const step=now=>{const p=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-p,3);el.textContent=f(e);if(p<1)requestAnimationFrame(step);else el.textContent=txt};
+  const tok=(el._cu=(el._cu||0)+1);let last=null;
+  const step=now=>{if(el._cu!==tok||(last!==null&&el.textContent!==last))return;const p=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-p,3);if(p<1){el.textContent=f(e);last=el.textContent;requestAnimationFrame(step)}else el.textContent=txt};
   requestAnimationFrame(step);
 }
 function confetti(){
@@ -793,6 +853,7 @@ function confetti(){
 
 /* ============ Ark ============ */
 function openSheet(html,mount){
+  {const lf=$("#logform"),sin=$("#sheet-in");if(lf&&sin.contains(lf))$("#log-holder").append(lf)}
   $("#sheet-in").innerHTML=`<div class="shtop"><span></span><span class="grab"></span><button class="close" id="sh-x" aria-label="Stäng">✕</button></div>`+html;
   const sh=$("#sheet"),sc=$("#scrim");sh.hidden=false;sc.hidden=false;sh.scrollTop=0;
   requestAnimationFrame(()=>{sh.classList.add("on");sc.classList.add("on")});
@@ -1091,7 +1152,7 @@ function buildPlan(adj){
       ses.push({t:"Styrka och stationer",m:M(55),d:str,s:["Sled Push","Sled Pull","Sandbag Lunges","Farmers Carry"]});
       if(set.per>=4){const m=M(Math.min(75,35+w*3));ses.push({t:"Lugn distans",m,d:`${m} min i lugnt prattempo, omkring ${P(60)} /km.`})}
       if(set.per>=5)ses.push({t:"Motor (SkiErg/rodd)",m:M(40),d:"Växla SkiErg och rodd: 6 × 500 m i jämnt hårt tempo med 1 min vila. Bygger kondition utan stötar för benen.",s:["SkiErg","Rowing"]});
-      if(ph==="Specifik"&&w===Wn-2)ses[1]={t:"Racesimulering",m:Math.round(set.target*.6),d:`Halv simulering: 4 × (1 km + station 1–4 i full mängd) i ${P(0)} /km. Använd tidtagningen under Race och träna byten.`,s:["SkiErg","Sled Push","Sled Pull","Burpee Broad Jumps"]};
+      if(ph==="Specifik"&&w===Wn-2)ses[1]={t:"Racesimulering",m:Math.round(set.target*.6),d:`Halv simulering: 4 × (1 km + station 1–4 i full mängd) i ${P(0)} /km. Använd tidtagningen under Tävla och träna byten.`,s:["SkiErg","Sled Push","Sled Pull","Burpee Broad Jumps"]};
     }
     const start=new Date(race);start.setDate(start.getDate()-(Wn-w+1)*7+1);
     const slots=[];for(let k=0;k<7;k++){const d=new Date(start);d.setDate(d.getDate()+k);const ds=iso(d),wd=(d.getDay()+6)%7;if(ds<set.date&&set.days.includes(wd))slots.push(ds)}
@@ -1178,7 +1239,7 @@ function updDbl(){
 const pr=$("#p-range"),pd=$("#p-date");
 pr.value=set.target;pd.value=set.date;pd.min=today();
 const DN=["Mån","Tis","Ons","Tors","Fre","Lör","Sön"];
-function renderDays(){$("#p-days").innerHTML=DN.map((d,i)=>`<button class="chip" data-day="${i}" aria-pressed="${set.days.includes(i)}">${d}</button>`).join("");$("#p-per").textContent=`${set.days.length} pass`}
+function renderDays(){$("#p-days").innerHTML=DN.map((d,i)=>`<button class="chip" data-day="${i}" aria-pressed="${set.days.includes(i)}">${d}</button>`).join("");$("#p-dayl").textContent=`Träningsdagar · ${set.days.length} pass i veckan, välj 3–5`}
 $("#p-days").onclick=e=>{const b=e.target.closest("[data-day]");if(!b)return;const i=+b.dataset.day;let d=set.days.includes(i)?set.days.filter(x=>x!==i):[...set.days,i].sort();
   if(d.length<3){toast("Välj minst 3 dagar");return}if(d.length>5){toast("Högst 5 dagar, ta bort en först");return}
   set.days=d;set.per=d.length;saveSet();renderDays();renderPlan();renderLog();renderHome()};
@@ -1200,7 +1261,7 @@ async function initDb(){
     const [db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")]);
     if(!db||!user)return;const id=await user.id();if(!id)return;
     col=db.collection("data/users/"+id);mode="db";noteStore();
-    DBH=db;USR=user;ME=id;renderComm();
+    DBH=db;USR=user;ME=id;renderComm();try{user.me().then(m=>{MEINFO=m;renderAvatar();if(location.hash==="#profil")renderProfile()})}catch(e){}
     db.collection("board").onSnapshot(snap=>{const b={};snap.docs.forEach(d=>{b[d.id]=d.data()||{}});BOARD=b;if(BOARD[ME])lastBoard=JSON.stringify(BOARD[ME]);renderComm()},()=>{});
     col.onSnapshot(snap=>{
       if(FIRST_RES){FIRST_RES();FIRST_RES=null}
@@ -1225,7 +1286,9 @@ function openEditLog(id){const l=LOGS.find(x=>x.id===id);if(!l)return;let r=l.rp
    <div class="field"><label for="e-type">Typ av pass</label><select id="e-type">${types.map(t=>`<option${t===l.type?" selected":""}>${esc(t)}</option>`).join("")}</select></div>
    <div class="field"><span class="lbl">Hur kändes det?</span><div class="rpe" id="e-rpe">${[1,2,3,4,5].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v===r}">${v}</button>`).join("")}</div></div>
    <div class="field"><label for="e-note">Anteckning</label><input type="text" id="e-note" value="${esc(l.note||"")}"></div>
-   <button class="pill block" id="e-save">Spara ändringar</button>`,()=>{
+   <button class="pill block" id="e-save">Spara ändringar</button>
+   <button class="pill ghost block" id="e-del">Ta bort passet</button>`,()=>{
+    $("#e-del").onclick=()=>{const b=$("#e-del");if(!b.dataset.c){b.dataset.c=1;b.textContent="Tryck igen för att ta bort";b.style.color="var(--bad)";return}delLog(id);closeSheet();toast("Passet är borttaget")};
     $("#e-rpe").onclick=e=>{const b=e.target.closest("button");if(!b)return;r=+b.dataset.v;[...$("#e-rpe").children].forEach(x=>x.setAttribute("aria-pressed",x===b))};
     $("#e-save").onclick=async()=>{const ok=await updLog(id,{date:$("#e-date").value||l.date,min:Math.max(1,Math.min(600,+$("#e-min").value||l.min)),type:$("#e-type").value,rpe:r,note:$("#e-note").value.trim().slice(0,300)});if(ok){closeSheet();toast("Passet är ändrat")}};
   });
@@ -1239,7 +1302,7 @@ async function savePRs(){
   if(mode==="db"&&col){try{await col.doc("meta").set({kind:"meta",prs:PRS})}catch(err){toast("Kunde inte spara rekordet.")}return}
   saveLocal();renderAllData();
 }
-function renderAllData(){renderLog();renderPlan();renderHome();renderPRs();clearTimeout(renderAllData.t);renderAllData.t=setTimeout(syncBoard,800)}
+function renderAllData(){renderLog();renderPlan();renderHome();renderPRs();renderAvatar();if(location.hash==="#profil")renderProfile();clearTimeout(renderAllData.t);renderAllData.t=setTimeout(syncBoard,800)}
 
 /* ============ Strava ============ */
 let MCP=null,STRAVA={state:"idle",msg:"",last:null};
@@ -1364,19 +1427,19 @@ $("#f-date").value=today();
 let PENDING=null;
 function prefill(o){
   PENDING=o.plan?{key:o.plan,type:o.type}:null;
-  if(location.hash!=="#logg")location.hash="#logg";
   $("#f-type").value=o.type;$("#f-min").value=o.min;$("#f-note").value=o.note||"";$("#f-date").value=today();
   chipsEl.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",(o.stations||[]).includes(c.dataset.n)));
-  setTimeout(()=>{$("#logform").scrollIntoView({behavior:RM()?"auto":"smooth",block:"start"})},120);
-  toast("Passet är ifyllt. Justera och spara.");
+  openLogSheet("Från din plan");
 }
+function openLogSheet(kicker){openSheet(`<div><span class="small">${kicker||"Nytt pass"}</span><h2>Logga pass</h2></div><div id="log-slot"></div>`,()=>{$("#log-slot").append($("#logform"))})}
+$("#log-new").onclick=()=>{PENDING=null;$("#f-date").value=today();$("#f-note").value="";chipsEl.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed","false"));openLogSheet()};
 $("#logform").addEventListener("submit",async e=>{
   e.preventDefault();
   const entry={date:$("#f-date").value||today(),type:$("#f-type").value,min:Math.max(1,Math.min(600,+$("#f-min").value||0)),rpe,
     stations:[...chipsEl.querySelectorAll('.chip[aria-pressed="true"]')].map(c=>c.dataset.n),note:$("#f-note").value.trim().slice(0,300),created:Date.now()};
   if(PENDING&&PENDING.type===entry.type)entry.plan=PENDING.key;
   const before=weekStats().now.n;
-  if(await addLog(entry)){const after=weekStats().now.n;if(before<set.per&&after>=set.per){toast("Veckans mål klart!");confetti()}else toast("Passet är sparat");PENDING=null;$("#f-note").value="";chipsEl.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed","false"))}
+  if(await addLog(entry)){const after=weekStats().now.n;if(before<set.per&&after>=set.per){toast("Veckans mål klart!");confetti()}else toast("Passet är sparat");closeSheet();PENDING=null;$("#f-note").value="";chipsEl.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed","false"))}
 });
 let filt="Alla";
 $("#filters").onclick=e=>{const c=e.target.closest(".chip");if(!c)return;filt=c.dataset.f;renderLog()};
@@ -1411,7 +1474,7 @@ function renderLog(){
   $("#hist-count").textContent=LOGS.length?`${LOGS.length} pass`:"";
   const list=[...LOGS].filter(l=>filt==="Alla"||l.type===filt).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(b.created||0)-(a.created||0));
   $("#hist").innerHTML=list.length?list.slice(0,80).map(l=>{const d=new Date(l.date+"T12:00:00");
-    return `<div class="row hrow" data-edit="${esc(l.id)}" role="button" tabindex="0" aria-label="Ändra ${esc(l.type)}"><div class="badge">${d.getDate()}<br>${d.toLocaleDateString("sv-SE",{month:"short"}).replace(".","")}</div><div><h3>${esc(l.type)}${l.src==="strava"?'<span class="src">Strava</span>':""}</h3><p>${l.min} min${l.rpe?" · känsla "+l.rpe+"/5":""}${l.stations&&l.stations.length?" · "+esc(l.stations.join(", ")):""}</p>${l.note?`<p>${esc(l.note)}</p>`:""}</div><button class="del" data-id="${esc(l.id)}">Ta bort</button></div>`}).join(""):`<div class="empty">Inga pass ännu. Spara ditt första ovan, eller tryck Logga passet i din plan.</div>`;
+    return `<div class="row hrow" data-edit="${esc(l.id)}" role="button" tabindex="0" aria-label="Ändra ${esc(l.type)}"><div class="badge">${d.getDate()}<br>${d.toLocaleDateString("sv-SE",{month:"short"}).replace(".","")}</div><div><h3>${esc(l.type)}${l.src==="strava"?'<span class="src">Strava</span>':""}</h3><p>${l.min} min${l.rpe?" · känsla "+l.rpe+"/5":""}${l.stations&&l.stations.length?" · "+esc(l.stations.join(", ")):""}</p>${l.note?`<p>${esc(l.note)}</p>`:""}</div><span class="chev">›</span></div>`}).join(""):`<div class="empty">Inga pass ännu. Tryck Logga pass ovan, eller Logga passet i din plan.</div>`;
 }
 
 /* ============ Hem ============ */
@@ -1422,10 +1485,10 @@ function renderHome(){
   $("#h-racedate").textContent=new Date(set.date+"T12:00:00").toLocaleDateString("sv-SE",{weekday:"long",day:"numeric",month:"long"});
   $("#h-target").textContent=fmtHM(set.target);$("#h-pace").textContent=fmt(t.pace);
   $("#h-week").textContent=`${st.now.n}/${set.per}`;$("#h-streak").textContent=st.streak;
-  $("#h-total").textContent=st.total>=60?`${Math.floor(st.total/60)} h ${st.total%60} min`:`${st.total} min`;
   const med=set.g==="w"?5780:5276,src=PRS.race||set.target*60,dm=Math.round((src-med)/60);
-  $("#h-med").textContent=dm===0?"±0 min":`${dm<0?"−":"+"}${Math.abs(dm)} min`;$("#h-med").className=dm<=0?"ahead":"";
-  $("#h-medl").textContent=`${PRS.race?"ditt rekord":"din måltid"} mot mediantiden i Open ${set.g==="w"?"dam":"herr"}, ${set.g==="w"?"1:36":"1:28"}`;
+  $("#h-med").innerHTML=`${PRS.race?"Ditt rekord":"Din måltid"} är <b class="${dm<=0?"ahead":"behind"}">${dm===0?"lika med":Math.abs(dm)+" min "+(dm<0?"snabbare än":"långsammare än")}</b> mediantiden i Open ${set.g==="w"?"dam, 1:36":"herr, 1:28"}.`;
+  const me=myEvent();$("#h-racedate").textContent=(me?me.c+" · ":"")+$("#h-racedate").textContent;
+  const nx=me&&me.e>=today()?me:evUpcoming().find(e=>e.r==="norden");$("#h-next").innerHTML=nx?evRow(nx):'<div class="empty">Inga kommande lopp i Norden just nu.</div>';
   const el=$("#today");
   if(!set.test){el.innerHTML=`<span class="tag">Kom igång</span><h3>Gör starttestet</h3><p>Tre korta tester på gymmet ger dig en personlig måltid, rätt tempo i passen och pulszoner.</p><div class="acts"><button class="pill" data-open="test">Starta testet</button><a class="pill ghost" href="#plan">Se planen</a></div>`;return}
   const w=PLAN[curWeekIdx()];
@@ -1502,7 +1565,7 @@ $("#rc-reset").onclick=()=>{const b=$("#rc-reset");
 const HAPTIC=(()=>{let lab=null;
   const ios=()=>{try{if(!lab){const i=document.createElement("input");i.type="checkbox";i.setAttribute("switch","");i.id="hx-sw";i.style.cssText="position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;left:-9px;top:-9px";lab=document.createElement("label");lab.htmlFor="hx-sw";lab.style.cssText=i.style.cssText;document.body.append(i,lab)}lab.click()}catch(e){}};
   const pat={light:8,medium:16,heavy:28,success:[12,60,18],warn:[30,60,30],tick:5};
-  return function(kind){if(set.cues&&set.cues.haptic===false)return;const p=pat[kind]||8;
+  return function(kind){if(set.cues&&set.cues.haptic===false)return;try{if(navigator.userActivation&&!navigator.userActivation.hasBeenActive)return}catch(e){}const p=pat[kind]||8;
     try{if(navigator.vibrate&&navigator.vibrate(p))return}catch(e){}
     const n=Array.isArray(p)?2:1;ios();if(n>1)setTimeout(ios,90)}})();
 document.addEventListener("click",e=>{const b=e.target.closest("button,a.pill,a.tab,a.tile,.chip,[data-st],[data-edit],[data-pk]");if(!b||b.disabled)return;
@@ -1555,14 +1618,176 @@ Fråga: ${q}`;
   $("#c-go").disabled=false;
 };
 
+
+/* ============ Tävlingar ============ */
+const EVENTS=[
+ ["Stockholm","Sverige","norden","2026-12-10","2026-12-13","Strawberry Arena, Solna",""],
+ ["Helsingfors","Finland","norden","2026-12-18","2026-12-20","",""],
+ ["Köpenhamn","Danmark","norden","2027-03-25","2027-03-28","","pre"],
+ ["Birmingham","Storbritannien","europa","2026-10-27","2026-11-01","",""],
+ ["Hamburg","Tyskland","europa","2026-10-28","2026-11-01","",""],
+ ["Nice","Frankrike","europa","2026-10-29","2026-11-01","",""],
+ ["Dublin","Irland","europa","2026-11-11","2026-11-15","",""],
+ ["Düsseldorf","Tyskland","europa","2026-11-11","2026-11-15","",""],
+ ["Barcelona","Spanien","europa","2026-11-12","2026-11-15","",""],
+ ["Poznań","Polen","europa","2026-11-20","2026-11-22","",""],
+ ["Utrecht","Nederländerna","europa","2026-11-26","2026-11-29","",""],
+ ["London","Storbritannien","europa","2026-12-02","2026-12-06","ExCeL",""],
+ ["Milano","Italien","europa","2026-12-05","2026-12-06","",""],
+ ["Frankfurt","Tyskland","europa","2026-12-10","2026-12-13","",""],
+ ["Paris","Frankrike","europa","2026-12-12","2026-12-20","",""],
+ ["Gent","Belgien","europa","2026-12-17","2026-12-20","",""],
+ ["Mexico City","Mexiko","varlden","2026-10-30","2026-11-01","",""],
+ ["Denver","USA","varlden","2026-11-13","2026-11-16","",""],
+ ["Seoul","Sydkorea","varlden","2026-11-14","2026-11-15","",""],
+ ["Kairo","Egypten","varlden","2026-11-14","2026-11-15","",""],
+ ["Dallas","USA","varlden","2026-11-18","2026-11-22","",""],
+ ["Rio de Janeiro","Brasilien","varlden","2026-11-21","2026-11-21","",""],
+ ["Guangzhou","Kina","varlden","2026-11-21","2026-11-22","",""],
+ ["Gujarat","Indien","varlden","2026-11-26","2026-11-28","",""],
+ ["Singapore","Singapore","varlden","2026-11-26","2026-11-29","",""],
+ ["Dubai","Förenade Arabemiraten","varlden","2026-11-27","2026-11-28","",""],
+ ["Johannesburg","Sydafrika","varlden","2026-11-27","2026-11-29","",""],
+ ["Anaheim","USA","varlden","2026-12-03","2026-12-06","",""],
+ ["Sanya","Kina","varlden","2026-12-05","2026-12-06","",""],
+ ["Melbourne","Australien","varlden","2026-12-09","2026-12-13","",""],
+ ["Kuala Lumpur","Malaysia","varlden","2026-12-10","2026-12-13","",""],
+ ["Nashville","USA","varlden","2026-12-10","2026-12-13","",""],
+ ["Vancouver","Kanada","varlden","2026-12-18","2026-12-20","",""],
+ ["Chicago","USA","varlden","2027-02-11","2027-02-15","","pre"],
+ ["Cancún","Mexiko","varlden","2027-02-19","2027-02-21","","pre"],
+ ["Phoenix","USA","varlden","2027-02-25","2027-02-28","","pre"],
+ ["Las Vegas","USA","varlden","2027-03-12","2027-03-14","","pre"],
+ ["Guadalajara","Mexiko","varlden","2027-03-19","2027-03-21","","pre"],
+ ["Miami Beach","USA","varlden","2027-03-26","2027-03-28","","pre"],
+ ["Houston","USA","varlden","2027-04-01","2027-04-04","","pre"],
+ ["Monterrey","Mexiko","varlden","2027-04-16","2027-04-18","","pre"],
+ ["Ottawa","Kanada","varlden","2027-04-21","2027-04-25","","pre"],
+ ["Atlanta","USA","varlden","2027-04-23","2027-04-25","","pre"],
+ ["San Diego","USA","varlden","2027-05-13","2027-05-16","","pre"],
+ ["Portland","USA","varlden","2027-05-21","2027-05-23","","pre"],
+ ["Puebla","Mexiko","varlden","2027-05-28","2027-05-30","","pre"],
+ ["Hongkong","Kina","varlden","2027-06-10","2027-06-13","AsiaWorld-Expo","vm"]
+].map(([c,n,r,s,e,v,f],i)=>({i,c,n,r,s,e,v,pre:f==="pre",vm:f==="vm"}));
+const MON=["jan","feb","mars","apr","maj","juni","juli","aug","sep","okt","nov","dec"];
+const MONL=["januari","februari","mars","april","maj","juni","juli","augusti","september","oktober","november","december"];
+const evD=s=>new Date(s+"T12:00:00");
+function evRange(e){const a=evD(e.s),b=evD(e.e),y=b.getFullYear();
+  if(e.s===e.e)return `${a.getDate()} ${MON[a.getMonth()]} ${y}`;
+  if(a.getMonth()===b.getMonth())return `${a.getDate()}–${b.getDate()} ${MON[b.getMonth()]} ${y}`;
+  return `${a.getDate()} ${MON[a.getMonth()]}–${b.getDate()} ${MON[b.getMonth()]} ${y}`}
+const evLive=e=>e.s<=today()&&today()<=e.e;
+const evIn=e=>Math.round((evD(e.s)-evD(today()))/864e5);
+const evUpcoming=()=>EVENTS.filter(e=>e.e>=today()).sort((a,b)=>a.s.localeCompare(b.s));
+const myEvent=()=>EVENTS.find(e=>e.s<=set.date&&set.date<=e.e)||null;
+function evWhen(e){if(evLive(e))return '<span class="ev-live">Pågår</span>';const d=evIn(e);return d===1?"i morgon":`om ${d} d`}
+function evRow(e){const a=evD(e.s),me=myEvent()===e;
+  return `<button class="row" data-ev="${e.i}"><span class="badge evd"><b>${a.getDate()}</b><small>${MON[a.getMonth()]}</small></span><div><h3>${e.c}${me?'<span class="evtag me">Mitt lopp</span>':""}${e.vm?'<span class="evtag">VM</span>':""}</h3><p>${e.n}${e.v?" · "+e.v:""}${e.pre?" · preliminärt":""}</p></div><span class="amt">${evWhen(e)}</span></button>`}
+function renderEvents(){
+  const el=$("#tv-kal");if(!el)return;const up=evUpcoming(),me=myEvent(),r=set.evr||"norden";
+  const hero=me&&me.e>=today()?me:up.find(e=>e.r==="norden")||up[0];
+  let h="";
+  if(hero){const d=evIn(hero);
+    h+=`<div class="evhero hot"><span class="k">${me===hero?"Mitt lopp":"Nästa i Norden"}</span><h3>${hero.c}</h3><p>${evRange(hero)}${hero.v?" · "+hero.v:""}</p>
+      <div class="evbig">${evLive(hero)?"<b>Pågår nu</b>":`<b>${d}</b><span>${d===1?"dag kvar":"dagar kvar"}</span>`}</div>
+      <button class="pill" data-ev="${hero.i}">${me===hero?"Visa loppet":"Gör till mitt lopp"}</button></div>`}
+  h+=`<div class="seg" id="ev-seg" role="group" aria-label="Region"><button data-r="norden" aria-pressed="${r==="norden"}">Norden</button><button data-r="europa" aria-pressed="${r==="europa"}">Europa</button><button data-r="varlden" aria-pressed="${r==="varlden"}">Världen</button></div>`;
+  const list=up.filter(e=>e.r===r);let cur="";
+  list.forEach(e=>{const a=evD(e.s),k=MONL[a.getMonth()]+" "+a.getFullYear();
+    if(k!==cur){if(cur)h+="</div>";h+=`<div class="evmonth">${k}</div><div class="group">`;cur=k}h+=evRow(e)});
+  if(cur)h+="</div>";else h+='<div class="empty">Inga kommande lopp här just nu.</div>';
+  const note={norden:"Fler nordiska lopp för våren 2027 kan tillkomma.",europa:"Vårens lopp 2027 i Europa är inte publicerade än.",varlden:"Lopp i Nordamerika våren 2027 är preliminära. VM 2027 avgörs i Hongkong."}[r];
+  h+=`<p class="small" style="margin-top:14px">${note} Datum enligt HYROX säsongskalender 2026/27, kontrollerade 30 oktober 2026. Boka alltid via <a href="https://hyrox.com" target="_blank" rel="noopener">hyrox.com</a>.</p>`;
+  el.innerHTML=h;
+  $$("#ev-seg [data-r]").forEach(b=>b.onclick=()=>{set.evr=b.dataset.r;saveSet();renderEvents()});
+}
+function evIcs(e){const st=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z",nx=evD(e.e);nx.setDate(nx.getDate()+1);
+  return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//VARV//SV","BEGIN:VEVENT",`UID:ev-${e.c.replace(/\W/g,"")}-${e.s}@varv`,`DTSTAMP:${st}`,`DTSTART;VALUE=DATE:${e.s.replace(/-/g,"")}`,`DTEND;VALUE=DATE:${iso(nx).replace(/-/g,"")}`,`SUMMARY:HYROX ${e.c}`,`LOCATION:${(e.v?e.v+"\\, ":"")+e.c}`,"END:VEVENT","END:VCALENDAR"].join("\r\n")}
+function openEvent(i){const e=EVENTS[i];if(!e)return;const me=myEvent()===e,live=evLive(e),d=evIn(e);
+  const days=[];for(let x=evD(e.s);iso(x)<=e.e;x.setDate(x.getDate()+1)){const s=iso(x);if(s>=today())days.push(s)}
+  const pick=me?set.date:days[0];
+  openSheet(`<div><span class="small">${e.n}${e.vm?" · Världsmästerskap":""}</span><h2>${e.c}</h2></div>
+   <div class="facts3"><div><small>Datum</small><b>${evRange(e)}</b></div><div><small>${live?"Status":"Kvar"}</small><b>${live?"Pågår":d+" dagar"}</b></div><div><small>Plats</small><b>${e.v||"Meddelas senare"}</b></div></div>
+   ${e.pre?'<p class="small">Preliminärt datum. Kontrollera på hyrox.com innan du bokar.</p>':""}
+   ${days.length?`<div class="field"><label for="ev-day">Min tävlingsdag</label><select id="ev-day">${days.map(s=>`<option value="${s}"${s===pick?" selected":""}>${evD(s).toLocaleDateString("sv-SE",{weekday:"long",day:"numeric",month:"long"})}</option>`).join("")}</select></div>
+   <button class="pill block" id="ev-set">${me?"Spara tävlingsdag":"Gör till mitt lopp"}</button>`:""}
+   <div class="grid2"><a class="pill ghost" href="https://hyrox.com" target="_blank" rel="noopener">Biljetter ↗</a>${DL?'<button class="pill ghost" id="ev-cal">Lägg i kalendern</button>':'<span></span>'}</div>`,()=>{
+    const b=$("#ev-set");if(b)b.onclick=()=>{set.date=$("#ev-day").value;set.planStart=today();saveSet();const pd=$("#p-date");if(pd)pd.value=set.date;
+      renderPlan();renderHome();renderEvents();closeSheet();toast(`${e.c} är ditt lopp. Planen är uppdaterad.`);HAPTIC("success")};
+    const c=$("#ev-cal");if(c)c.onclick=async()=>{try{const nm=`varv-${e.c.toLowerCase().replace(/[^a-z]/g,"")}`;const r=await DL.save(DL.raw?{filename:nm+".ics",data:evIcs(e)}:{filename:nm+".zip",data:makeZip([{name:nm+".ics",data:evIcs(e)}])});if(r&&r.status==="saved")toast("Loppet är sparat i en kalenderfil")}catch(err){saveErr(err)}};
+  });
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-ev]");if(b){openEvent(+b.dataset.ev);return}
+  const g=e.target.closest("[data-tv-go]");if(g){set.tsub=g.dataset.tvGo;saveSet();if(location.hash==="#race")renderTv()}});
+function renderTv(){const sub=set.tsub||"kal";
+  $$("#tv-seg [data-tv]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tv===sub));
+  $("#tv-kal").hidden=sub!=="kal";$("#tv-run").hidden=sub!=="run";
+  $("#tv-h").textContent=sub==="kal"?"Tävlingar.":"Racedag.";
+  $("#tv-p").textContent=sub==="kal"?"Kommande lopp i Norden, Europa och resten av världen. Tryck på ett lopp för att göra det till ditt.":"Tryck efter varje moment och se direkt om du ligger före eller efter planen. Fungerar även för simuleringar på gymmet.";
+  if(sub==="kal")renderEvents();else renderRace()}
+$$("#tv-seg [data-tv]").forEach(b=>b.onclick=()=>{set.tsub=b.dataset.tv;saveSet();renderTv()});
+
+/* ============ Profil ============ */
+function initials(n){const p=String(n||"").trim().split(/\s+/).filter(Boolean);return p.length?(p[0][0]+(p.length>1?p[p.length-1][0]:"")).toUpperCase():"V"}
+let MEINFO=null;
+function pName(){return set.name||(MEINFO&&MEINFO.name)||""}
+function avatarHtml(){return MEINFO&&MEINFO.avatarUrl&&!set.name?`<img src="${esc(MEINFO.avatarUrl)}" alt="">`:`<span>${esc(initials(pName()))}</span>`}
+function renderAvatar(){const a=$("#avatar-btn");if(a)a.innerHTML=avatarHtml()}
+function swRow(id,title,sub,on){return `<button class="switchrow" id="${id}" role="switch" aria-checked="${!!on}"><span><b>${title}</b><small>${sub}</small></span><span class="sw"></span></button>`}
+function renderProfile(){
+  if(!set.since){set.since=today();saveSet()}
+  const st=weekStats(),hrs=Math.round(st.total/6)/10;
+  $("#pf-av").innerHTML=avatarHtml();
+  $("#pf-name").textContent=pName()||"Din profil";
+  const s=evD(set.since);$("#pf-sub").textContent=`Tränar med VARV. sedan ${MONL[s.getMonth()]} ${s.getFullYear()}`;
+  $("#pf-stats").innerHTML=`<div class="tile"><b>${LOGS.length}</b><span>pass loggade</span></div><div class="tile"><b>${String(hrs).replace(".",",")} h</b><span>träningstid</span></div><div class="tile"><b>${PRS.race?fmt(PRS.race):"–"}</b><span>bästa Hyrox-tid</span></div><div class="tile"><b>${st.streak}</b><span>veckor i rad</span></div>`;
+  const db=mode==="db";
+  $("#pf-acc").innerHTML=db?`<div class="row"><span class="badge pf-mini">${avatarHtml()}</span><div><h3>Inloggad via Claude</h3><p>Din logg, dina rekord och din plan sparas i ditt konto och följer med mellan enheter.</p></div><span></span></div>`
+   :`<div class="row"><span class="badge">✓</span><div><h3>Sparas på den här enheten</h3><p>Allt ligger kvar i webbläsaren. Exportera dina data nedan för att flytta dem till en annan enhet. Inloggning med Google är på väg.</p></div><span></span></div>`;
+  const nm=$("#pf-in-name");if(document.activeElement!==nm)nm.value=set.name||"";
+  nm.placeholder=(MEINFO&&MEINFO.name)||"Ditt namn";
+  $("#pf-in-age").value=set.age||"";$("#pf-in-max").value=set.maxhr||"";
+  $("#pf-set").innerHTML=swRow("pf-sw-sound","Ljud","Pip i tidtagningen",set.cues.sound)+swRow("pf-sw-voice","Röst","Säger nästa moment och om du ligger före planen",set.cues.voice)+swRow("pf-sw-hap","Vibration","Känn knapptryck och milstolpar",set.cues.haptic!==false);
+  $("#pf-sw-sound").onclick=()=>{set.cues.sound=!set.cues.sound;saveSet();renderProfile();renderCues()};
+  $("#pf-sw-voice").onclick=()=>{set.cues.voice=!set.cues.voice;saveSet();renderProfile();renderCues()};
+  $("#pf-sw-hap").onclick=()=>{set.cues.haptic=set.cues.haptic===false;saveSet();renderProfile();renderCues()};
+  $("#pf-con").innerHTML=`<a class="row" href="#logg"><span class="badge">S</span><div><h3>Strava</h3><p>${MCP?(set.strava?"Kopplad. Synkar dina pass och pulszoner.":"Inte kopplad än."):"Finns i Claude-versionen av appen."}</p></div><span class="chev">›</span></a>
+    <a class="row" href="#race" data-tv-go="run"><span class="badge">G</span><div><h3>Garmin</h3><p>Skapa ett racepass för klockan under Racedag.</p></div><span class="chev">›</span></a>`;
+  $("#pf-exp").hidden=!DL;
+}
+function saveProfileFields(){set.name=$("#pf-in-name").value.trim().slice(0,60);set.age=+$("#pf-in-age").value||null;set.maxhr=+$("#pf-in-max").value||null;saveSet();renderAvatar();$("#pf-av").innerHTML=avatarHtml();$("#pf-name").textContent=pName()||"Din profil"}
+["#pf-in-name","#pf-in-age","#pf-in-max"].forEach(id=>{const el=$(id);el.addEventListener("input",()=>{clearTimeout(el._t);el._t=setTimeout(()=>{saveProfileFields();renderPlan();renderHome()},400)})});
+$("#pf-back").onclick=()=>{if(history.length>1)history.back();else location.hash="#hem"};
+$("#pf-exp").onclick=async()=>{const data=JSON.stringify({app:"VARV.",v:1,exported:new Date().toISOString(),settings:set,logs:LOGS,prs:PRS},null,1);
+  try{const r=await DL.save({filename:`varv-data-${today()}.json`,data});if(r&&r.status==="saved")toast("Dina data är exporterade")}catch(err){saveErr(err)}};
+$("#pf-imp-file").addEventListener("change",async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
+  try{const d=JSON.parse(await f.text());if(!d||d.app!=="VARV."||!Array.isArray(d.logs))throw 0;
+    const keep=["target","date","days","per","fmt","k","g","age","maxhr","test","name","split","cues","since","hour","planStart","onboarded"];
+    keep.forEach(k=>{if(d.settings&&d.settings[k]!==undefined)set[k]=d.settings[k]});set.per=(set.days||[]).length||set.per;saveSet();
+    let n=0;for(const l of d.logs){if(!l||!l.date||LOGS.some(x=>x.id===l.id))continue;const b=Object.assign({},l);const id=b.id||("l"+Date.now()+n);delete b.id;
+      if(mode==="db"&&col){try{await col.doc(id).set(b)}catch(err){}}else LOGS.push(Object.assign({id},b));n++}
+    Object.entries(d.prs||{}).forEach(([k,v])=>{if(+v>0&&(!PRS[k]||v<PRS[k]))PRS[k]=+v});await savePRs();
+    if(mode!=="db")saveLocal();renderAllData();renderProfile();toast(`${n} pass importerade`)}
+  catch(err){toast("Filen kunde inte läsas. Välj en export från VARV.")}
+  e.target.value=""});
+$("#pf-del").onclick=async()=>{const b=$("#pf-del");
+  if(!b.dataset.c){b.dataset.c=1;b.querySelector("h3").textContent="Tryck igen för att radera allt";setTimeout(()=>{if(b.isConnected){delete b.dataset.c;b.querySelector("h3").textContent="Radera alla data"}},3500);return}
+  if(mode==="db"&&col){for(const l of LOGS){try{await col.doc(l.id).delete()}catch(e){}}try{await col.doc("meta").delete()}catch(e){}}
+  ["hyrox-logs","hyrox-prs","hyrox-pack","hyrox-race","hyrox-hidden","hyrox-set"].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
+  LOGS=[];PRS={};PK={};RACE=null;const keepDate=new Date();keepDate.setDate(keepDate.getDate()+84);
+  set=JSON.parse(JSON.stringify(DEF));set.date=iso(keepDate);set.days=DEFDAYS[4];set.per=4;saveSet();
+  $("#p-range").value=set.target;$("#p-date").value=set.date;renderDays();renderSplits();renderAllData();renderPack();renderRace();renderCues();renderAvatar();renderProfile();
+  delete b.dataset.c;toast("Allt är raderat");setTimeout(()=>openTest(true),600)};
+
 /* ============ Routing ============ */
-const VIEWS=["hem","stationer","plan","race","logg"];
+const VIEWS=["hem","stationer","plan","race","logg","profil"];
 function route(){
   const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):"hem";
   $$(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
   $$(".tab").forEach(a=>{if(a.dataset.v===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
-  closeSheet();try{window.scrollTo(0,0)}catch(e){}if(v==="race")renderRace();
-  if(v==="hem")["#h-days","#h-target","#h-pace","#h-week","#h-streak","#h-total"].forEach(id=>countUp($(id)));
+  closeSheet();try{window.scrollTo(0,0)}catch(e){}if(v==="race"){if(RACE&&!RACE.end)set.tsub="run";renderTv()}
+  $("#avatar-btn").hidden=v==="profil";if(v==="profil")renderProfile();
+  if(v==="hem")["#h-days","#h-target","#h-pace","#h-week","#h-streak"].forEach(id=>countUp($(id)));
   if(v==="logg"){drawRings(true);renderLog()}
 }
 window.addEventListener("hashchange",route);
@@ -1575,12 +1800,12 @@ route();
 (async()=>{try{if(window.claude&&window.claude.use){DL=await window.claude.use("downloads");if(DL)$("#cal-btn").hidden=false;renderGarmin()}}catch(e){}})();
 if(!window.claude&&"serviceWorker" in navigator&&location.protocol==="https:"){try{navigator.serviceWorker.register("sw.js")}catch(e){}}
 if(!window.claude){DL={raw:true,save:async({filename,data})=>{const u=URL.createObjectURL(new Blob([data],{type:"application/octet-stream"}));const a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return {status:"saved"}}};$("#cal-btn").hidden=false}
-renderComm();renderGarmin();
+renderComm();renderGarmin();renderAvatar();renderEvents();
 if(!set.onboarded)setTimeout(()=>{if(!location.hash||location.hash==="#hem")openTest(true)},2300);
 /* Startanimation */
 (()=>{const sp=document.getElementById("splash");if(!sp)return;let done=false;
   const end=()=>{if(done)return;done=true;sp.remove();const v=document.querySelector(".view.on");if(v&&!RM()){v.classList.remove("on");void v.offsetWidth;v.classList.add("on")}
-    if(!location.hash||location.hash==="#hem")["#h-days","#h-target","#h-pace","#h-week","#h-streak","#h-total"].forEach(id=>countUp($(id)))};
+    if(!location.hash||location.hash==="#hem")["#h-days","#h-target","#h-pace","#h-week","#h-streak"].forEach(id=>countUp($(id)))};
   const hz=[[0,"light"],[950,"medium"],[1100,"success"]].map(([ms,k])=>setTimeout(()=>{if(!done&&!RM())HAPTIC(k)},ms));
   sp.addEventListener("click",()=>{HAPTIC("success");hz.forEach(clearTimeout);sp.classList.add("skip");setTimeout(end,260)});
   sp.addEventListener("animationend",e=>{if(e.target===sp)end()});
