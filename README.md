@@ -22,3 +22,10 @@ Sätt upp det så här:
 6. Valfritt, inloggning med kod: lägg till `{{ .Token }}` i mallen Magic Link under Authentication → Emails, så får man en sexsiffrig kod i mejlet. Det behövs på iPhone när appen ligger på hemskärmen, eftersom länkar i mejl öppnas i Safari och inte i appen.
 
 Inloggningssätt: e-post och lösenord, kod eller länk via e-post, glömt lösenord och Google.
+
+## Konto, integritet och säkerhet
+
+- På hemsidan måste man skapa konto efter startanimationen. Man godkänner villkoren, samtycker till att träningsdata sparas och intygar att man är 16 år eller äldre. Samtycket sparas på kontot.
+- Integritetspolicy: `legal/integritet.html`. Användarvillkor: `legal/villkor.html`.
+- Radera konto i Profil → Konto. Kräver att `supabase/konto.sql` körts i Supabase.
+- Rekommenderade inställningar i Supabase under Authentication: Confirm email på, minsta lösenordslängd 8, Site URL och Redirect URLs satta till hemsidan.

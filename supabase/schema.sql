@@ -33,3 +33,24 @@ create policy "Ändra egna" on public.user_docs
 
 create policy "Ta bort egna" on public.user_docs
   for delete to authenticated using ((select auth.uid()) = user_id);
+
+-- Radera konto (samma som supabase/konto.sql)
+create or replace function public.delete_my_account()
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  uid uuid := auth.uid();
+begin
+  if uid is null then
+    raise exception 'Inte inloggad';
+  end if;
+  delete from public.user_docs where user_id = uid;
+  delete from auth.users where id = uid;
+end;
+$$;
+
+revoke all on function public.delete_my_account() from public, anon;
+grant execute on function public.delete_my_account() to authenticated;
