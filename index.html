@@ -1656,12 +1656,12 @@ function sbErr(e){
   if(/rate_limit/.test(c)||(e&&e.status===429))return "För många försök. Vänta en stund och försök igen.";
   if(c==="otp_expired"||/expired|invalid.*(otp|token)/i.test(m))return "Koden stämmer inte eller har gått ut. Be om en ny.";
   if(c==="signup_disabled")return "Nya konton är avstängda just nu.";
-  if(/sending (confirmation|magic link|recovery)? ?e?-?mail|smtp|gomail|535|authentication failed/i.test(m))return "Vi kunde inte skicka mejlet just nu. Försök igen om en stund. (Mejlinställningen i Supabase behöver kontrolleras.)";
-  if(/database error saving new user|database error/i.test(m))return "Kontot kunde inte sparas. Försök igen om en stund. (Databasen i Supabase behöver kontrolleras.)";
+  if(/sending (confirmation|magic link|recovery)? ?e?-?mail|smtp|gomail|535|authentication failed/i.test(m))return "Vi kunde inte skicka mejlet just nu. Försök igen om en stund.";
+  if(/database error saving new user|database error/i.test(m))return "Kontot kunde inte sparas. Försök igen om en stund.";
   if(c==="email_address_invalid"||/email address.*invalid|invalid.*email/i.test(m))return "E-postadressen godkänns inte. Kontrollera stavningen.";
   if(/fetch|network/i.test(m))return "Ingen anslutning. Försök igen.";
   try{console.warn("VARV konto:",c,e&&e.status,m)}catch(x){}
-  return "Något gick fel. Försök igen."+(m?` (${m.slice(0,80)})`:"");
+  return "Något gick fel. Försök igen.";
 }
 const okMail=v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 async function busy(btn,fn){if(!btn||btn.disabled)return;btn.disabled=true;try{await fn()}finally{if(btn.isConnected)btn.disabled=false}}
