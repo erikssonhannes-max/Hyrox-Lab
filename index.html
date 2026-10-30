@@ -304,6 +304,15 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 .ov.act .ov-n{transform:scale(1.22)}
 .ov.act .ov-c{fill:var(--green);stroke:var(--green);stroke-width:2}
 .ov.act{color:#fff}
+.ov-rip{fill:none;stroke:var(--green);stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center;pointer-events:none}
+.ov.act .ov-rip{animation:ovRip .9s var(--ease) both}
+@keyframes ovRip{0%{opacity:.6;transform:scale(1)}100%{opacity:0;transform:scale(2.1)}}
+#ovalsvg.win .ov .ov-n{animation:ovWave .7s var(--spring) var(--d) both}
+#ovalsvg.win .ov .ov-c{fill:var(--green);stroke:var(--green)}
+#ovalsvg.win .ov{color:#fff}
+#ovalsvg.win #trail{animation:ovGlow 1.2s ease-in-out both}
+@keyframes ovWave{50%{transform:scale(1.25)}}
+@keyframes ovGlow{40%{stroke-width:10}}
 .rn-halo{opacity:.22;transform-box:fill-box;transform-origin:center;animation:rnPulse 1.6s ease-in-out infinite}
 @keyframes rnPulse{50%{transform:scale(1.45);opacity:.08}}
 .daypick{display:flex;flex-wrap:wrap;gap:6px}
@@ -1405,21 +1414,23 @@ function drawOval(){
   const P=`M${cx},${cy-ry} a${rx},${ry} 0 1,1 -0.1,0`;
   h+=`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="none" stroke="var(--tile)" stroke-width="20"/>`;
   h+=`<path id="ovpath" d="${P}" fill="none" stroke="none"/>`;
-  h+=`<path id="trail" d="${P}" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round"/>`;
+  h+=`<defs><linearGradient id="ovhot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent2)"/></linearGradient><filter id="ovblur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="5"/></filter></defs>`;
+  h+=`<path id="trail" d="${P}" fill="none" stroke="url(#ovhot)" stroke-width="6" stroke-linecap="round"/>`;
+  h+=`<path id="comet" d="${P}" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" filter="url(#ovblur)" opacity="0"/>`;
   h+=`<g class="ov-start" aria-hidden="true"><line x1="${cx}" y1="${cy-ry-13}" x2="${cx}" y2="${cy-ry+13}" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/><text x="${cx}" y="${cy-ry-19}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--muted)" style="font-family:var(--f);letter-spacing:.06em">START · MÅL</text></g>`;
-  h+=`<g id="ov-lbl" class="ov-lbl"><text id="ov-t" x="${cx}" y="${cy-2}" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" style="letter-spacing:-1px;font-family:var(--f)">Roxzone</text>`;
+  h+=`<g id="ov-lbl" class="ov-lbl"><text id="ov-t" x="${cx}" y="${cy-2}" text-anchor="middle" font-size="32" font-weight="700" fill="var(--ink)" style="letter-spacing:-1px;font-family:var(--f);font-variant-numeric:tabular-nums">Roxzone</text>`;
   h+=`<text id="ov-s" x="${cx}" y="${cy+24}" text-anchor="middle" font-size="14" fill="var(--muted)" style="font-family:var(--f)">1 km löpning före varje station</text></g>`;
   h+=`<g id="runner"><circle class="rn-halo" r="13" fill="var(--accent)"/><circle r="7.5" fill="var(--accent)"/><circle r="3" fill="#fff"/></g>`;
   const pos=[];
   S.forEach((st,i)=>{const a=-Math.PI/2+i*(Math.PI/4)+Math.PI/8;const x=cx+rx*Math.cos(a),y=cy+ry*Math.sin(a);pos.push([x,y]);
     const inner=ART[st.id].replace(/^<svg[^>]*>/,"").replace(/<\/svg>$/,"");
-    h+=`<g class="ov" data-st="${i}" role="button" aria-label="${st.n}"><g class="ov-n"><circle class="ov-c" cx="${x}" cy="${y}" r="21"/><svg class="ov-i" x="${x-13}" y="${y-13}" width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${inner}</svg></g></g>`});
+    h+=`<g class="ov" data-st="${i}" role="button" aria-label="${st.n}" style="--d:${i*60}ms"><circle class="ov-rip" cx="${x}" cy="${y}" r="21"/><g class="ov-n"><circle class="ov-c" cx="${x}" cy="${y}" r="21"/><svg class="ov-i" x="${x-13}" y="${y-13}" width="26" height="26" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${inner}</svg></g></g>`});
   svg.innerHTML=h;
   svg.onclick=e=>{const g=e.target.closest("g.ov");if(g){location.hash="#stationer";setTimeout(()=>openStation(+g.dataset.st),80)}};
-  const path=svg.querySelector("#ovpath"),tr=svg.querySelector("#trail"),rn=svg.querySelector("#runner"),nodes=[...svg.querySelectorAll("g.ov")];
+  const path=svg.querySelector("#ovpath"),tr=svg.querySelector("#trail"),cm=svg.querySelector("#comet"),rn=svg.querySelector("#runner"),nodes=[...svg.querySelectorAll("g.ov")];
   const lbl=svg.querySelector("#ov-lbl"),tt=svg.querySelector("#ov-t"),sb=svg.querySelector("#ov-s");
   let L;try{L=path.getTotalLength()}catch(e){L=0}
-  if(!L||RM()){tr.remove();rn.style.display="none";return}
+  if(!L||RM()){tr.remove();cm.remove();rn.style.display="none";return}
   // Var på varvet varje station ligger
   const ss=pos.map(([x,y])=>{let best=0,bd=1e9;for(let k=0;k<=720;k++){const d=L*k/720,p=path.getPointAtLength(d),q=(p.x-x)**2+(p.y-y)**2;if(q<bd){bd=q;best=d}}return best});
   // Loppet som en tidslinje: löpning, station, löpning, station … och målgång
@@ -1428,10 +1439,11 @@ function drawOval(){
   let prev=0;ss.forEach((v,i)=>{runTo(prev,v,i);segs.push({k:"sta",i,a:v,b:v,t0:t,t1:t+STA_MS});t+=STA_MS;prev=v});
   runTo(prev,L,8);segs.push({k:"goal",a:L,b:L,t0:t,t1:t+GOAL_MS});t+=GOAL_MS;segs.push({k:"reset",a:L,b:L,t0:t,t1:t+FADE_MS});t+=FADE_MS;
   const TOTAL=t,ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
-  tr.setAttribute("stroke-dasharray",`${L} ${L}`);
-  let cur="",swapT=null;
-  const setLabel=(key,title,sub)=>{if(key===cur)return;cur=key;clearTimeout(swapT);lbl.classList.add("out");
-    swapT=setTimeout(()=>{tt.textContent=title;sb.textContent=sub;lbl.classList.remove("out")},200)};
+  const C=70;tr.setAttribute("stroke-dasharray",`${L} ${L}`);cm.setAttribute("stroke-dasharray",`${C} ${L*2}`);
+  let cur="",swapT=null,swapping=false;
+  const setLabel=(key,title,sub)=>{if(key===cur)return;cur=key;clearTimeout(swapT);lbl.classList.add("out");swapping=true;
+    swapT=setTimeout(()=>{tt.textContent=title;sb.textContent=sub;lbl.classList.remove("out");swapping=false},200)};
+  const kmTxt=v=>v.toFixed(1).replace(".",",")+" km";
   const state=(i,c)=>{const n=nodes[i];if(n.dataset.s!==c){n.dataset.s=c;n.setAttribute("class","ov"+(c?" "+c:""))}};
   let el=0,last=performance.now();
   const frame=now=>{const dt=Math.min(64,now-last);last=now;
@@ -1440,13 +1452,15 @@ function drawOval(){
       const d=g.k==="run"?g.a+(g.b-g.a)*ease(f):g.a,p=path.getPointAtLength(Math.min(d,L-0.01));
       rn.setAttribute("transform",`translate(${p.x.toFixed(2)},${p.y.toFixed(2)})`);
       tr.setAttribute("stroke-dashoffset",(L-d).toFixed(2));
+      const sp=g.k==="run"?Math.sin(Math.PI*f):0;cm.setAttribute("stroke-dashoffset",(C-d).toFixed(2));cm.style.opacity=(sp*.55).toFixed(3);
+      svg.classList.toggle("win",g.k==="goal");
       if(g.k==="reset"){tr.style.opacity=String(1-f);rn.style.opacity=String(f)}else{tr.style.opacity="1";rn.style.opacity="1"}
       nodes.forEach((n,i)=>{const passed=g.k==="goal"||g.k==="reset"?g.k!=="reset"||f<.5:(g.k==="run"?i<g.i:i<g.i);
         state(i,g.k==="sta"&&i===g.i?"act":passed?"done":"")});
-      if(g.k==="run"&&g.i<8)setLabel("r"+g.i,"Löpning",`${g.i+1} km av 8 · mot ${S[g.i].n}`);
-      else if(g.k==="run")setLabel("r8","Upploppet","Sista metrarna till mål");
+      if(g.k==="run"&&g.i<8){const km=g.i+ease(f);setLabel("r"+g.i,kmTxt(km),`Löpning · mot ${S[g.i].n}`);if(!swapping)tt.textContent=kmTxt(km)}
+      else if(g.k==="run")setLabel("r8","8,0 km","Upploppet mot mål");
       else if(g.k==="sta")setLabel("s"+g.i,S[g.i].n,`Station ${g.i+1} av 8 · ${S[g.i].q}`);
-      else if(g.k==="goal")setLabel("goal","Mål.","8 km och 8 stationer");
+      else if(g.k==="goal")setLabel("goal","Mål.","8 km · 8 stationer · klart");
     }
     requestAnimationFrame(frame)};
   requestAnimationFrame(frame);
