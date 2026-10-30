@@ -2979,7 +2979,7 @@ function onLogged(e){
 }
 
 /* ============ Notiser ============ */
-const PUSHKEY=(window.VARV_SUPABASE&&window.VARV_SUPABASE.pushKey)||"";
+const PUSHKEY=(window.VARV_SUPABASE&&window.VARV_SUPABASE.pushKey)||"BKngCUNxkMao_gb9Zlpo97GmuYHNvhWmOXMg9AIuwPQEi9frf1S9awn-wFB8ERsy7-LqlU3ctAUwQITxpF_n_Po";
 const isIOS=()=>/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 const isStandalone=()=>{try{return matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}catch(e){return false}};
 const pushOK=()=>"serviceWorker" in navigator&&"PushManager" in window&&"Notification" in window;
@@ -3007,7 +3007,7 @@ async function pushOn(){
      <p class="muted">På iPhone kan bara appar på hemskärmen skicka notiser.</p>
      <ol class="fr-steps"><li>Tryck på <b>Dela</b> längst ned i Safari.</li><li>Välj <b>Lägg till på hemskärmen</b>.</li><li>Öppna VARV. från hemskärmen och slå på notiser under Profil.</li></ol>
      <button class="pill ghost block" id="ios-ok">Okej</button>`,()=>{$("#ios-ok").onclick=closeSheet});return false}
-  if(!pushOK()||!PUSHKEY){toast("Notiser fungerar inte i den här webbläsaren");return false}
+  if(!pushOK()){toast(isIOS()?"Uppdatera iPhone till iOS 16.4 eller senare för notiser":"Notiser fungerar inte i den här webbläsaren. Prova Chrome, Edge eller Safari.");return false}
   const perm=await Notification.requestPermission();
   if(perm!=="granted"){toast(perm==="denied"?"Notiser är avstängda för VARV. i telefonens inställningar":"Notiser är inte påslagna");return false}
   try{const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
