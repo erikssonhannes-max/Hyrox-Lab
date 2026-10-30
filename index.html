@@ -1246,7 +1246,7 @@ function icsText(){
     L.push("BEGIN:VEVENT",`UID:${s.key}-${set.date}@hyrox-plan`,`DTSTAMP:${stamp}`,`DTSTART:${d}T${hh(Math.floor(st/60))}${hh(st%60)}00`,`DTEND:${d}T${hh(Math.floor(en/60)%24)}${hh(en%60)}00`,
       `SUMMARY:${e("VARV. · "+s.t)}`,`DESCRIPTION:${e(s.d+" "+zoneTxt(s.z)+".")}`,"BEGIN:VALARM","TRIGGER:-PT60M","ACTION:DISPLAY",`DESCRIPTION:${e("Om en timme: "+s.t)}`,"END:VALARM","END:VEVENT")}));
   const rd=set.date.replace(/-/g,"");const nx=new Date(set.date+"T12:00:00");nx.setDate(nx.getDate()+1);
-  L.push("BEGIN:VEVENT",`UID:race-${set.date}@hyrox-plan`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${rd}`,`DTEND;VALUE=DATE:${iso(nx).replace(/-/g,"")}`,`SUMMARY:${e("Hyrox-loppet, mål "+fmtHM(set.target))}`,"END:VEVENT","END:VCALENDAR");
+  if(!set.noRace)L.push("BEGIN:VEVENT",`UID:race-${set.date}@hyrox-plan`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${rd}`,`DTEND;VALUE=DATE:${iso(nx).replace(/-/g,"")}`,`SUMMARY:${e("Hyrox-loppet, mål "+fmtHM(set.target))}`,"END:VEVENT");L.push("END:VCALENDAR");
   return L.map(l=>{let o="";while(l.length>70){o+=l.slice(0,70)+"\r\n ";l=l.slice(70)}return o+l}).join("\r\n");
 }
 function openCal(){
@@ -1572,7 +1572,7 @@ $("#p-days").onclick=e=>{const b=e.target.closest("[data-day]");if(!b)return;con
 renderDays();
 let tmr;
 pr.oninput=()=>{set.target=+pr.value;renderSplits();renderHome();if(set.fmt!=="singel")updDbl();clearTimeout(tmr);tmr=setTimeout(()=>{saveSet();renderPlan();renderPRs();renderHome();renderGarmin()},250)};
-pd.onchange=()=>{if(pd.value){set.date=pd.value;set.planStart=today();saveSet();renderPlan();renderHome()}};
+pd.onchange=()=>{if(pd.value){set.date=pd.value;set.noRace=false;set.planStart=today();saveSet();renderPlan();renderHome()}};
 
 /* ============ Lagring: logg och rekord ============ */
 let LOGS=[],PRS={},mode="local",col=null;
@@ -1943,7 +1943,7 @@ function profilePayload(){
   const prs={};PRKEYS.forEach(([k])=>{if(k!=="race"&&PRS[k])prs[k]=PRS[k]});
   const bt=PRS.race&&PRS.race>=600&&PRS.race<=36000?PRS.race:null;
   return {best_time:bt,best_division:divText().slice(0,60),prs,
-    next_race:set.date&&set.date>=today()?{name:me?me.c:null,country:me?me.n:null,date:me?me.s:set.date,end:me?me.e:null,venue:me&&me.v?me.v:null,div:divText()}:null,
+    next_race:!set.noRace&&set.date&&set.date>=today()?{name:me?me.c:null,country:me?me.n:null,date:me?me.s:set.date,end:me?me.e:null,venue:me&&me.v?me.v:null,div:divText()}:null,
     stats:{wk:weekStart(today()),wv:P.weekVarv,sessions:LOGS.length,hours:Math.round(st.total/6)/10,streak:st.streak,week:st.now.n,varv:P.varv,tier:P.tier.n,medals:P.recent.length,since:set.since||null}};
 }
 function syncProfile(){
@@ -2638,11 +2638,12 @@ function renderHome(){
   $("#h-days").textContent=days>=0?days:"–";
   $("#h-racename").textContent=days<0?"Loppet har varit":days===1?"dag kvar":"dagar kvar";
   $("#h-racedate").textContent=new Date(set.date+"T12:00:00").toLocaleDateString("sv-SE",{weekday:"long",day:"numeric",month:"long"});
+  {const a=$("#h-days").closest("a");if(set.noRace){$("#h-days").textContent=Math.max(0,days);$("#h-racename").textContent="dagar kvar av planen";$("#h-racedate").textContent="Inget lopp valt. Tryck för att välja.";if(a)a.setAttribute("href","#race")}else if(a)a.setAttribute("href","#plan")}
   $("#h-target").textContent=fmtHM(set.target);$("#h-pace").textContent=fmt(t.pace);
   $("#h-week").textContent=`${st.now.n}/${set.per}`;$("#h-streak").textContent=st.streak;
   const med=set.g==="w"?5780:5276,src=PRS.race||set.target*60,dm=Math.round((src-med)/60);
   $("#h-med").innerHTML=`${PRS.race?"Ditt rekord":"Din måltid"} är <b style="color:var(--ink);font-weight:600">${dm===0?"lika med":Math.abs(dm)+" min "+(dm<0?"snabbare än":"långsammare än")}</b> mediantiden i Open ${set.g==="w"?"dam, 1:36":"herr, 1:28"}.`;
-  const me=myEvent();$("#h-racedate").textContent=(me?me.c+" · ":"")+$("#h-racedate").textContent;
+  const me=myEvent();if(!set.noRace)$("#h-racedate").textContent=(me?me.c+" · ":"")+$("#h-racedate").textContent;
   const nx=me&&me.e>=today()?me:evUpcoming().find(e=>e.r==="norden");$("#h-next").innerHTML=nx?evRow(nx):'<div class="empty">Inga kommande lopp i Norden just nu.</div>';
   const el=$("#today");
   if(!set.test){el.innerHTML=`<span class="tag">Träning</span><h3>Logga ditt pass</h3><p>Spara passet direkt efter träningen. Då följer du hur mycket du tränar och hur formen utvecklas.</p><div class="acts"><button class="pill" id="today-log">Logga pass</button><a class="pill ghost" href="#plan">Se planen</a></div>`;$("#today-log").onclick=()=>$("#log-new").click();return}
@@ -2843,7 +2844,8 @@ async function loadEvents(){const C=window.VARV_SUPABASE||{};if(!C.url||!C.anonK
     const rows=await r.json();if(applyEvents(rows)){try{localStorage.setItem("varv-events",JSON.stringify(rows))}catch(e){}try{renderEvents();renderHome()}catch(e){}}}catch(e){}}
 setTimeout(loadEvents,1200);
 const evUpcoming=()=>EVENTS.filter(e=>e.e>=today()).sort((a,b)=>a.s.localeCompare(b.s));
-const myEvent=()=>EVENTS.find(e=>e.s<=set.date&&set.date<=e.e)||null;
+const myEvent=()=>set.noRace?null:(EVENTS.find(e=>e.s<=set.date&&set.date<=e.e)||null);
+function freeDate(){const d=new Date(today()+"T12:00:00");d.setDate(d.getDate()+84);while(EVENTS.some(e=>e.s<=iso(d)&&iso(d)<=e.e))d.setDate(d.getDate()+1);return iso(d)}
 function evWhen(e){if(evLive(e))return '<span class="ev-live">Pågår</span>';const d=evIn(e);return d===1?"i morgon":`om ${d} d`}
 function evRow(e){const a=evD(e.s),me=myEvent()===e;
   return `<button class="row" data-ev="${e.i}"><span class="badge evd"><b>${a.getDate()}</b><small>${MON[a.getMonth()]}</small></span><div><h3>${e.c}${me?'<span class="evtag me">Mitt lopp</span>':""}${e.vm?'<span class="evtag">VM</span>':""}</h3><p>${e.n}${e.v?" · "+e.v:""}${e.pre?" · preliminärt":""}</p></div><span class="amt">${evWhen(e)}</span></button>`}
@@ -2875,8 +2877,12 @@ function openEvent(i){const e=EVENTS[i];if(!e)return;const me=myEvent()===e,live
    ${e.pre?'<p class="small">Preliminärt datum. Kontrollera på hyrox.com innan du bokar.</p>':""}
    ${days.length?`<div class="field"><label for="ev-day">Min tävlingsdag</label><select id="ev-day">${days.map(s=>`<option value="${s}"${s===pick?" selected":""}>${evD(s).toLocaleDateString("sv-SE",{weekday:"long",day:"numeric",month:"long"})}</option>`).join("")}</select></div>
    <button class="pill block" id="ev-set">${me?"Spara tävlingsdag":"Gör till mitt lopp"}</button>`:""}
+   ${me?`<button class="pill ghost block" id="ev-rm">Ta bort som mitt lopp</button>`:""}
    <div class="grid2"><a class="pill ghost" href="https://hyrox.com" target="_blank" rel="noopener">Biljetter ↗</a>${DL?'<button class="pill ghost" id="ev-cal">Lägg i kalendern</button>':'<span></span>'}</div>`,()=>{
-    const b=$("#ev-set");if(b)b.onclick=()=>{set.date=$("#ev-day").value;set.planStart=today();saveSet();const pd=$("#p-date");if(pd)pd.value=set.date;
+    const rm=$("#ev-rm");if(rm)rm.onclick=()=>{if(!rm.dataset.c){rm.dataset.c=1;rm.textContent="Tryck igen för att ta bort";rm.style.color="var(--bad)";return}
+      set.noRace=true;set.date=freeDate();set.planStart=today();saveSet();const pd=$("#p-date");if(pd)pd.value=set.date;
+      renderPlan();renderHome();renderEvents();try{syncProfile()}catch(x){}closeSheet();toast(`${e.c} är inte längre ditt lopp. Planen fortsätter utan tävling.`)};
+    const b=$("#ev-set");if(b)b.onclick=()=>{set.noRace=false;set.date=$("#ev-day").value;set.planStart=today();saveSet();const pd=$("#p-date");if(pd)pd.value=set.date;
       renderPlan();renderHome();renderEvents();closeSheet();toast(`${e.c} är ditt lopp. Planen är uppdaterad.`);HAPTIC("success")};
     const c=$("#ev-cal");if(c)c.onclick=async()=>{try{const nm=`varv-${e.c.toLowerCase().replace(/[^a-z]/g,"")}`;const r=await DL.save(DL.raw?{filename:nm+".ics",data:evIcs(e)}:{filename:nm+".zip",data:makeZip([{name:nm+".ics",data:evIcs(e)}])});if(r&&r.status==="saved")toast("Loppet är sparat i en kalenderfil")}catch(err){saveErr(err)}};
   });
@@ -3041,7 +3047,7 @@ const pushOK=()=>"serviceWorker" in navigator&&"PushManager" in window&&"Notific
 function b64u(s){const p="=".repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))}
 function pushSchedule(){
   const td=today(),me=myEvent(),out={plan:!!set.date,race:null,sessions:[],last:null};
-  if(set.date&&set.date>=td)out.race={date:me?me.s:set.date,name:me?me.c:"loppet"};
+  if(!set.noRace&&set.date&&set.date>=td)out.race={date:me?me.s:set.date,name:me?me.c:"loppet"};
   const lim=new Date(td+"T12:00:00");lim.setDate(lim.getDate()+21);const L=iso(lim);
   if(set.date)PLAN.forEach(w=>w.ses.forEach(s=>{if(s.date>=td&&s.date<=L&&!sesDone(w,s))out.sessions.push({d:s.date,t:s.t,m:s.m})}));
   const last=sortedLogs()[0];if(last)out.last=last.date;return out;
@@ -3121,7 +3127,7 @@ function openStart(){
       else if(d.sg){st.target=+d.sg}else if(d.fmt){set.fmt=d.fmt;if(set.fmt==="mixed")set.k="open"}else if(d.k){set.k=d.k}else if(d.g){set.g=d.g}else return;draw()});
     r.addEventListener("change",e=>{if(e.target.id==="st-d"&&e.target.value){st.date=e.target.value;st.ev=null;st.none=false;draw()}});
     r.addEventListener("input",e=>{if(e.target.id==="st-g"){st.target=+e.target.value;$("#st-gv").textContent=fmtHM(st.target);$$("#st-body [data-sg]").forEach(c=>c.setAttribute("aria-pressed",+c.dataset.sg===st.target))}});
-    const fin=go=>{if(go){const ev=st.ev!=null?EVENTS[st.ev]:null;set.date=ev?ev.s:st.date||(st.none||!set.date?def():set.date);set.target=st.target;set.planStart=today()}
+    const fin=go=>{if(go){const ev=st.ev!=null?EVENTS[st.ev]:null;set.noRace=!ev&&!st.date;set.date=ev?ev.s:st.date||freeDate();set.target=st.target;set.planStart=today()}
       set.onboarded=true;saveSet();refreshSettingsUI();renderPlan();renderHome();renderPRs();closeSheet();
       if(go){toast("Din plan är klar");HAPTIC("success")}setTimeout(maybeTour,500)};
     $("#st-go").onclick=()=>fin(true);$("#st-skip").onclick=()=>fin(false);
