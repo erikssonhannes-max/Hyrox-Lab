@@ -1134,7 +1134,7 @@ function makeZip(files){
   const parts=out.concat(cd,[Uint8Array.from(end)]),tot=parts.reduce((a,x)=>a+x.length,0),z=new Uint8Array(tot);let p=0;parts.forEach(x=>{z.set(x,p);p+=x.length});return z;
 }
 function saveErr(err){const c=err&&err.code;if(c==="declined")return;
-  toast(c==="rate_limited"?"Vänta en stund och försök igen":c==="rejected_extension"||c==="extension_not_enabled"?"Den filtypen går inte att spara här":c==="too_large"?"Filen blev för stor":"Filen kunde inte sparas här. Försök i webbläsaren på claude.ai.")}
+  toast(c==="rate_limited"?"Vänta en stund och försök igen":c==="rejected_extension"||c==="extension_not_enabled"?"Den filtypen går inte att spara här":c==="too_large"?"Filen blev för stor":"Filen kunde inte sparas här. Försök i en annan webbläsare.")}
 
 /* ============ Garmin-träningspass (FIT) ============ */
 const FITSHORT={ski:"SkiErg",push:"Sled Push",pull:"Sled Pull",bbj:"Burpee BJ",row:"Rodd",farm:"Farmers",lunge:"Lunges",wall:"Wall Balls"};
@@ -1683,7 +1683,7 @@ function openNewPassword(){
 
 /* ============ Kontokrav ============ */
 /* På hemsidan måste man ha ett konto. Porten visas efter startanimationen
-   och släpper in först när man är inloggad. I Claude-versionen sköts kontot av Claude. */
+   och släpper in först när man är inloggad. I den inbäddade versionen sköts kontot separat. */
 let GATE_ON=false,GATE_RES=null,GATE_MODE="up";
 const GATE=new Promise(r=>{GATE_RES=r});
 const TERMS_VERSION="2026-10-30";
@@ -1814,7 +1814,7 @@ async function syncStrava(manual){
     renderAllData();if(manual)toast(STRAVA.msg);
   }catch(err){
     const c=err&&err.code;STRAVA.state="err";
-    STRAVA.msg=c==="needs_reauth"?"Strava behöver kopplas om under Inställningar och Kopplingar på claude.ai.":c==="server_not_connected"||c==="selection_required"?"Lägg till Strava under Inställningar och Kopplingar på claude.ai.":c==="not_in_manifest"||c==="approval_required"||c==="consent_required"?"Appen har inte fått tillgång till Strava. Tryck på knappen och godkänn.":c==="tool_error"?"Strava nekade hämtningen. Kopplingen kräver ett aktivt Strava-abonnemang.":"Strava svarade inte. Försök igen om en stund.";
+    STRAVA.msg=c==="needs_reauth"?"Strava behöver kopplas om. Koppla Strava igen och försök på nytt.":c==="server_not_connected"||c==="selection_required"?"Strava är inte kopplat än.":c==="not_in_manifest"||c==="approval_required"||c==="consent_required"?"Appen har inte fått tillgång till Strava. Tryck på knappen och godkänn.":c==="tool_error"?"Strava nekade hämtningen. Kopplingen kräver ett aktivt Strava-abonnemang.":"Strava svarade inte. Försök igen om en stund.";
     if(c==="not_in_manifest"||c==="approval_required"){set.strava=false;saveSet()}
   }
   renderStrava();
@@ -2420,7 +2420,7 @@ function renderProfile(){
   $("#pf-stats").innerHTML=`<div class="tile"><b>${LOGS.length}</b><span>pass loggade</span></div><div class="tile"><b>${String(hrs).replace(".",",")} h</b><span>träningstid</span></div><div class="tile"><b>${PRS.race?fmt(PRS.race):"–"}</b><span>bästa Hyrox-tid</span></div><div class="tile"><b>${st.streak}</b><span>veckor i rad</span></div>`;
   const db=mode==="db";
   if(SB){renderAccount();}else
-  $("#pf-acc").innerHTML=db?`<div class="row"><span class="badge pf-mini">${avatarHtml()}</span><div><h3>Inloggad via Claude</h3><p>Din logg, dina rekord och din plan sparas i ditt konto och följer med mellan enheter.</p></div><span></span></div>`
+  $("#pf-acc").innerHTML=db?`<div class="row"><span class="badge pf-mini">${avatarHtml()}</span><div><h3>Inloggad</h3><p>Din logg, dina rekord och din plan sparas i ditt konto och följer med mellan enheter.</p></div><span></span></div>`
    :`<div class="row"><span class="badge">✓</span><div><h3>Sparas på den här enheten</h3><p>Allt ligger kvar i webbläsaren. Exportera dina data nedan för att flytta dem till en annan enhet. Inloggning med Google är på väg.</p></div><span></span></div>`;
   const nm=$("#pf-in-name");if(document.activeElement!==nm)nm.value=set.name||"";
   nm.placeholder=(MEINFO&&MEINFO.name)||"Ditt namn";
@@ -2429,7 +2429,7 @@ function renderProfile(){
   $("#pf-sw-sound").onclick=()=>{set.cues.sound=!set.cues.sound;saveSet();renderProfile();renderCues()};
   $("#pf-sw-voice").onclick=()=>{set.cues.voice=!set.cues.voice;saveSet();renderProfile();renderCues()};
   $("#pf-sw-hap").onclick=()=>{set.cues.haptic=set.cues.haptic===false;saveSet();renderProfile();renderCues()};
-  $("#pf-con").innerHTML=`<a class="row" href="#logg"><span class="badge">S</span><div><h3>Strava</h3><p>${MCP?(set.strava?"Kopplad. Synkar dina pass och pulszoner.":"Inte kopplad än."):"Finns i Claude-versionen av appen."}</p></div><span class="chev">›</span></a>
+  $("#pf-con").innerHTML=`<a class="row" href="#logg"><span class="badge">S</span><div><h3>Strava</h3><p>${MCP?(set.strava?"Kopplad. Synkar dina pass och pulszoner.":"Inte kopplad än."):"Kommer snart på hemsidan."}</p></div><span class="chev">›</span></a>
     <a class="row" href="#race" data-tv-go="run"><span class="badge">G</span><div><h3>Garmin</h3><p>Skapa ett racepass för klockan under Racedag.</p></div><span class="chev">›</span></a>`;
   $("#pf-exp").hidden=!DL;
 }

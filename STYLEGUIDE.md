@@ -187,4 +187,4 @@ All kod ligger i `index.html`. Färgerna är CSS-variabler på `:root` med egna 
 | Bekräftelse | `toast("Passet är sparat")` |
 | Vibration | `HAPTIC("light" \| "medium" \| "success")` |
 
-Logotyperna finns i mappen `brand/`. Den levande stilguiden med förhandsvisningar finns i Claude.
+Logotyperna finns i mappen `brand/`. 
