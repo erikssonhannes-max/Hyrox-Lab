@@ -278,6 +278,7 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 
 .brandbar{display:flex;justify-content:center;margin-bottom:6px;color:var(--ink)}
 .brandmark{height:34px;width:auto;display:block}
+@media (max-width:560px){.brandbar{justify-content:flex-start;justify-self:start;min-height:36px;align-items:center}.brandmark{height:30px}}
 @media (prefers-reduced-motion:no-preference){.view.on .brandbar{animation:up .55s var(--ease) both}}
 /* Startanimation, högst 2 s */
 #splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--bg);animation:spOut .45s var(--ease) 1.5s forwards;cursor:pointer}
@@ -691,7 +692,7 @@ a.row{color:inherit;text-decoration:none}
 @media (prefers-reduced-motion:reduce){.lg-ex{animation:none}}
 
 /* Vänner */
-.fr-btn{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 48px);z-index:30;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--ink);background:var(--tile);text-decoration:none;box-shadow:0 0 0 2px var(--bg)}
+.fr-btn{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 46px);z-index:30;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:var(--ink);background:var(--tile);text-decoration:none;box-shadow:0 0 0 2px var(--bg)}
 .fr-btn.on{background:var(--ink);color:var(--bg)}
 .fr-btn.new::after{content:"";position:absolute;top:1px;right:1px;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--bg)}
 .fr-lb{grid-template-columns:22px minmax(0,1fr) auto}
@@ -750,6 +751,19 @@ a.row{color:inherit;text-decoration:none}
 .near-when{font-size:.85rem;font-weight:600;color:var(--accent);margin-top:auto;padding-top:8px}
 .near-card.mine{box-shadow:inset 0 0 0 2px var(--accent)}
 .near-foot{margin-top:8px}.near-foot .linkbtn{font-size:inherit}
+.nt-btn{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 88px);z-index:30;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:var(--ink);background:var(--tile);text-decoration:none;box-shadow:0 0 0 2px var(--bg)}
+.nt-btn.on{background:var(--ink);color:var(--bg)}
+.nt-count{position:absolute;top:-4px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:980px;background:var(--accent);color:#fff;font-size:.68rem;font-weight:700;display:grid;place-items:center;box-shadow:0 0 0 2px var(--bg);font-variant-numeric:tabular-nums}
+.nt-count[hidden]{display:none}
+.nt-row{grid-template-columns:44px minmax(0,1fr) 10px;align-items:start}
+.nt-row.unread h3{font-weight:700}
+.nt-ago{font-size:.78rem!important;margin-top:2px}
+.nt-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);margin-top:8px}
+.nt-ic{width:44px;height:44px;border-radius:50%;background:var(--card);display:grid;place-items:center;color:var(--ink)}
+.nt-req{grid-template-columns:44px minmax(0,1fr) auto}
+.nt-acts{display:flex;gap:6px}.nt-acts .pill{min-height:36px;padding:7px 14px;font-size:.9rem}
+@media (max-width:420px){.nt-req{grid-template-columns:44px minmax(0,1fr)}.nt-acts{grid-column:2;margin-top:4px}}
+.fr-reqcard{display:flex;justify-content:space-between;align-items:center;text-decoration:none;color:inherit;margin-bottom:14px;box-shadow:inset 0 0 0 2px var(--accent)}
 </style>
 
 <div id="gate" hidden role="dialog" aria-modal="true" aria-labelledby="gt-h">
@@ -975,6 +989,13 @@ a.row{color:inherit;text-decoration:none}
     <div id="fr-body"></div>
   </div>
 </section>
+<!-- ================= NOTISER ================= -->
+<section class="view" id="v-notiser">
+  <div class="wrap">
+    <div class="pagehead"><span class="eyebrow">Notiser</span><h1>Det senaste.</h1><p class="small">Vänförfrågningar, påminnelser och vad dina vänner gör.</p></div>
+    <div id="nt-body"></div>
+  </div>
+</section>
 <!-- ================= PROFIL ================= -->
 <section class="view" id="v-profil">
   <div class="wrap">
@@ -1030,6 +1051,7 @@ a.row{color:inherit;text-decoration:none}
     <div id="tr-ic"></div><h3 id="tr-h"></h3><p id="tr-p"></p><div class="tr-bar"><i id="tr-bar"></i></div>
     <div class="tr-foot"><button class="pill ghost" id="tr-back">Tillbaka</button><button class="pill" id="tr-next">Nästa</button></div>
   </div></div>
+<a class="nt-btn" id="nt-btn" href="#notiser" aria-label="Notiser" hidden><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><span class="nt-count" hidden></span></a>
 <a class="fr-btn" id="fr-btn" href="#vanner" aria-label="Vänner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 19.5c.6-3.3 3.2-5.3 6.2-5.3s5.6 2 6.2 5.3"/><path d="M15.6 4.9a3.3 3.3 0 0 1 0 6.3M17.8 14.6c1.8.7 3 2.4 3.4 4.9"/></svg></a>
 <a class="avatar-btn" id="avatar-btn" href="#profil" aria-label="Din profil"><span>V</span></a>
 
@@ -1856,7 +1878,7 @@ let GATE_ON=false,GATE_RES=null,GATE_MODE="up";
 const GATE=new Promise(r=>{GATE_RES=r});
 const TERMS_VERSION="2026-10-30";
 function gateDone(){if(GATE_RES){GATE_RES();GATE_RES=null}}
-function gateInert(on){["main",".tabbar","#avatar-btn","#fr-btn"].forEach(s=>{const e=document.querySelector(s);if(e)e.inert=on})}
+function gateInert(on){["main",".tabbar","#avatar-btn","#fr-btn","#nt-btn"].forEach(s=>{const e=document.querySelector(s);if(e)e.inert=on})}
 function showGate(){GATE_ON=true;$("#gate").hidden=false;gateInert(true);renderGate()}
 function hideGate(){if(!GATE_ON)return;GATE_ON=false;$("#gate").hidden=true;gateInert(false);gateDone()}
 function renderGate(sentTo){
@@ -1952,7 +1974,7 @@ async function loadMyProfile(){
   const {data,error}=await SB.from("profiles").select("*").eq("user_id",SBUSER.id).maybeSingle();
   if(error||!data){MYPROF=null;if(location.hash==="#profil")renderProfile();return}
   MYPROF=data;MEINFO=Object.assign({},MEINFO||{},{avatarUrl:data.avatar_url||(MEINFO&&MEINFO.avatarUrl)||""});
-  await loadFriends();renderAvatar();if(location.hash==="#profil")renderProfile();syncProfile();pendingFriend();frCheck();if(location.hash==="#vanner")renderFriends(true);planChanged();
+  await loadFriends();renderAvatar();if(location.hash==="#profil")renderProfile();syncProfile();pendingFriend();frCheck();notiRefresh();if(location.hash==="#vanner")renderFriends(true);planChanged();
 }
 async function loadFriends(){
   if(!SB||!SBUSER)return;
@@ -2004,7 +2026,7 @@ function openAddFriend(){
    <form id="fa-f" novalidate style="display:grid;gap:14px">
      <div class="field"><label for="fa-in">Namn#kod</label><input type="text" id="fa-in" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Johan#1234"></div>
      <p class="small au-msg" id="fa-msg" role="status" aria-live="polite"></p>
-     <button class="pill block" id="fa-go" type="submit">Lägg till</button>
+     <button class="pill block" id="fa-go" type="submit">Skicka vänförfrågan</button>
    </form>
    <div class="card"><p class="small">Ditt namn och kod: <b style="color:var(--ink)">${esc(handleTxt(MYPROF))}</b></p></div>`,()=>{
     const msg=$("#fa-msg"),say=(t,b)=>{msg.textContent=t;msg.classList.toggle("bad",!!b)};
@@ -2015,8 +2037,7 @@ function openAddFriend(){
       if(error){say(sbErr(error),true);return}
       const p=data&&data[0];if(!p){say("Hittar ingen med det namnet och koden. Kontrollera stavningen.",true);return}
       if(p.user_id===SBUSER.id){say("Det där är du.",true);return}
-      const {error:e2}=await SB.from("friends").insert({user_id:SBUSER.id,friend_id:p.user_id});
-      if(e2&&e2.code!=="23505"){say(sbErr(e2),true);return}
+      NAMES[p.user_id]=Object.assign({},NAMES[p.user_id]||{},p);const res=await sendFriendRequest(p.user_id);if(!res)return;closeSheet();return;
       NAMES[p.user_id]=p;await loadFriends();closeSheet();renderSocial();FRC=null;if(location.hash==="#vanner")renderFriends(true);toast(e2?`${handleTxt(p)} är redan din vän`:`${handleTxt(p)} är tillagd`);HAPTIC("success")})};
     setTimeout(()=>$("#fa-in").focus({preventScroll:true}),350);
   });
@@ -2045,13 +2066,16 @@ async function viewProfile(uid){
     document.querySelectorAll("#sheet-in [data-prof]").forEach(b=>b.onclick=()=>viewProfile(b.dataset.prof));
   });
 }
-function friendBtns(uid,me){if(me)return "";return FRIENDS.includes(uid)?`<button class="pill ghost block" id="pv-rm">Ta bort som vän</button>`:`<button class="pill block" id="pv-add">Lägg till som vän</button>`}
+function friendBtns(uid,me){if(me)return "";
+  if(FRIENDS.includes(uid))return `<button class="pill ghost block" id="pv-rm">Ta bort som vän</button>`;
+  if(FRQ_IN.some(r=>r.from_user===uid))return `<div class="grid2"><button class="pill" id="pv-yes">Godkänn</button><button class="pill ghost" id="pv-no">Avböj</button></div>`;
+  if(FRQ_OUT.some(r=>r.to_user===uid))return `<button class="pill ghost block" id="pv-undo">Förfrågan skickad · Ångra</button>`;
+  return `<button class="pill block" id="pv-add">Skicka vänförfrågan</button>`}
 function bindFriendBtns(uid){
-  const a=$("#pv-add"),r=$("#pv-rm");
-  if(a)a.onclick=()=>busy(a,async()=>{const {error}=await SB.from("friends").insert({user_id:SBUSER.id,friend_id:uid});if(error&&error.code!=="23505"){toast(sbErr(error));return}await loadFriends();renderSocial();closeSheet();toast("Tillagd bland dina vänner")});
-  if(r)r.onclick=()=>busy(r,async()=>{const {error}=await SB.from("friends").delete().eq("user_id",SBUSER.id).eq("friend_id",uid);if(error){toast(sbErr(error));return}
-    if(MYPROF.partner_id===uid){await SB.from("profiles").update({partner_id:null}).eq("user_id",SBUSER.id);MYPROF.partner_id=null}
-    await loadFriends();renderSocial();closeSheet();toast("Borttagen från dina vänner")});
+  const on=(id,f)=>{const b=$(id);if(b)b.onclick=()=>busy(b,async()=>{await f();closeSheet()})};
+  on("#pv-add",()=>sendFriendRequest(uid));on("#pv-yes",()=>answerFriend(uid,true));on("#pv-no",()=>answerFriend(uid,false));on("#pv-undo",()=>cancelRequest(uid));
+  const r=$("#pv-rm");if(r)r.onclick=()=>{if(!r.dataset.c){r.dataset.c=1;r.textContent="Tryck igen för att ta bort";r.style.color="var(--bad)";return}
+    busy(r,async()=>{if(await removeFriend(uid)){closeSheet();toast("Ni är inte längre vänner")}})};
 }
 function openEditProfile(){
   if(!MYPROF)return;let exp=MYPROF.experience||"",pub=!!MYPROF.is_public;
@@ -3083,10 +3107,11 @@ async function renderFriends(force){
   const races=[];if(myNr&&myNr.date>=today())races.push({u:me,nr:myNr,pid:MYPROF.partner_id});
   Object.values(D.profs).forEach(p=>{if(p.next_race&&p.next_race.date&&p.next_race.date>=today())races.push({u:p,nr:p.next_race,pid:p.partner_id})});
   races.sort((a,b)=>a.nr.date.localeCompare(b.nr.date));
-  const waiting=FRIENDS.filter(id=>!D.profs[id]);
+  const waiting=FRQ_OUT.map(r=>r.to_user);
   const kindTxt={lopp:"tävlade",rekord:"satte rekord",pass:"tränade"};
   el.innerHTML=`
-   ${FRIENDS.length?"":`<div class="card fr-empty"><h3>Lägg till din första vän</h3><p class="small">Skriv in vännens namn och kod, eller dela din länk. Ditt namn och kod är <b style="color:var(--ink)">${esc(handleTxt(MYPROF))}</b>.</p></div>`}
+   ${FRQ_IN.length?`<a class="card fr-reqcard" href="#notiser"><b>${FRQ_IN.length===1?esc((NAMES[FRQ_IN[0].from_user]||{username:"Någon"}).username)+" vill bli din vän":FRQ_IN.length+" vill bli din vän"}</b><span class="linkbtn">Svara ›</span></a>`:""}
+   ${FRIENDS.length?"":`<div class="card fr-empty"><h3>Lägg till din första vän</h3><p class="small">Skicka en vänförfrågan med vännens namn och kod, eller dela din länk. Ditt namn och kod är <b style="color:var(--ink)">${esc(handleTxt(MYPROF))}</b>.</p></div>`}
    <div class="sechead"><h2>Den här veckan</h2><span class="small">Varv</span></div>
    <div class="group">${board.map((b,i)=>`<div class="row fr-lb${b.me?" me":""}"><span class="fr-rank">${i+1}</span><div class="fr-who">${avImg(b.avatar_url,b.username)}<div><h3>${b.me?"Du":esc(b.username)}</h3><p>${b.n} ${b.n===1?"pass":"pass"}</p></div></div><b class="fr-v">${b.wv}</b></div>`).join("")}</div>
    <p class="small fr-foot">Ett varv per tio minuters träning. Topplistan jämför flit, inte fart, och börjar om på måndag.</p>
@@ -3103,7 +3128,7 @@ async function renderFriends(force){
          :`<button class="fr-like" data-like="${a.id}" aria-pressed="${liked}" aria-label="${liked?"Ta bort tumme upp":"Ge tumme upp"}">${THUMB}<span>${L.length||""}</span></button>`;
        return `<div class="row fr-act">${avImg(p.avatar_url,p.username)}<div><h3>${mine?"Du":esc(p.username)} ${kindTxt[a.kind]||"tränade"}</h3><p>${esc([a.title,a.detail].filter(Boolean).join(" · "))}</p>${mine?like:""}</div><div class="fr-side"><span class="small fr-ago">${agoTxt(a.created_at)}</span>${mine?"":like}</div></div>`}).join("")}</div>`
      :`<div class="card"><p class="small">Här syns det när dina vänner tränar och tävlar.</p></div>`}
-   ${waiting.length?`<div class="sechead"><h2>Väntar på svar</h2></div><div class="group">${waiting.map(id=>{const p=NAMES[id]||{username:"Okänd",tag:"0000"};return `<div class="row">${avImg(p.avatar_url,p.username)}<div><h3>${handleHtml(p)}</h3><p>Syns här när hen har lagt till dig</p></div><span></span></div>`}).join("")}</div>`:""}
+   ${waiting.length?`<div class="sechead"><h2>Väntar på svar</h2></div><div class="group">${waiting.map(id=>{const p=NAMES[id]||{username:"Okänd",tag:"0000"};return `<div class="row">${avImg(p.avatar_url,p.username)}<div><h3>${handleHtml(p)}</h3><p>Väntar på svar på din vänförfrågan</p></div><span></span></div>`}).join("")}</div>`:""}
    <div class="fr-acts"><button class="pill block" id="fr-add2">Lägg till vän</button><div class="grid2"><button class="pill ghost" id="fr-link2">Dela vänlänk</button><button class="pill ghost" id="fr-qr2">Visa QR-kod</button></div></div>`;
   const fd=$("#fr-feed");if(fd)fd.onclick=async e=>{const b=e.target.closest("[data-like]");if(!b||b.disabled)return;const id=+b.dataset.like,L=D.likes[id]=D.likes[id]||[],on=L.includes(SBUSER.id);
     b.disabled=true;if(on)L.splice(L.indexOf(SBUSER.id),1);else{L.push(SBUSER.id);HAPTIC("light")}
@@ -3323,14 +3348,86 @@ function renderNear(){const el=$("#h-next");if(!el)return;const g=myGeo(),me=myE
   const cb=$("#near-clear");if(cb)cb.onclick=()=>{saveGeo(null);renderNear()};
 }
 
+/* ============ Vänförfrågningar ============ */
+let FRQ_IN=[],FRQ_OUT=[];
+async function loadRequests(){if(!SB||!SBUSER)return;
+  const {data,error}=await SB.from("friend_requests").select("from_user,to_user,created_at").order("created_at",{ascending:false});
+  if(error){FRQ_IN=[];FRQ_OUT=[];return}
+  FRQ_IN=(data||[]).filter(r=>r.to_user===SBUSER.id);FRQ_OUT=(data||[]).filter(r=>r.from_user===SBUSER.id);
+  const need=[...new Set(FRQ_IN.map(r=>r.from_user).concat(FRQ_OUT.map(r=>r.to_user)))].filter(id=>!NAMES[id]);
+  if(need.length){const {data:n}=await SB.rpc("varv_names",{p_ids:need});(n||[]).forEach(x=>{NAMES[x.user_id]=x})}
+}
+async function sendFriendRequest(uid){
+  const {data,error}=await SB.rpc("varv_request_friend",{p_to:uid});if(error){toast(sbErr(error));return null}
+  const p=NAMES[uid];const nm=p?p.username:"hen";
+  await loadFriends();await loadRequests();FRC=null;
+  if(data==="accepted"){toast(`Du och ${nm} är nu vänner`);HAPTIC("success")}
+  else if(data==="sent"||data==="pending")toast(`Vänförfrågan skickad till ${nm}`);
+  else if(data==="friends")toast(`Ni är redan vänner`);
+  refreshSocialViews();return data;
+}
+async function answerFriend(uid,yes){
+  const {data,error}=await SB.rpc("varv_answer_friend",{p_from:uid,p_accept:yes});if(error){toast(sbErr(error));return}
+  const p=NAMES[uid];await loadFriends();await loadRequests();FRC=null;
+  if(data==="accepted"){toast(`Du och ${p?p.username:"din vän"} är nu vänner`);HAPTIC("success")}else if(data==="declined")toast("Förfrågan är borttagen");
+  await loadNotis();refreshSocialViews();
+}
+async function removeFriend(uid){const {error}=await SB.rpc("varv_remove_friend",{p_other:uid});if(error){toast(sbErr(error));return false}
+  if(MYPROF&&MYPROF.partner_id===uid)MYPROF.partner_id=null;await loadFriends();await loadRequests();FRC=null;refreshSocialViews();return true}
+async function cancelRequest(uid){await SB.from("friend_requests").delete().eq("from_user",SBUSER.id).eq("to_user",uid);await loadRequests();refreshSocialViews();toast("Förfrågan är återkallad")}
+function refreshSocialViews(){try{renderSocial()}catch(e){}const h=location.hash;if(h==="#vanner")renderFriends(true);if(h==="#notiser")renderNotiser();notiBadge()}
+
+/* ============ Notiscenter ============ */
+let NOTIS=[],NOTIS_OK=true;
+async function loadNotis(){if(!SB||!SBUSER)return;
+  const {data,error}=await SB.from("notifications").select("id,kind,title,body,url,actor,read_at,created_at").order("created_at",{ascending:false}).limit(60);
+  if(error){NOTIS_OK=false;NOTIS=[];notiBadge();return}NOTIS_OK=true;NOTIS=data||[];
+  const need=[...new Set(NOTIS.map(n=>n.actor).filter(a=>a&&!NAMES[a]))];
+  if(need.length){const {data:n}=await SB.rpc("varv_names",{p_ids:need});(n||[]).forEach(x=>{NAMES[x.user_id]=x})}
+  notiBadge();if(location.hash==="#notiser")renderNotiser();
+}
+function notiBadge(){const b=$("#nt-btn");if(!b)return;b.hidden=!SBUSER||location.hash==="#profil";
+  const n=Math.max(NOTIS.filter(x=>!x.read_at).length,FRQ_IN.length);const c=b.querySelector(".nt-count");
+  c.textContent=n>9?"9+":n;c.hidden=!n||location.hash==="#notiser";b.setAttribute("aria-label",n?`Notiser, ${n} nya`:"Notiser");b.classList.toggle("on",location.hash==="#notiser")}
+const NT_ICON={plan:"M3.5 5h17v15.5h-17zM3.5 10h17M8 3v4M16 3v4",race:"M7.5 2.5l4.5 8 4.5-8M12 10a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11z",test:"M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0"};
+function ntRow(n){const p=n.actor?NAMES[n.actor]:null,unread=!n.read_at;
+  const ic=p?avImg(p.avatar_url,p.username):`<span class="nt-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${NT_ICON[n.kind]||NT_ICON.test}"/></svg></span>`;
+  return `<button class="row nt-row${unread?" unread":""}" data-nt="${n.id}" data-url="${esc(n.url||"")}">${ic}<div><h3>${esc(n.title)}</h3>${n.body?`<p>${esc(n.body)}</p>`:""}<p class="nt-ago">${agoTxt(n.created_at)}</p></div>${unread?'<span class="nt-dot" aria-label="Ny"></span>':"<span></span>"}</button>`}
+function renderNotiser(){const el=$("#nt-body");if(!el)return;
+  if(!SBUSER){el.innerHTML=`<div class="card"><h3>Logga in för notiser</h3><p class="small">Här samlas vänförfrågningar, påminnelser och vad dina vänner gör.</p><button class="pill block" id="nt-login">Logga in</button></div>`;$("#nt-login").onclick=()=>openAuth();return}
+  const td=today(),isToday=n=>iso(new Date(n.created_at))===td,list=NOTIS.filter(n=>!(n.kind==="request"&&FRQ_IN.some(r=>r.from_user===n.actor)));
+  const nyt=list.filter(isToday),old=list.filter(n=>!isToday(n));
+  el.innerHTML=`${FRQ_IN.length?`<div class="sechead"><h2>Vänförfrågningar</h2><span class="small">${FRQ_IN.length}</span></div>
+     <div class="group">${FRQ_IN.map(r=>{const p=NAMES[r.from_user]||{username:"Någon",tag:"0000"};return `<div class="row nt-req" data-req="${esc(r.from_user)}">${avImg(p.avatar_url,p.username)}<div><h3>${handleHtml(p)}</h3><p>Vill bli din vän · ${agoTxt(r.created_at)}</p></div>
+       <div class="nt-acts"><button class="pill nt-yes" data-yes="${esc(r.from_user)}">Godkänn</button><button class="pill ghost nt-no" data-no="${esc(r.from_user)}" aria-label="Avböj ${esc(p.username)}">Avböj</button></div></div>`}).join("")}</div>`:""}
+   ${!NOTIS_OK?`<div class="card"><p class="small">Notiscentret är inte uppsatt än.</p></div>`
+     :list.length?`${nyt.length?`<div class="sechead"><h2>I dag</h2></div><div class="group">${nyt.map(ntRow).join("")}</div>`:""}${old.length?`<div class="sechead"><h2>Tidigare</h2></div><div class="group">${old.map(ntRow).join("")}</div>`:""}`
+     :FRQ_IN.length?"":`<div class="card nt-empty"><h3>Inga notiser än</h3><p class="small">Här samlas vänförfrågningar, påminnelser om dagens pass, nedräkningen till loppet och vad dina vänner gör.</p></div>`}
+   ${FRQ_OUT.length?`<div class="sechead"><h2>Skickade förfrågningar</h2></div><div class="group">${FRQ_OUT.map(r=>{const p=NAMES[r.to_user]||{username:"Okänd",tag:"0000"};return `<div class="row">${avImg(p.avatar_url,p.username)}<div><h3>${handleHtml(p)}</h3><p>Väntar på svar</p></div><button class="linkbtn" data-undo="${esc(r.to_user)}">Ångra</button></div>`}).join("")}</div>`:""}`;
+  el.onclick=async e=>{const b=e.target.closest("button");if(!b||b.disabled)return;
+    if(b.dataset.yes){b.disabled=true;await answerFriend(b.dataset.yes,true);return}
+    if(b.dataset.no){b.disabled=true;await answerFriend(b.dataset.no,false);return}
+    if(b.dataset.undo){b.disabled=true;await cancelRequest(b.dataset.undo);return}
+    if(b.dataset.nt){const u=b.dataset.url;if(u&&u.startsWith("/#")&&u!=="/#notiser")location.hash=u.slice(1)}
+    const r=e.target.closest("[data-req]");if(r)viewProfile(r.dataset.req)};
+  markNotisRead();
+}
+async function markNotisRead(){const ids=NOTIS.filter(n=>!n.read_at).map(n=>n.id);if(!ids.length)return;
+  const now=new Date().toISOString();setTimeout(async()=>{const {error}=await SB.from("notifications").update({read_at:now}).in("id",ids);
+    if(!error){NOTIS.forEach(n=>{if(ids.includes(n.id))n.read_at=now});notiBadge()}},1500)}
+async function notiRefresh(){try{await loadRequests();await loadNotis()}catch(e){}}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&SBUSER)notiRefresh()});
+setInterval(()=>{if(document.visibilityState==="visible"&&SBUSER)notiRefresh()},60000);
+try{navigator.serviceWorker&&navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type==="push")notiRefresh()})}catch(e){}
+
 /* ============ Routing ============ */
-const VIEWS=["hem","stationer","plan","race","logg","vanner","profil"];
+const VIEWS=["hem","stationer","plan","race","logg","vanner","notiser","profil"];
 function route(){
   const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):"hem";
   $$(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
   $$(".tab").forEach(a=>{if(a.dataset.v===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
   closeSheet();try{window.scrollTo(0,0)}catch(e){}if(v==="race"){if(RACE&&!RACE.end)set.tsub="run";renderTv()}
-  $("#avatar-btn").hidden=v==="profil";$("#fr-btn").hidden=v==="profil";$("#fr-btn").classList.toggle("on",v==="vanner");if(v==="profil"){renderProfile();renderNotis()}if(v==="vanner")renderFriends();frDot();
+  $("#avatar-btn").hidden=v==="profil";$("#fr-btn").hidden=v==="profil";$("#fr-btn").classList.toggle("on",v==="vanner");if(v==="profil"){renderProfile();renderNotis()}if(v==="vanner")renderFriends();if(v==="notiser")renderNotiser();frDot();notiBadge();
   if(v==="hem")["#h-days","#h-target","#h-pace","#h-week","#h-streak"].forEach(id=>countUp($(id)));
   if(v==="logg"){drawRings(true);renderLog()}
 }

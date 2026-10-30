@@ -24,6 +24,18 @@ async function send(s: Sub, m: Msg) {
   }
 }
 
+// Sparar notisen i notiscentret för varje mottagare och skickar den till deras telefoner.
+async function notify(users: string[], m: Msg, kind: string, actor: string | null, pref: string | null) {
+  users = [...new Set(users)].filter(Boolean);
+  if (!users.length) return 0;
+  await SB.from("notifications").insert(users.map((u) => ({ user_id: u, kind, title: m.title, body: m.body || null, url: m.url || null, actor })));
+  const { data: subs } = await SB.from("push_subs").select("*").in("user_id", users);
+  let n = 0;
+  for (const s of (subs || []) as Sub[]) if (!pref || s.prefs?.[pref] !== false) { await send(s, m); n++; }
+  return n;
+}
+const nameOf = async (id: string) => (await SB.from("profiles").select("username").eq("user_id", id).maybeSingle()).data?.username || "Någon";
+
 function local(tz: string) {
   const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hourCycle: "h23", weekday: "short" })
     .formatToParts(new Date()).map((x) => [x.type, x.value]));
@@ -73,7 +85,10 @@ async function runDaily() {
     if (now.hour !== s.hour || s.last_daily === now.date) continue;
     await SB.from("push_subs").update({ last_daily: now.date }).eq("endpoint", s.endpoint);
     const m = daily(s, now);
-    if (m) { await send(s, m); sent++; }
+    if (m) {
+      await SB.from("notifications").insert({ user_id: s.user_id, kind: m.tag === "race" ? "race" : "plan", title: m.title, body: m.body, url: m.url || null });
+      await send(s, m); sent++;
+    }
   }
   return sent;
 }
@@ -91,37 +106,37 @@ async function runActivity(id: number) {
   const { data: fr } = await SB.from("friends").select("friend_id").eq("user_id", a.user_id);
   const ids = (fr || []).map((f) => f.friend_id);
   if (!ids.length) return 0;
-  const { data: subs } = await SB.from("push_subs").select("*").in("user_id", ids);
   const m: Msg = a.kind === "lopp"
     ? { title: `${name} har precis tävlat`, body: [a.title, a.detail].filter(Boolean).join(" · "), url: "/#vanner", tag: "fr-" + a.user_id }
     : a.kind === "rekord"
     ? { title: `${name} satte nytt rekord`, body: [a.title, a.detail].filter(Boolean).join(" · "), url: "/#vanner", tag: "fr-" + a.user_id }
     : { title: `${name} har tränat`, body: [a.title, a.detail].filter(Boolean).join(" · "), url: "/#vanner", tag: "fr-" + a.user_id };
-  let sent = 0;
-  for (const s of (subs || []) as Sub[]) if (s.prefs?.friends !== false) { await send(s, m); sent++; }
-  return sent;
+  return await notify(ids, m, "activity", a.user_id, "friends");
 }
 
 async function runLike(activityId: number, liker: string) {
   const { data: a } = await SB.from("activity").select("*").eq("id", activityId).maybeSingle();
   if (!a || a.user_id === liker) return 0;
   const { data: p } = await SB.from("profiles").select("username").eq("user_id", liker).maybeSingle();
-  const { data: subs } = await SB.from("push_subs").select("*").eq("user_id", a.user_id);
   const m: Msg = { title: `${p?.username || "En vän"} gav dig tummen upp`, body: [a.title, a.detail].filter(Boolean).join(" · "), url: "/#vanner", tag: "like-" + a.id };
-  let sent = 0;
-  for (const s of (subs || []) as Sub[]) if (s.prefs?.friends !== false) { await send(s, m); sent++; }
-  return sent;
+  return await notify([a.user_id], m, "like", liker, "friends");
+}
+
+async function runRequest(from: string, to: string) {
+  return await notify([to], { title: `${await nameOf(from)} vill bli din vän`, body: "Godkänn eller avböj under ringklockan.", url: "/#notiser", tag: "req-" + from }, "request", from, null);
+}
+async function runAccept(from: string, to: string) {
+  return await notify([to], { title: `${await nameOf(from)} godkände din vänförfrågan`, body: "Nu ser ni varandras pass, lopp och veckans varv.", url: "/#vanner", tag: "acc-" + from }, "accept", from, null);
 }
 
 async function runTest(user: string) {
-  const { data: subs } = await SB.from("push_subs").select("*").eq("user_id", user);
-  for (const s of (subs || []) as Sub[]) await send(s, { title: "Notiserna fungerar", body: "Så här ser det ut när VARV. påminner dig om dagens pass.", url: "/#hem", tag: "test" });
-  return (subs || []).length;
+  return await notify([user], { title: "Notiserna fungerar", body: "Så här ser det ut när VARV. påminner dig om dagens pass.", url: "/#hem", tag: "test" }, "test", null, null);
 }
 
 Deno.serve(async (req) => {
   if (req.headers.get("x-varv-secret") !== Deno.env.get("CRON_SECRET")) return new Response("Nej", { status: 401 });
   const b = await req.json().catch(() => ({}));
-  const n = b.kind === "daily" ? await runDaily() : b.kind === "activity" ? await runActivity(+b.id) : b.kind === "like" ? await runLike(+b.activity, String(b.user)) : b.kind === "test" ? await runTest(String(b.user)) : 0;
+  const n = b.kind === "daily" ? await runDaily() : b.kind === "activity" ? await runActivity(+b.id) : b.kind === "like" ? await runLike(+b.activity, String(b.user)) : b.kind === "test" ? await runTest(String(b.user))
+    : b.kind === "request" ? await runRequest(String(b.from), String(b.to)) : b.kind === "accept" ? await runAccept(String(b.from), String(b.to)) : 0;
   return Response.json({ sent: n });
 });
