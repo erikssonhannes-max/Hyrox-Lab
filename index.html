@@ -647,6 +647,48 @@ a.row{color:inherit;text-decoration:none}
   .ringwrap{grid-template-columns:1fr;justify-items:center;text-align:center}
 }
 @media (prefers-reduced-motion:reduce){.sheet,.scrim,.stack div,.ring .fg,.ring .fg2,.balance div{transition:none}#runner{display:none}}
+
+/* Logga pass */
+.lg{display:grid;gap:22px;padding-bottom:4px}
+.lg-sec{display:grid;gap:10px}
+.lg-h{display:flex;align-items:baseline;gap:8px}.lg-h h3{font-size:1.3rem;font-weight:600;letter-spacing:-.02em}
+.lg-day{align-items:center}.lg-day .chip{min-height:36px}
+.lg-dchip{position:relative;overflow:hidden}.lg-dchip input{position:absolute;inset:0;opacity:0;width:100%;min-height:0;padding:0;border:0;cursor:pointer}
+.lg-step{display:grid;grid-template-columns:52px 1fr 52px;align-items:center;background:var(--tile);border-radius:var(--r);padding:8px}
+.lg-step button{height:44px;border:0;border-radius:12px;background:var(--card);font-size:1.4rem;color:var(--ink);cursor:pointer}
+.lg-step label{display:flex;align-items:baseline;justify-content:center;gap:6px}
+.lg-step input{width:3.2ch;text-align:right;border:0;background:none;font-size:2.2rem;font-weight:700;padding:0;min-height:0;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.lg-step span{color:var(--muted);font-size:1rem}
+.lg-ex{background:var(--tile);border-radius:var(--r);padding:14px 14px 8px;display:grid;gap:6px;animation:lgIn .35s var(--ease) both}
+@keyframes lgIn{from{opacity:0;transform:translateY(8px)}}
+.lg-exh{display:grid;grid-template-columns:auto minmax(0,1fr) 32px;gap:10px;align-items:start}
+.lg-exh h4{font-size:1.06rem;font-weight:600;line-height:1.3}
+.lg-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:7px}.lg-dot.st{background:var(--green)}
+.lg-x{width:32px;height:32px;border-radius:50%;border:0;background:var(--card);color:var(--muted);cursor:pointer;font-size:.8rem}
+.lg-cols,.lg-set{display:grid;gap:8px;align-items:center}
+.lg-cols span{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;text-align:center}.lg-cols span:first-child{text-align:left}
+.lg-set input{text-align:center;padding:9px 6px;font-variant-numeric:tabular-nums;font-weight:600;border-color:transparent}
+.lg-n{font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;text-align:center}
+.lg-sx{width:36px;height:36px;border-radius:50%;border:0;background:none;color:var(--muted);font-size:1.3rem;cursor:pointer}.lg-sx:disabled{opacity:.25;cursor:default}
+.lg-add{justify-self:start;border:0;background:none;color:var(--link);font-weight:600;font-size:.95rem;padding:8px 0;min-height:40px;cursor:pointer}
+.lg-rpe{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.lg-rpe button{border:0;background:var(--tile);border-radius:12px;min-height:56px;display:grid;place-content:center;gap:0;cursor:pointer;color:var(--ink)}
+.lg-rpe b{font-size:1.15rem;font-variant-numeric:tabular-nums}.lg-rpe span{font-size:.7rem;color:var(--muted);min-height:1em}
+.lg-rpe button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}.lg-rpe button[aria-pressed="true"] span{color:inherit;opacity:.75}
+.lg textarea{resize:vertical}
+.lg-foot{position:sticky;bottom:calc(-24px - env(safe-area-inset-bottom,0px));display:grid;gap:8px;padding:14px 0 calc(24px + env(safe-area-inset-bottom,0px));margin-bottom:calc(-24px - env(safe-area-inset-bottom,0px));background:linear-gradient(to bottom,transparent,var(--bg) 16px);z-index:2}
+.lg-foot .small{text-align:center;font-variant-numeric:tabular-nums}
+.lg-foot .pill:disabled{opacity:.45;box-shadow:none}
+.lg input[type=search]{font:inherit;font-size:16px;color:var(--ink);background:var(--tile);border:0;border-radius:12px;padding:11px 14px;width:100%;min-height:44px;-webkit-appearance:none;appearance:none}
+.lg-list{display:grid;gap:8px}.lg-list .lbl{margin-top:8px}
+.lg-grp{background:var(--tile);border-radius:var(--r);overflow:hidden}
+.lg-pk{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;border:0;background:none;color:var(--ink);text-align:left;padding:13px 16px;min-height:48px;font:inherit;cursor:pointer;position:relative}
+.lg-pk + .lg-pk::before{content:"";position:absolute;top:0;left:38px;right:0;height:1px;background:var(--hair)}
+.lg-pk .lg-dot{margin-top:0}.lg-pk:disabled{cursor:default}.lg-pk:disabled span:nth-child(2){color:var(--muted)}
+.lg-ck{font-weight:600;color:var(--accent);font-size:.95rem}.lg-pk:disabled .lg-ck{color:var(--muted);font-weight:400;font-size:.85rem}
+.lg-pk[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 9%,var(--tile))}
+.lg-hist{color:var(--ink)!important;font-size:.9rem}
+@media (prefers-reduced-motion:reduce){.lg-ex{animation:none}}
 </style>
 
 <div id="gate" hidden role="dialog" aria-modal="true" aria-labelledby="gt-h">
@@ -917,21 +959,7 @@ a.row{color:inherit;text-decoration:none}
   </div></div>
 <a class="avatar-btn" id="avatar-btn" href="#profil" aria-label="Din profil"><span>V</span></a>
 
-<div id="log-holder" hidden>
-    <form class="card" id="logform">
-      <div class="grid2">
-        <div class="field"><label for="f-date">Datum</label><input type="date" id="f-date" required></div>
-        <div class="field"><label for="f-min">Minuter</label><input type="number" id="f-min" inputmode="numeric" min="1" max="600" value="45" required></div>
-      </div>
-      <div class="field"><label for="f-type">Typ av pass</label>
-        <select id="f-type"><option>Intervaller</option><option>Kompromisslöpning</option><option>Styrka och stationer</option><option>Lugn distans</option><option>Motor (SkiErg/rodd)</option><option>Racesimulering</option><option>Löpning</option><option>Annat</option></select></div>
-      <div class="field"><span class="lbl">Stationer du tränade</span><div class="chips" id="f-chips"></div></div>
-      <div class="field"><span class="lbl">Hur kändes det? 1 är lätt, 5 är maxat</span>
-        <div class="rpe" id="f-rpe"><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button><button type="button" data-v="3" aria-pressed="true">3</button><button type="button" data-v="4">4</button><button type="button" data-v="5">5</button></div></div>
-      <div class="field"><label for="f-note">Anteckning</label><input type="text" id="f-note" placeholder="Till exempel: 5 × 1 km på 4:50"></div>
-      <button class="pill block" type="submit">Spara pass</button>
-    </form>
-</div>
+<div id="log-holder" hidden></div>
 <canvas id="confetti" aria-hidden="true"></canvas>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="scrim" id="scrim" hidden></div>
@@ -1510,20 +1538,7 @@ let HIDDEN=new Set();try{HIDDEN=new Set(JSON.parse(localStorage.getItem("hyrox-h
 async function updLog(id,f){const l=LOGS.find(x=>x.id===id);if(!l)return false;const n=Object.assign({},l,f,{edited:true});
   if(mode==="db"&&col){const b=Object.assign({},n);delete b.id;try{await col.doc(id).set(b);return true}catch(err){toast("Kunde inte spara ändringen.");return false}}
   LOGS=LOGS.map(x=>x.id===id?n:x);saveLocal();renderAllData();return true}
-function openEditLog(id){const l=LOGS.find(x=>x.id===id);if(!l)return;let r=l.rpe||3;
-  const types=[...$("#f-type").options].map(o=>o.value);
-  openSheet(`<div><span class="small">${l.src==="strava"?"Från Strava":"Pass"}</span><h2>Ändra pass</h2></div>
-   <div class="grid2"><div class="field"><label for="e-date">Datum</label><input type="date" id="e-date" value="${esc(l.date)}"></div><div class="field"><label for="e-min">Minuter</label><input type="number" id="e-min" inputmode="numeric" min="1" max="600" value="${+l.min||0}"></div></div>
-   <div class="field"><label for="e-type">Typ av pass</label><select id="e-type">${types.map(t=>`<option${t===l.type?" selected":""}>${esc(t)}</option>`).join("")}</select></div>
-   <div class="field"><span class="lbl">Hur kändes det?</span><div class="rpe" id="e-rpe">${[1,2,3,4,5].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v===r}">${v}</button>`).join("")}</div></div>
-   <div class="field"><label for="e-note">Anteckning</label><input type="text" id="e-note" value="${esc(l.note||"")}"></div>
-   <button class="pill block" id="e-save">Spara ändringar</button>
-   <button class="pill ghost block" id="e-del">Ta bort passet</button>`,()=>{
-    $("#e-del").onclick=()=>{const b=$("#e-del");if(!b.dataset.c){b.dataset.c=1;b.textContent="Tryck igen för att ta bort";b.style.color="var(--bad)";return}delLog(id);closeSheet();toast("Passet är borttaget")};
-    $("#e-rpe").onclick=e=>{const b=e.target.closest("button");if(!b)return;r=+b.dataset.v;[...$("#e-rpe").children].forEach(x=>x.setAttribute("aria-pressed",x===b))};
-    $("#e-save").onclick=async()=>{const ok=await updLog(id,{date:$("#e-date").value||l.date,min:Math.max(1,Math.min(600,+$("#e-min").value||l.min)),type:$("#e-type").value,rpe:r,note:$("#e-note").value.trim().slice(0,300)});if(ok){closeSheet();toast("Passet är ändrat")}};
-  });
-}
+function openEditLog(id){const l=LOGS.find(x=>x.id===id);if(l)openLogger({edit:l})}
 async function delLog(id){
   if(String(id).startsWith("strava-")){HIDDEN.add(id);try{localStorage.setItem("hyrox-hidden",JSON.stringify([...HIDDEN]))}catch(e){}}
   if(mode==="db"&&col){try{if(String(id).startsWith("strava-")){const l=LOGS.find(x=>x.id===id)||{};const b=Object.assign({},l,{hidden:true});delete b.id;await col.doc(id).set(b)}else await col.doc(id).delete()}catch(err){toast("Kunde inte ta bort passet.")}return}
@@ -2346,29 +2361,169 @@ function openPR(k){
 $("#prs").onclick=e=>{const b=e.target.closest("[data-pr]");if(b)openPR(b.dataset.pr)};
 
 /* ============ Logg-UI ============ */
-const chipsEl=$("#f-chips");
-chipsEl.innerHTML=S.map(s=>`<button type="button" class="chip" aria-pressed="false" data-n="${s.n}">${s.n}</button>`).join("");
-chipsEl.onclick=e=>{const c=e.target.closest(".chip");if(c)c.setAttribute("aria-pressed",c.getAttribute("aria-pressed")!=="true")};
-let rpe=3;
-$("#f-rpe").onclick=e=>{const b=e.target.closest("button");if(!b)return;rpe=+b.dataset.v;[...$("#f-rpe").children].forEach(x=>x.setAttribute("aria-pressed",x===b))};
-$("#f-date").value=today();
-let PENDING=null;
-function prefill(o){
-  PENDING=o.plan?{key:o.plan,type:o.type}:null;
-  $("#f-type").value=o.type;$("#f-min").value=o.min;$("#f-note").value=o.note||"";$("#f-date").value=today();
-  chipsEl.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",(o.stations||[]).includes(c.dataset.n)));
-  openLogSheet("Från din plan");
+/* ============ Logga pass ============ */
+const lg$$=s=>[...document.querySelectorAll(s)];
+const TYPES=["Styrka och stationer","Intervaller","Löpning","Kompromisslöpning","Lugn distans","Motor (SkiErg/rodd)","Racesimulering","Annat"];
+/* k: d = meter och tid, r = antal, c = kalorier och tid, t = tid. w: vikt. st: HYROX-station */
+const EXG=["Hyrox-stationer","Löpning och kondition","Styrka","Kroppsvikt och core"];
+const EX=[
+ {id:"ski",n:"SkiErg",g:0,k:"d",st:1},{id:"push",n:"Sled Push",g:0,k:"d",w:1,st:1},{id:"pull",n:"Sled Pull",g:0,k:"d",w:1,st:1},
+ {id:"bbj",n:"Burpee Broad Jumps",g:0,k:"d",st:1},{id:"row",n:"Rowing",g:0,k:"d",st:1},{id:"farm",n:"Farmers Carry",g:0,k:"d",w:1,st:1},
+ {id:"lunge",n:"Sandbag Lunges",g:0,k:"d",w:1,st:1},{id:"wall",n:"Wall Balls",g:0,k:"r",w:1,st:1},
+ {id:"run",n:"Löpning",g:1,k:"d"},{id:"tread",n:"Löpband",g:1,k:"d"},{id:"bike",n:"Assault Bike",g:1,k:"c"},{id:"bikeerg",n:"BikeErg",g:1,k:"d"},{id:"jump",n:"Hopprep",g:1,k:"t"},
+ {id:"squat",n:"Knäböj",g:2,k:"r",w:1},{id:"front",n:"Frontböj",g:2,k:"r",w:1},{id:"dead",n:"Marklyft",g:2,k:"r",w:1},{id:"rdl",n:"Rumänska marklyft",g:2,k:"r",w:1},
+ {id:"bench",n:"Bänkpress",g:2,k:"r",w:1},{id:"ohp",n:"Militärpress",g:2,k:"r",w:1},{id:"brow",n:"Skivstångsrodd",g:2,k:"r",w:1},{id:"thr",n:"Thrusters",g:2,k:"r",w:1},
+ {id:"kbs",n:"Kettlebell swings",g:2,k:"r",w:1},{id:"bss",n:"Bulgarska utfall",g:2,k:"r",w:1},{id:"wlunge",n:"Gående utfall",g:2,k:"r",w:1},{id:"hip",n:"Höftlyft",g:2,k:"r",w:1},
+ {id:"chin",n:"Chins",g:3,k:"r"},{id:"pushup",n:"Armhävningar",g:3,k:"r"},{id:"burpee",n:"Burpees",g:3,k:"r"},{id:"boxj",n:"Boxhopp",g:3,k:"r"},{id:"situp",n:"Situps",g:3,k:"r"},{id:"plank",n:"Plankan",g:3,k:"t"}];
+const LGCOLS={d:[["m","Meter"],["t","Tid"]],r:[["r","Antal"]],c:[["c","Kcal"],["t","Tid"]],t:[["t","Tid"]]};
+const nz=v=>v!=null&&v!==""&&!isNaN(v)&&+v>0;
+const fmtKg=v=>String(Math.round(+v*10)/10).replace(".",",");
+const fmtM=m=>m>=2000&&m%100===0?String(m/1000).replace(".",",")+" km":m+" m";
+function exStd(id){const pro=set.k==="pro",w=set.g==="w",P=(om,ow,pm,pw)=>pro?(w?pw:pm):(w?ow:om);
+  return {ski:{m:1000},push:{m:50,kg:P(152,102,202,152)},pull:{m:50,kg:P(103,78,153,103)},bbj:{m:80},row:{m:1000},farm:{m:200,kg:P(24,16,32,24)},
+    lunge:{m:100,kg:P(20,10,30,20)},wall:{r:100,kg:P(6,4,9,6)},run:{m:1000},tread:{m:1000},bikeerg:{m:2000},bike:{c:20},jump:{t:120},plank:{t:60}}[id]||null}
+function setTxt(k,s){const p=[];
+  if(k==="d"){if(nz(s.m))p.push(fmtM(+s.m));if(nz(s.t))p.push(fmt(s.t))}
+  else if(k==="r"){if(nz(s.r))p.push(s.r+" st")}
+  else if(k==="c"){if(nz(s.c))p.push(s.c+" kcal");if(nz(s.t))p.push(fmt(s.t))}
+  else if(nz(s.t))p.push(fmt(s.t));
+  if(nz(s.kg))p.push(fmtKg(s.kg)+" kg");return p.join(" · ")}
+function itemTxt(it){const ss=(it.sets||[]).filter(s=>setTxt(it.k,s));if(!ss.length)return it.n;
+  const same=ss.every(s=>setTxt(it.k,s)===setTxt(it.k,ss[0])),n=ss.length;
+  if(it.k==="r"&&same){const s=ss[0];const parts=[];if(n>1)parts.push(n);if(nz(s.r))parts.push(s.r);let t=parts.join(" × ");if(nz(s.kg))t+=(t?" × ":"")+fmtKg(s.kg)+" kg";return `${it.n} ${t}`}
+  if(same)return `${it.n} ${n>1?n+" × ":""}${setTxt(it.k,ss[0])}`;
+  return `${it.n} ${ss.map(s=>setTxt(it.k,s)).join(", ")}`}
+const sortedLogs=()=>[...LOGS].sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(b.created||0)-(a.created||0));
+function lastItem(id,skip){const l=sortedLogs().find(x=>x.id!==skip&&x.items&&x.items.some(i=>i.ex===id&&i.sets&&i.sets.length));return l?l.items.find(i=>i.ex===id):null}
+function exDesc(id){const x=EX.find(e=>e.id===id);if(x)return x;for(const l of LOGS)for(const i of (l.items||[]))if(i.ex===id)return {id,n:i.n,k:i.k,w:i.w,st:i.st,g:9};return null}
+function newItem(x,empty){
+  const base={ex:x.id,n:x.n,k:x.k,w:x.w?1:0,st:x.st?1:0};
+  if(empty)return Object.assign(base,{sets:[{}]});
+  const last=lastItem(x.id,LG&&LG.edit);
+  if(last)return Object.assign(base,{sets:last.sets.map(s=>Object.assign({},s))});
+  const std=exStd(x.id);
+  if(x.k==="r"&&!x.st)return Object.assign(base,{sets:[{r:10},{r:10},{r:10}]});
+  return Object.assign(base,{sets:[std?Object.assign({},std):{}]});
 }
-function openLogSheet(kicker){openSheet(`<div><span class="small">${kicker||"Nytt pass"}</span><h2>Logga pass</h2></div><div id="log-slot"></div>`,()=>{$("#log-slot").append($("#logform"))})}
-$("#log-new").onclick=()=>{PENDING=null;$("#f-date").value=today();$("#f-note").value="";chipsEl.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed","false"));openLogSheet()};
-$("#logform").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const entry={date:$("#f-date").value||today(),type:$("#f-type").value,min:Math.max(1,Math.min(600,+$("#f-min").value||0)),rpe,
-    stations:[...chipsEl.querySelectorAll('.chip[aria-pressed="true"]')].map(c=>c.dataset.n),note:$("#f-note").value.trim().slice(0,300),created:Date.now()};
-  if(PENDING&&PENDING.type===entry.type)entry.plan=PENDING.key;
-  const before=weekStats().now.n;
-  if(await addLog(entry)){const after=weekStats().now.n;if(before<set.per&&after>=set.per){toast("Veckans mål klart!");confetti()}else toast("Passet är sparat");closeSheet();PENDING=null;$("#f-note").value="";chipsEl.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed","false"))}
-});
+function autoType(){const it=LG.items;if(!it.length)return "Styrka och stationer";
+  const isRun=i=>i.ex==="run"||i.ex==="tread",st=it.filter(i=>i.st).length,run=it.find(isRun);
+  const motor=it.every(i=>["ski","row","bike","bikeerg"].includes(i.ex)),other=it.some(i=>!i.st&&!isRun(i));
+  if(st>=8&&run)return "Racesimulering";if(motor)return "Motor (SkiErg/rodd)";if(run&&st)return "Kompromisslöpning";
+  if(run&&!other)return run.sets.length>1?"Intervaller":"Löpning";return "Styrka och stationer"}
+const lgType=()=>LG.typeSet?LG.type:autoType();
+let LG=null;
+function openLogger(o){o=o||{};const ed=o.edit;
+  LG={edit:ed?ed.id:null,src:ed?ed.src:null,date:ed?ed.date:today(),min:ed?(+ed.min||45):(o.min||45),type:ed?ed.type:(o.type||null),typeSet:!!(ed||o.type),
+    rpe:ed?(ed.rpe||3):3,note:ed?(ed.note||""):(o.note||""),plan:o.plan||null,kicker:o.kicker||(ed?(ed.src==="strava"?"Från Strava":"Pass"):"Nytt pass"),
+    items:ed&&ed.items?JSON.parse(JSON.stringify(ed.items)):[],view:"main",pick:[],q:"",showNote:!!((ed&&ed.note)||o.note),delArm:false};
+  if(ed&&!ed.items&&ed.stations)ed.stations.forEach(n=>{const x=EX.find(e=>e.n===n);if(x)LG.items.push(newItem(x,true))});
+  if(!ed){(o.stations||[]).forEach(n=>{const x=EX.find(e=>e.n===n);if(x)LG.items.push(newItem(x))});
+    if(o.type&&/Intervall|Löpning|distans|Kompromiss/.test(o.type)&&!LG.items.some(i=>i.ex==="run"))LG.items.unshift(newItem(EX.find(e=>e.id==="run")))}
+  openSheet(`<div id="lg" class="lg"></div>`,()=>{const r=$("#lg");
+    r.addEventListener("click",lgClick);r.addEventListener("input",lgInput);r.addEventListener("change",lgChange);
+    r.addEventListener("focusin",e=>{const t=e.target;if(t.matches&&t.matches(".lg-set input,#lg-minv"))setTimeout(()=>{try{t.select()}catch(x){}},0)});
+    r.addEventListener("focusout",e=>{const t=e.target;if(t.dataset&&t.dataset.f==="t"&&t.value){const v=parseT(t.value);if(v)t.value=fmt(v)}});
+    renderLG()});
+}
+function lgYest(){const d=new Date(today()+"T12:00:00");d.setDate(d.getDate()-1);return iso(d)}
+function lgSum(){const n=LG.items.length,s=LG.items.reduce((a,i)=>a+(i.sets||[]).filter(x=>setTxt(i.k,x)).length,0);
+  return [n?`${n} ${n===1?"övning":"övningar"}`:"",s?`${s} set`:"",`${LG.min} min`].filter(Boolean).join(" · ")}
+function renderLG(){const r=$("#lg");if(!r)return;
+  if(LG.view==="pick"){renderPick(r);return}
+  const td=today(),yd=lgYest(),other=LG.date!==td&&LG.date!==yd;
+  const dl=new Date(LG.date+"T12:00:00").toLocaleDateString("sv-SE",{weekday:"short",day:"numeric",month:"short"});
+  const ty=lgType(),last=sortedLogs().find(l=>l.items&&l.items.length&&l.id!==LG.edit);
+  const exHtml=LG.items.map((it,i)=>{const cols=LGCOLS[it.k].concat(it.w?[["kg","Kg"]]:[]),hint=!LG.edit&&lastItem(it.ex)?itemTxt(lastItem(it.ex)):"";
+    const gc=`28px repeat(${cols.length},minmax(0,1fr)) 36px`;
+    return `<div class="lg-ex" data-i="${i}"><div class="lg-exh"><span class="lg-dot${it.st?" st":""}" aria-hidden="true"></span><div><h4>${esc(it.n)}</h4>${hint?`<p class="small">Förra gången: ${esc(hint.replace(it.n+" ",""))}</p>`:""}</div><button type="button" class="lg-x" data-rm="${i}" aria-label="Ta bort ${esc(it.n)}">✕</button></div>
+      <div class="lg-cols" style="grid-template-columns:${gc}"><span>Set</span>${cols.map(c=>`<span>${c[1]}${c[0]==="kg"&&it.ex==="farm"?" per hand":""}</span>`).join("")}<span></span></div>
+      ${it.sets.map((s,j)=>`<div class="lg-set" style="grid-template-columns:${gc}"><span class="lg-n">${j+1}</span>${cols.map(c=>{const v=s[c[0]];const val=nz(v)?(c[0]==="t"?fmt(v):c[0]==="kg"?fmtKg(v):v):"";
+        return `<input type="text" data-i="${i}" data-j="${j}" data-f="${c[0]}" inputmode="${c[0]==="kg"||c[0]==="t"?"decimal":"numeric"}" autocomplete="off" placeholder="${c[0]==="t"?"m:ss":"–"}" value="${val}" aria-label="${c[1]}, set ${j+1}">`}).join("")}
+        <button type="button" class="lg-sx" data-rs="${i}:${j}" aria-label="Ta bort set ${j+1}"${it.sets.length<2?" disabled":""}>−</button></div>`).join("")}
+      <button type="button" class="lg-add" data-as="${i}">+ Lägg till set</button></div>`}).join("");
+  r.innerHTML=`<div><span class="small">${esc(LG.kicker)}</span><h2>${LG.edit?"Ändra pass":"Logga pass"}</h2></div>
+   <section class="lg-sec"><div class="chips lg-day"><button type="button" class="chip" data-day="${td}" aria-pressed="${LG.date===td}">Idag</button><button type="button" class="chip" data-day="${yd}" aria-pressed="${LG.date===yd}">Igår</button>
+     <label class="chip lg-dchip" aria-pressed="${other}">${other?esc(dl):"Annat datum"}<input type="date" id="lg-date" max="${td}" value="${esc(LG.date)}" aria-label="Datum"></label></div>
+     <div class="lg-step"><button type="button" data-min="-5" aria-label="5 minuter kortare">−</button><label><input type="text" id="lg-minv" inputmode="numeric" value="${LG.min}" aria-label="Minuter"><span>min</span></label><button type="button" data-min="5" aria-label="5 minuter längre">+</button></div></section>
+   <section class="lg-sec"><div class="lg-h"><h3>Övningar</h3>${LG.items.length?`<span class="small">${LG.items.length}</span>`:""}</div>
+     ${LG.items.length?exHtml:`<p class="small">Välj vad du tränade. Värdena fylls i från förra gången eller från tävlingsstandarden, så ändrar du bara det som skiljer.</p>
+       <div class="chips">${last?`<button type="button" class="divchip" data-quick="last">Samma som ${esc(last.type.toLowerCase())}, ${new Date(last.date+"T12:00:00").toLocaleDateString("sv-SE",{day:"numeric",month:"short"})}</button>`:""}<button type="button" class="divchip" data-quick="all8">Alla åtta stationer</button><button type="button" class="divchip" data-quick="int">Löpintervaller 5 × 1 km</button></div>`}
+     <button type="button" class="pill ghost block" id="lg-open">+ Lägg till övning</button></section>
+   <section class="lg-sec"><span class="lbl">Typ av pass</span><div class="chips">${TYPES.map(t=>`<button type="button" class="chip" data-type="${esc(t)}" aria-pressed="${t===ty}">${esc(t)}</button>`).join("")}</div>${!LG.typeSet&&LG.items.length?`<p class="small">Föreslås utifrån dina övningar.</p>`:""}</section>
+   <section class="lg-sec"><span class="lbl">Hur kändes det?</span><div class="lg-rpe">${[[1,"Lätt"],[2,""],[3,"Lagom"],[4,""],[5,"Max"]].map(([v,t])=>`<button type="button" data-rpe="${v}" aria-pressed="${v===LG.rpe}"><b>${v}</b><span>${t}</span></button>`).join("")}</div></section>
+   <section class="lg-sec">${LG.showNote?`<label class="lbl" for="lg-note">Anteckning</label><textarea id="lg-note" rows="2" maxlength="300" placeholder="Till exempel: tunga ben, bra tempo sista km">${esc(LG.note)}</textarea>`:`<button type="button" class="linkbtn" data-note>+ Lägg till anteckning</button>`}</section>
+   <div class="lg-foot"><p class="small" id="lg-sum">${lgSum()}</p><button type="button" class="pill block" id="lg-save">${LG.edit?"Spara ändringar":"Spara pass"}</button>
+     ${LG.edit?`<button type="button" class="pill ghost block" id="lg-del"${LG.delArm?' style="color:var(--bad)"':""}>${LG.delArm?"Tryck igen för att ta bort":"Ta bort passet"}</button>`:""}</div>`;
+}
+function renderPick(r){const q=LG.q.trim().toLowerCase(),added=new Set(LG.items.map(i=>i.ex));
+  const recent=[];sortedLogs().forEach(l=>(l.items||[]).forEach(i=>{if(!recent.includes(i.ex))recent.push(i.ex)}));
+  const row=x=>{const on=LG.pick.includes(x.id),has=added.has(x.id);
+    return `<button type="button" class="lg-pk" data-pk="${esc(x.id)}" aria-pressed="${on}"${has?" disabled":""}><span class="lg-dot${x.st?" st":""}" aria-hidden="true"></span><span>${esc(x.n)}</span><span class="lg-ck">${has?"Tillagd":on?"✓":""}</span></button>`};
+  let body="";
+  if(q){const all=[...EX];recent.forEach(id=>{if(!all.find(e=>e.id===id)){const d=exDesc(id);if(d)all.push(d)}});
+    const m=all.filter(x=>x.n.toLowerCase().includes(q));
+    body=(m.length?`<div class="lg-grp">${m.map(row).join("")}</div>`:"")+(all.some(x=>x.n.toLowerCase()===q)?"":`<div class="lg-grp"><button type="button" class="lg-pk" data-custom><span class="lg-dot" aria-hidden="true"></span><span>Lägg till ”${esc(LG.q.trim())}” som egen övning</span><span class="lg-ck">+</span></button></div>`)}
+  else{const rc=recent.slice(0,6).map(exDesc).filter(Boolean);
+    if(rc.length)body+=`<span class="lbl">Senast</span><div class="lg-grp">${rc.map(row).join("")}</div>`;
+    EXG.forEach((g,gi)=>{body+=`<span class="lbl">${g}</span><div class="lg-grp">${EX.filter(x=>x.g===gi).map(row).join("")}</div>`})}
+  const n=LG.pick.length;
+  r.innerHTML=`<div><button type="button" class="linkbtn" id="lg-back">‹ Tillbaka</button><h2>Välj övningar</h2></div>
+   <input type="search" id="lg-q" placeholder="Sök övning" value="${esc(LG.q)}" autocomplete="off" aria-label="Sök övning">
+   <div class="lg-list">${body}</div>
+   <div class="lg-foot"><button type="button" class="pill block" id="lg-addsel"${n?"":" disabled"}>${n?`Lägg till ${n} ${n===1?"övning":"övningar"}`:"Välj övningar"}</button></div>`;
+}
+function lgClick(e){const t=e.target.closest("button,[data-day]");if(!t||t.disabled)return;const d=t.dataset;
+  if(t.id==="lg-open"){LG.view="pick";LG.pick=[];LG.q="";renderLG();$("#sheet").scrollTop=0;return}
+  if(t.id==="lg-back"){LG.view="main";renderLG();return}
+  if(t.id==="lg-addsel"){const n0=LG.items.length;LG.pick.forEach(id=>{const x=exDesc(id);if(x)LG.items.push(newItem(x))});LG.view="main";LG.pick=[];renderLG();
+    const el=$(`#lg .lg-ex[data-i="${n0}"]`);if(el)setTimeout(()=>el.scrollIntoView({behavior:RM()?"auto":"smooth",block:"center"}),60);return}
+  if(d.pk){const i=LG.pick.indexOf(d.pk);if(i<0)LG.pick.push(d.pk);else LG.pick.splice(i,1);t.setAttribute("aria-pressed",i<0);t.querySelector(".lg-ck").textContent=i<0?"✓":"";
+    const b=$("#lg-addsel"),n=LG.pick.length;b.disabled=!n;b.textContent=n?`Lägg till ${n} ${n===1?"övning":"övningar"}`:"Välj övningar";return}
+  if(d.custom!==undefined){const nm=LG.q.trim().slice(0,40);if(!nm)return;const id="c-"+nm.toLowerCase().replace(/[^a-zåäö0-9]+/g,"-");
+    if(!LG.items.some(i=>i.ex===id))LG.items.push(Object.assign(newItem({id,n:nm,k:"r",w:1}),{}));LG.view="main";renderLG();return}
+  if(d.day){LG.date=d.day;renderLG();return}
+  if(d.min){LG.min=Math.max(5,Math.min(600,LG.min+ +d.min));$("#lg-minv").value=LG.min;$("#lg-sum").textContent=lgSum();return}
+  if(d.quick){
+    if(d.quick==="last"){const l=sortedLogs().find(x=>x.items&&x.items.length&&x.id!==LG.edit);if(l){LG.items=JSON.parse(JSON.stringify(l.items));if(!LG.typeSet){LG.type=l.type;LG.typeSet=true}LG.min=+l.min||LG.min}}
+    else if(d.quick==="all8")EX.filter(x=>x.st).forEach(x=>LG.items.push(newItem(x)));
+    else if(d.quick==="int")LG.items.push(Object.assign(newItem(EX.find(x=>x.id==="run")),{sets:[1,2,3,4,5].map(()=>({m:1000}))}));
+    renderLG();return}
+  if(d.rm!==undefined){LG.items.splice(+d.rm,1);renderLG();return}
+  if(d.as!==undefined){const it=LG.items[+d.as];const p=it.sets[it.sets.length-1]||{};it.sets.push(Object.assign({},p));renderLG();
+    const ins=lg$$(`#lg input[data-i="${d.as}"][data-j="${it.sets.length-1}"]`);if(ins[0])ins[0].focus({preventScroll:false});return}
+  if(d.rs){const [i,j]=d.rs.split(":").map(Number);LG.items[i].sets.splice(j,1);renderLG();return}
+  if(d.type){LG.type=d.type;LG.typeSet=true;renderLG();return}
+  if(d.rpe){LG.rpe=+d.rpe;lg$$("#lg .lg-rpe button").forEach(b=>b.setAttribute("aria-pressed",b===t));return}
+  if(d.note!==undefined){LG.showNote=true;renderLG();const n=$("#lg-note");if(n)n.focus();return}
+  if(t.id==="lg-save"){saveLG(t);return}
+  if(t.id==="lg-del"){if(!LG.delArm){LG.delArm=true;renderLG();return}delLog(LG.edit);closeSheet();toast("Passet är borttaget");return}
+}
+function lgInput(e){const t=e.target;
+  if(t.id==="lg-q"){LG.q=t.value;const pos=t.selectionStart;renderLG();const q=$("#lg-q");q.focus();try{q.setSelectionRange(pos,pos)}catch(x){}return}
+  if(t.id==="lg-note"){LG.note=t.value;return}
+  if(t.id==="lg-minv"){const v=parseInt(t.value,10);if(v>0)LG.min=Math.min(600,v);$("#lg-sum").textContent=lgSum();return}
+  if(t.dataset&&t.dataset.f){const it=LG.items[+t.dataset.i],s=it.sets[+t.dataset.j],f=t.dataset.f,v=t.value.trim();
+    const j=+t.dataset.j,prev=nz(s[f])?+s[f]:null;
+    s[f]=!v?null:f==="t"?parseT(v):parseFloat(v.replace(",","."));if(!nz(s[f]))s[f]=null;
+    if(f!=="t")for(let k=j+1;k<it.sets.length;k++){const o=it.sets[k],ov=nz(o[f])?+o[f]:null;if(ov!==prev)break;o[f]=s[f];
+      const inp=document.querySelector(`#lg input[data-i="${t.dataset.i}"][data-j="${k}"][data-f="${f}"]`);if(inp)inp.value=nz(s[f])?(f==="kg"?fmtKg(s[f]):s[f]):""}
+    $("#lg-sum").textContent=lgSum()}
+}
+function lgChange(e){if(e.target.id==="lg-date"&&e.target.value){LG.date=e.target.value>today()?today():e.target.value;renderLG()}}
+async function saveLG(btn){if(btn.disabled)return;
+  const items=LG.items.map(i=>({ex:i.ex,n:i.n,k:i.k,w:i.w?1:0,st:i.st?1:0,sets:(i.sets||[]).map(s=>{const o={};["m","r","c","t","kg"].forEach(f=>{if(nz(s[f]))o[f]=Math.round(+s[f]*10)/10});return o}).filter(s=>Object.keys(s).length)}));
+  const f={date:LG.date||today(),type:lgType(),min:Math.max(1,Math.min(600,LG.min||1)),rpe:LG.rpe,stations:[...new Set(items.filter(i=>i.st).map(i=>i.n))],items,note:(LG.note||"").trim().slice(0,300)};
+  btn.disabled=true;
+  if(LG.edit){const ok=await updLog(LG.edit,f);btn.disabled=false;if(ok){closeSheet();toast("Passet är ändrat")}return}
+  const entry=Object.assign(f,{created:Date.now()});if(LG.plan)entry.plan=LG.plan;
+  const before=weekStats().now.n;const ok=await addLog(entry);btn.disabled=false;if(!ok)return;
+  const after=weekStats().now.n;closeSheet();HAPTIC("success");
+  if(before<set.per&&after>=set.per){toast("Veckans mål är klart");confetti()}else toast("Passet är sparat");
+  try{if(typeof onLogged==="function")onLogged(entry)}catch(x){}
+}
+function prefill(o){openLogger({type:o.type,min:o.min,note:o.note,plan:o.plan,stations:o.stations,kicker:"Från din plan"})}
+function openLogSheet(){openLogger()}
+$("#log-new").onclick=()=>openLogger();
 let filt="Alla";
 $("#filters").onclick=e=>{const c=e.target.closest(".chip");if(!c)return;filt=c.dataset.f;renderLog()};
 $("#hist").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.edit)openEditLog(e.target.dataset.edit)});
@@ -2403,7 +2558,7 @@ function renderLog(){
   $("#hist-count").textContent=LOGS.length?`${LOGS.length} pass`:"";
   const list=[...LOGS].filter(l=>filt==="Alla"||l.type===filt).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(b.created||0)-(a.created||0));
   $("#hist").innerHTML=list.length?list.slice(0,HN).map(l=>{const d=new Date(l.date+"T12:00:00");
-    return `<div class="row hrow" data-edit="${esc(l.id)}" role="button" tabindex="0" aria-label="Ändra ${esc(l.type)}"><div class="badge">${d.getDate()}<br>${d.toLocaleDateString("sv-SE",{month:"short"}).replace(".","")}</div><div><h3>${esc(l.type)}${l.src==="strava"?'<span class="src">Strava</span>':""}</h3><p>${l.min} min${l.rpe?" · känsla "+l.rpe+"/5":""}${l.stations&&l.stations.length?" · "+esc(l.stations.join(", ")):""}</p>${l.note?`<p>${esc(l.note)}</p>`:""}</div><span class="chev">›</span></div>`}).join(""):`<div class="empty">Inga pass ännu. Tryck Logga pass ovan, eller Logga passet i din plan.</div>`;
+    return `<div class="row hrow" data-edit="${esc(l.id)}" role="button" tabindex="0" aria-label="Ändra ${esc(l.type)}"><div class="badge">${d.getDate()}<br>${d.toLocaleDateString("sv-SE",{month:"short"}).replace(".","")}</div><div><h3>${esc(l.type)}${l.src==="strava"?'<span class="src">Strava</span>':""}</h3><p>${l.min} min${l.rpe?" · känsla "+l.rpe+"/5":""}${!(l.items&&l.items.length)&&l.stations&&l.stations.length?" · "+esc(l.stations.join(", ")):""}</p>${l.items&&l.items.length?`<p class="lg-hist">${esc(l.items.map(itemTxt).join(" · "))}</p>`:""}${l.note?`<p>${esc(l.note)}</p>`:""}</div><span class="chev">›</span></div>`}).join(""):`<div class="empty">Inga pass ännu. Tryck Logga pass ovan, eller Logga passet i din plan.</div>`;
   {let mb=$("#hist-more");if(!mb){mb=document.createElement("button");mb.id="hist-more";mb.className="pill ghost block";mb.style.marginTop="10px";$("#hist").after(mb);mb.onclick=()=>{HN+=20;renderLog()}}mb.hidden=list.length<=HN;mb.textContent=`Visa fler pass (${list.length-HN} till)`}
   renderProgress();
 }
