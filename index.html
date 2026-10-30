@@ -689,6 +689,28 @@ a.row{color:inherit;text-decoration:none}
 .lg-pk[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 9%,var(--tile))}
 .lg-hist{color:var(--ink)!important;font-size:.9rem}
 @media (prefers-reduced-motion:reduce){.lg-ex{animation:none}}
+
+/* Vänner */
+.fr-btn{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 48px);z-index:30;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--ink);background:var(--tile);text-decoration:none;box-shadow:0 0 0 2px var(--bg)}
+.fr-btn.on{background:var(--ink);color:var(--bg)}
+.fr-btn.new::after{content:"";position:absolute;top:1px;right:1px;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--bg)}
+.fr-lb{grid-template-columns:22px minmax(0,1fr) auto}
+.fr-lb + .fr-lb::before{left:52px}
+.fr-who{display:flex;align-items:center;gap:12px;min-width:0}.fr-who>div{min-width:0}
+.fr-rank{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;text-align:center}
+.fr-lb:first-child .fr-rank{color:var(--accent)}
+.fr-lb.me h3{color:var(--accent)}
+.fr-v{font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.fr-foot{margin-top:10px}
+.fr-race,.fr-act{align-items:start}
+.fr-days{display:grid;justify-items:end;line-height:1.1;font-size:.72rem;color:var(--muted)}.fr-days b{font-size:1.35rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.fr-same{display:inline-block;margin-top:6px;font-size:.75rem;font-weight:600;padding:3px 10px;border-radius:980px;background:var(--card);color:var(--green)}
+.fr-ago{white-space:nowrap}
+.fr-acts{display:grid;gap:10px;margin-top:34px}
+.fr-steps{margin:0;padding-left:20px;display:grid;gap:8px}
+.pu-sub{display:grid;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--hair)}
+#pf-push{gap:0}
+.cal-rm{gap:6px}.cal-rm h4{font-size:1rem}
 </style>
 
 <div id="gate" hidden role="dialog" aria-modal="true" aria-labelledby="gt-h">
@@ -904,6 +926,13 @@ a.row{color:inherit;text-decoration:none}
     <div class="group" id="hist"></div>
   </div>
 </section>
+<!-- ================= VÄNNER ================= -->
+<section class="view" id="v-vanner">
+  <div class="wrap">
+    <div class="pagehead"><span class="eyebrow">Vänner</span><h1>Tillsammans.</h1><p class="small">Veckans topplista, era lopp och vad dina vänner har tränat.</p></div>
+    <div id="fr-body"></div>
+  </div>
+</section>
 <!-- ================= PROFIL ================= -->
 <section class="view" id="v-profil">
   <div class="wrap">
@@ -923,7 +952,9 @@ a.row{color:inherit;text-decoration:none}
     </div>
     <div class="sechead"><h2>Ljud och känsla</h2></div>
     <div class="card" id="pf-set"></div>
-    <div class="sechead"><h2>Påminnelser</h2></div>
+    <div class="sechead"><h2>Notiser</h2></div>
+    <div class="card" id="pf-push"></div>
+    <div class="sechead"><h2>Kalender</h2></div>
     <div class="group"><button class="row" id="pf-rem"><span class="badge"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></span><div><h3>Påminnelser för passen</h3><p>Lägg din plan i kalendern med en påminnelse före varje pass.</p></div><span class="chev">›</span></button></div>
     <div class="sechead"><h2>Kopplingar</h2></div>
     <div class="group" id="pf-con"></div>
@@ -957,6 +988,7 @@ a.row{color:inherit;text-decoration:none}
     <div id="tr-ic"></div><h3 id="tr-h"></h3><p id="tr-p"></p><div class="tr-bar"><i id="tr-bar"></i></div>
     <div class="tr-foot"><button class="pill ghost" id="tr-back">Tillbaka</button><button class="pill" id="tr-next">Nästa</button></div>
   </div></div>
+<a class="fr-btn" id="fr-btn" href="#vanner" aria-label="Vänner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 19.5c.6-3.3 3.2-5.3 6.2-5.3s5.6 2 6.2 5.3"/><path d="M15.6 4.9a3.3 3.3 0 0 1 0 6.3M17.8 14.6c1.8.7 3 2.4 3.4 4.9"/></svg></a>
 <a class="avatar-btn" id="avatar-btn" href="#profil" aria-label="Din profil"><span>V</span></a>
 
 <div id="log-holder" hidden></div>
@@ -1190,13 +1222,16 @@ function icsText(){
   return L.map(l=>{let o="";while(l.length>70){o+=l.slice(0,70)+"\r\n ";l=l.slice(70)}return o+l}).join("\r\n");
 }
 function openCal(){
-  const n=PLAN.slice(curWeekIdx()).reduce((a,w)=>a+w.ses.filter(s=>s.date>=today()).length,0);
-  openSheet(`<div><span class="small">Påminnelser</span><h2>Lägg i kalendern</h2></div>
-   <p class="muted">Du får en kalenderfil med ${n} pass och loppet. Varje pass har en påminnelse en timme innan.</p>
+  const n=PLAN.slice(curWeekIdx()).reduce((a,w)=>a+w.ses.filter(s=>s.date>=today()).length,0),feed=!!(SB&&SBUSER);
+  openSheet(`<div><span class="small">Kalender</span><h2>Lägg i kalendern</h2></div>
+   <p class="muted">${n} pass och loppet, med en påminnelse en timme innan varje pass.${feed?" Kalendern uppdateras av sig själv när du ändrar planen.":""}</p>
    <div class="field"><label for="cal-h">Vilken tid brukar du träna?</label><select id="cal-h">${Array.from({length:17},(_,i)=>i+5).map(h=>`<option value="${h}"${h===set.hour?" selected":""}>${String(h).padStart(2,"0")}:00</option>`).join("")}</select></div>
-   <button class="pill block" id="cal-save">Spara kalenderfil</button>
-   <p class="small">${DL&&DL.raw?"Öppna":"Packa upp zip-filen och öppna"} <b>varv-plan.ics</b> på telefonen eller datorn, så läggs passen in i din kalender. På iPhone gör du det i appen Filer. Ändrar du planen kan du spara en ny fil.</p>`,()=>{
-    $("#cal-h").onchange=e=>{set.hour=+e.target.value;saveSet()};
+   ${feed?`<button class="pill block" id="cal-sub">Lägg till i Kalender</button><button class="pill ghost block" id="cal-save">Spara som fil i stället</button>`:`<button class="pill block" id="cal-save">Spara kalenderfil</button>`}
+   <div class="card cal-rm"><h4>Ta bort kalendern</h4><p class="small">${feed?"På iPhone: öppna Kalender, tryck på <b>Kalendrar</b> längst ned, tryck på <b>i</b> vid VARV. och välj <b>Avsluta prenumeration</b>. På Mac: högerklicka på VARV. och välj Avprenumerera."
+     :"Välj en ny kalender som heter VARV. när du lägger in passen. Då tar du bort alla på en gång: Kalender → <b>Kalendrar</b> → <b>i</b> vid VARV. → <b>Radera kalender</b>."}</p></div>`,()=>{
+    $("#cal-h").onchange=e=>{set.hour=+e.target.value;saveSet();planChanged()};
+    const sb=$("#cal-sub");if(sb)sb.onclick=()=>busy(sb,async()=>{const t=await calSync();if(!t){toast("Kalenderlänken är inte uppsatt än. Spara som fil i stället.");return}
+      set.calSub=true;saveSet();location.href=calUrl(t);setTimeout(()=>{if($("#sh-x"))openCal()},800)});
     $("#cal-save").onclick=async()=>{try{const r=await DL.save(DL.raw?{filename:"varv-plan.ics",data:icsText()}:{filename:"varv-kalender.zip",data:makeZip([{name:"varv-plan.ics",data:icsText()}])});if(r&&r.status==="saved")toast("Kalenderfilen är sparad");closeSheet()}catch(err){saveErr(err)}};
   });
 }
@@ -1452,7 +1487,7 @@ function renderAdapt(){
   el.innerHTML=`<div class="banner"><span class="bicon ${a.mode}">${icon}</span><div><b>${title}</b><p>${note}</p>${a.suggest?`<button class="linkbtn" id="ad-sug">Ditt rekord på 1 km pekar mot ${fmtHM(a.suggest)}. Använd som måltid</button>`:""}${!set.test?`<button class="linkbtn" data-open="test">Gör starttestet för en personlig måltid</button>`:""}</div></div>`;
   const b=$("#ad-sug");if(b)b.onclick=()=>{set.target=a.suggest;$("#p-range").value=a.suggest;saveSet();renderSplits();renderPlan();renderHome();renderPRs();toast("Måltiden är uppdaterad")};
 }
-function renderPlan(){
+function renderPlan(){planChanged();
   const openIdx=$$("#p-plan details").map((d,i)=>d.open?i:-1).filter(i=>i>=0);
   const base=buildPlan();ADAPT=computeAdapt(base);PLAN=buildPlan(ADAPT);
   const days=daysLeft();const cw=curWeekIdx();
@@ -1765,7 +1800,7 @@ let GATE_ON=false,GATE_RES=null,GATE_MODE="up";
 const GATE=new Promise(r=>{GATE_RES=r});
 const TERMS_VERSION="2026-10-30";
 function gateDone(){if(GATE_RES){GATE_RES();GATE_RES=null}}
-function gateInert(on){["main",".tabbar","#avatar-btn"].forEach(s=>{const e=document.querySelector(s);if(e)e.inert=on})}
+function gateInert(on){["main",".tabbar","#avatar-btn","#fr-btn"].forEach(s=>{const e=document.querySelector(s);if(e)e.inert=on})}
 function showGate(){GATE_ON=true;$("#gate").hidden=false;gateInert(true);renderGate()}
 function hideGate(){if(!GATE_ON)return;GATE_ON=false;$("#gate").hidden=true;gateInert(false);gateDone()}
 function renderGate(sentTo){
@@ -1861,7 +1896,7 @@ async function loadMyProfile(){
   const {data,error}=await SB.from("profiles").select("*").eq("user_id",SBUSER.id).maybeSingle();
   if(error||!data){MYPROF=null;if(location.hash==="#profil")renderProfile();return}
   MYPROF=data;MEINFO=Object.assign({},MEINFO||{},{avatarUrl:data.avatar_url||(MEINFO&&MEINFO.avatarUrl)||""});
-  await loadFriends();renderAvatar();if(location.hash==="#profil")renderProfile();syncProfile();pendingFriend();
+  await loadFriends();renderAvatar();if(location.hash==="#profil")renderProfile();syncProfile();pendingFriend();frCheck();if(location.hash==="#vanner")renderFriends(true);planChanged();
 }
 async function loadFriends(){
   if(!SB||!SBUSER)return;
@@ -1875,8 +1910,8 @@ function profilePayload(){
   const prs={};PRKEYS.forEach(([k])=>{if(k!=="race"&&PRS[k])prs[k]=PRS[k]});
   const bt=PRS.race&&PRS.race>=600&&PRS.race<=36000?PRS.race:null;
   return {best_time:bt,best_division:divText().slice(0,60),prs,
-    next_race:set.date&&set.date>=today()?{name:me?me.c:null,country:me?me.n:null,date:me?me.s:set.date}:null,
-    stats:{sessions:LOGS.length,hours:Math.round(st.total/6)/10,streak:st.streak,week:st.now.n,varv:P.varv,tier:P.tier.n,medals:P.recent.length,since:set.since||null}};
+    next_race:set.date&&set.date>=today()?{name:me?me.c:null,country:me?me.n:null,date:me?me.s:set.date,end:me?me.e:null,venue:me&&me.v?me.v:null,div:divText()}:null,
+    stats:{wk:weekStart(today()),wv:P.weekVarv,sessions:LOGS.length,hours:Math.round(st.total/6)/10,streak:st.streak,week:st.now.n,varv:P.varv,tier:P.tier.n,medals:P.recent.length,since:set.since||null}};
 }
 function syncProfile(){
   if(!MYPROF||!SB||!SBUSER)return;clearTimeout(syncProfile.t);
@@ -1926,7 +1961,7 @@ function openAddFriend(){
       if(p.user_id===SBUSER.id){say("Det där är du.",true);return}
       const {error:e2}=await SB.from("friends").insert({user_id:SBUSER.id,friend_id:p.user_id});
       if(e2&&e2.code!=="23505"){say(sbErr(e2),true);return}
-      NAMES[p.user_id]=p;await loadFriends();closeSheet();renderSocial();toast(e2?`${handleTxt(p)} är redan din vän`:`${handleTxt(p)} är tillagd`);HAPTIC("success")})};
+      NAMES[p.user_id]=p;await loadFriends();closeSheet();renderSocial();FRC=null;if(location.hash==="#vanner")renderFriends(true);toast(e2?`${handleTxt(p)} är redan din vän`:`${handleTxt(p)} är tillagd`);HAPTIC("success")})};
     setTimeout(()=>$("#fa-in").focus({preventScroll:true}),350);
   });
 }
@@ -2633,6 +2668,7 @@ $("#rc-next").onclick=async()=>{
     const b=$("#rc-next");b.disabled=true;
     const total=(RACE.end-RACE.start)/1000;
     await addLog({date:today(),type:"Racesimulering",min:Math.max(1,Math.round(total/60)),rpe:5,stations:S.map(s=>s.n),note:`Sluttid ${fmt(total)} mot målet ${fmtHM(RACE.target)}`,created:Date.now()});
+    {const ev=myEvent();if(ev&&evLive(ev))postActivity("lopp",ev.c,`${fmt(total)} · ${divText()}`);else postActivity("pass","Racesimulering",`Sluttid ${fmt(total)}`)}
     if(!PRS.race||total<PRS.race){PRS.race=Math.round(total);await savePRs();toast("Sparat, och nytt rekord för hel Hyrox")}else toast("Loppet är sparat i loggen");
     RACE=null;saveRace();renderRace();b.disabled=false;return}
   RACE.marks.push(Date.now());cue("tap");
@@ -2868,14 +2904,148 @@ $("#pf-del").onclick=async()=>{const b=$("#pf-del");
   $("#p-range").value=set.target;$("#p-date").value=set.date;renderDays();renderSplits();renderAllData();renderPack();renderRace();renderCues();renderAvatar();renderProfile();
   delete b.dataset.c;toast("Allt är raderat");set.onboarded=true;saveSet();renderHome()};
 
+/* ============ Vänner ============ */
+let FRC=null;
+const agoTxt=t=>{const s=(Date.now()-new Date(t))/1e3;if(s<3600)return Math.max(1,Math.round(s/60))+" min sedan";if(s<86400)return Math.round(s/3600)+" tim sedan";const d=Math.round(s/86400);return d===1?"igår":d+" dagar sedan"};
+async function loadFriendData(force){
+  if(!SB||!SBUSER||!MYPROF)return null;
+  if(FRC&&!force&&Date.now()-FRC.at<60000)return FRC;
+  const ids=FRIENDS.slice(0,200);const out={at:Date.now(),profs:{},acts:[],actOk:true};
+  if(ids.length){
+    const [pr,ac]=await Promise.all([
+      SB.from("profiles").select("user_id,username,tag,avatar_url,stats,next_race,best_division,partner_id").in("user_id",ids),
+      SB.from("activity").select("id,user_id,kind,title,detail,created_at").in("user_id",ids).order("created_at",{ascending:false}).limit(30)]);
+    (pr.data||[]).forEach(p=>{out.profs[p.user_id]=p;NAMES[p.user_id]=Object.assign({},NAMES[p.user_id]||{},{user_id:p.user_id,username:p.username,tag:p.tag,avatar_url:p.avatar_url})});
+    if(ac.error)out.actOk=false;else out.acts=ac.data||[];
+    const need=[...new Set(Object.values(out.profs).map(p=>p.partner_id).filter(x=>x&&!NAMES[x]))];
+    if(need.length){const {data:n}=await SB.rpc("varv_names",{p_ids:need});(n||[]).forEach(x=>{NAMES[x.user_id]=x})}
+  }
+  FRC=out;return out;
+}
+function raceLine(nr,partnerId){
+  const ev=nr.date?EVENTS.find(e=>e.s<=nr.date&&nr.date<=e.e):null;
+  const where=nr.name||(ev&&ev.c)||"Lopp";const when=ev?evRange(ev):nr.date?new Date(nr.date+"T12:00:00").toLocaleDateString("sv-SE",{day:"numeric",month:"short",year:"numeric"}):"";
+  const venue=nr.venue||(ev&&ev.v)||"";const div=nr.div||"";
+  const dbl=/Doubles/.test(div)&&partnerId&&NAMES[partnerId]?` med ${esc(NAMES[partnerId].username)}`:"";
+  return {where,when,ev,sub:[venue,div?esc(div)+dbl:""].filter(Boolean).join(" · ")};
+}
+async function renderFriends(force){
+  const el=$("#fr-body");if(!el)return;
+  if(!SB){el.innerHTML=`<div class="card"><p class="small">Vänner kräver ett konto. Det är inte uppsatt i den här versionen av appen.</p></div>`;return}
+  if(!SBUSER){el.innerHTML=`<div class="card"><h3>Träna ihop med vänner</h3><p class="small">Logga in för att lägga till vänner, se veckans topplista och vilka lopp dina vänner ska till.</p><button class="pill block" id="fr-login">Logga in</button></div>`;$("#fr-login").onclick=()=>openAuth();return}
+  if(!MYPROF){el.innerHTML=`<div class="card"><p class="small">Profiler och vänner är inte uppsatta än. Kör supabase/profiler.sql i Supabase.</p></div>`;return}
+  if(!FRC)el.innerHTML=`<div class="card"><p class="small">Hämtar dina vänner…</p></div>`;
+  const D=await loadFriendData(force);if(!D||location.hash!=="#vanner")return;
+  const wk=weekStart(today()),P=PROG||progress();
+  const me={user_id:SBUSER.id,username:MYPROF.username,tag:MYPROF.tag,avatar_url:MYPROF.avatar_url,wv:P.weekVarv,n:weekStats().now.n,me:true};
+  const board=[me].concat(Object.values(D.profs).map(p=>{const s=p.stats||{};const cur=s.wk===wk;return {user_id:p.user_id,username:p.username,tag:p.tag,avatar_url:p.avatar_url,wv:cur?(+s.wv||0):0,n:cur?(+s.week||0):0}}))
+    .sort((a,b)=>b.wv-a.wv||b.n-a.n);
+  const myNr=profilePayload().next_race;
+  const races=[];if(myNr&&myNr.date>=today())races.push({u:me,nr:myNr,pid:MYPROF.partner_id});
+  Object.values(D.profs).forEach(p=>{if(p.next_race&&p.next_race.date&&p.next_race.date>=today())races.push({u:p,nr:p.next_race,pid:p.partner_id})});
+  races.sort((a,b)=>a.nr.date.localeCompare(b.nr.date));
+  const waiting=FRIENDS.filter(id=>!D.profs[id]);
+  const kindTxt={lopp:"tävlade",rekord:"satte rekord",pass:"tränade"};
+  el.innerHTML=`
+   ${FRIENDS.length?"":`<div class="card fr-empty"><h3>Lägg till din första vän</h3><p class="small">Skriv in vännens namn och kod, eller dela din länk. Ditt namn och kod är <b style="color:var(--ink)">${esc(handleTxt(MYPROF))}</b>.</p></div>`}
+   <div class="sechead"><h2>Den här veckan</h2><span class="small">Varv</span></div>
+   <div class="group">${board.map((b,i)=>`<div class="row fr-lb${b.me?" me":""}"><span class="fr-rank">${i+1}</span><div class="fr-who">${avImg(b.avatar_url,b.username)}<div><h3>${b.me?"Du":esc(b.username)}</h3><p>${b.n} ${b.n===1?"pass":"pass"}</p></div></div><b class="fr-v">${b.wv}</b></div>`).join("")}</div>
+   <p class="small fr-foot">Ett varv per tio minuters träning. Topplistan jämför flit, inte fart, och börjar om på måndag.</p>
+   <div class="sechead"><h2>Kommande lopp</h2><a href="#race">Alla lopp</a></div>
+   ${races.length?`<div class="group">${races.map(r=>{const L=raceLine(r.nr,r.pid);const same=!r.u.me&&myNr&&myNr.date===r.nr.date;const d=Math.round((evD(r.nr.date)-evD(today()))/864e5);
+     return `<div class="row fr-race">${avImg(r.u.avatar_url,r.u.username)}<div><h3>${r.u.me?"Du":esc(r.u.username)} · ${esc(L.where)}</h3><p>${esc(L.when)}${L.sub?"<br>"+L.sub:""}</p>${same?`<span class="fr-same">Samma lopp som du</span>`:""}</div><span class="fr-days"><b>${d}</b>${d===1?"dag":"dagar"}</span></div>`}).join("")}</div>`
+     :`<div class="card"><p class="small">Ingen av er har valt ett lopp än. Välj ditt under Tävla, så syns det här för dina vänner.</p></div>`}
+   <div class="sechead"><h2>Senaste</h2></div>
+   ${!D.actOk?`<div class="card"><p class="small">Aktiviteten är inte uppsatt än. Kör supabase/notiser.sql i Supabase.</p></div>`
+     :D.acts.length?`<div class="group">${D.acts.map(a=>{const p=NAMES[a.user_id]||{username:"En vän"};
+       return `<div class="row fr-act">${avImg(p.avatar_url,p.username)}<div><h3>${esc(p.username)} ${kindTxt[a.kind]||"tränade"}</h3><p>${esc([a.title,a.detail].filter(Boolean).join(" · "))}</p></div><span class="small fr-ago">${agoTxt(a.created_at)}</span></div>`}).join("")}</div>`
+     :`<div class="card"><p class="small">Här syns det när dina vänner tränar och tävlar.</p></div>`}
+   ${waiting.length?`<div class="sechead"><h2>Väntar på svar</h2></div><div class="group">${waiting.map(id=>{const p=NAMES[id]||{username:"Okänd",tag:"0000"};return `<div class="row">${avImg(p.avatar_url,p.username)}<div><h3>${handleHtml(p)}</h3><p>Syns här när hen har lagt till dig</p></div><span></span></div>`}).join("")}</div>`:""}
+   <div class="fr-acts"><button class="pill block" id="fr-add2">Lägg till vän</button><div class="grid2"><button class="pill ghost" id="fr-link2">Dela vänlänk</button><button class="pill ghost" id="fr-qr2">Visa QR-kod</button></div></div>`;
+  $("#fr-add2").onclick=openAddFriend;$("#fr-link2").onclick=shareFriendLink;$("#fr-qr2").onclick=showFriendQR;
+  const top=D.acts[0];if(top){set.frSeen=top.created_at;saveSet()}frDot();
+}
+function frDot(){const b=$("#fr-btn");if(!b)return;const top=FRC&&FRC.acts&&FRC.acts[0];b.classList.toggle("new",!!(top&&(!set.frSeen||top.created_at>set.frSeen)&&location.hash!=="#vanner"))}
+async function frCheck(){try{if(!SB||!SBUSER||!FRIENDS.length)return;await loadFriendData(true);frDot()}catch(e){}}
+
+/* ============ Aktivitet för vänner ============ */
+async function postActivity(kind,title,detail){
+  if(!SB||!SBUSER)return;
+  try{await SB.from("activity").insert({kind,title:String(title).slice(0,80),detail:detail?String(detail).slice(0,160):null})}catch(e){}
+}
+function onLogged(e){
+  const parts=[`${e.min} min`];if(e.items&&e.items.length)parts.push(e.items.slice(0,2).map(itemTxt).join(", ")+(e.items.length>2?` och ${e.items.length-2} till`:""));
+  postActivity("pass",e.type,parts.join(" · "));
+}
+
+/* ============ Notiser ============ */
+const PUSHKEY=(window.VARV_SUPABASE&&window.VARV_SUPABASE.pushKey)||"";
+const isIOS=()=>/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+const isStandalone=()=>{try{return matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}catch(e){return false}};
+const pushOK=()=>"serviceWorker" in navigator&&"PushManager" in window&&"Notification" in window;
+function b64u(s){const p="=".repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))}
+function pushSchedule(){
+  const td=today(),me=myEvent(),out={plan:!!set.date,race:null,sessions:[],last:null};
+  if(set.date&&set.date>=td)out.race={date:me?me.s:set.date,name:me?me.c:"loppet"};
+  const lim=new Date(td+"T12:00:00");lim.setDate(lim.getDate()+21);const L=iso(lim);
+  if(set.date)PLAN.forEach(w=>w.ses.forEach(s=>{if(s.date>=td&&s.date<=L&&!sesDone(w,s))out.sessions.push({d:s.date,t:s.t,m:s.m})}));
+  const last=sortedLogs()[0];if(last)out.last=last.date;return out;
+}
+function pushPrefs(){return Object.assign({plan:true,race:true,friends:true},(set.push&&set.push.prefs)||{})}
+async function pushSave(sub){
+  const row={user_id:SBUSER.id,tz:Intl.DateTimeFormat().resolvedOptions().timeZone||"Europe/Stockholm",hour:+set.hour||8,prefs:pushPrefs(),schedule:pushSchedule(),updated_at:new Date().toISOString()};
+  if(sub){row.endpoint=sub.endpoint;row.sub=sub.toJSON();}else row.endpoint=set.push&&set.push.ep;
+  if(!row.endpoint)return false;
+  const q=sub?SB.from("push_subs").upsert(row):SB.from("push_subs").update(row).eq("endpoint",row.endpoint);
+  const {error}=await q;return !error;
+}
+let pushT=null;
+function planChanged(){clearTimeout(pushT);pushT=setTimeout(()=>{try{if(set.push&&set.push.on&&SB&&SBUSER)pushSave(null)}catch(e){}try{if(set.calSub&&SB&&SBUSER)calSync()}catch(e){}},2500)}
+async function pushOn(){
+  if(!SB||!SBUSER){toast("Logga in för att få notiser");openAuth();return false}
+  if(isIOS()&&!isStandalone()){openSheet(`<div><span class="small">Notiser</span><h2>Lägg VARV. på hemskärmen.</h2></div>
+     <p class="muted">På iPhone kan bara appar på hemskärmen skicka notiser.</p>
+     <ol class="fr-steps"><li>Tryck på <b>Dela</b> längst ned i Safari.</li><li>Välj <b>Lägg till på hemskärmen</b>.</li><li>Öppna VARV. från hemskärmen och slå på notiser under Profil.</li></ol>
+     <button class="pill ghost block" id="ios-ok">Okej</button>`,()=>{$("#ios-ok").onclick=closeSheet});return false}
+  if(!pushOK()||!PUSHKEY){toast("Notiser fungerar inte i den här webbläsaren");return false}
+  const perm=await Notification.requestPermission();
+  if(perm!=="granted"){toast(perm==="denied"?"Notiser är avstängda för VARV. i telefonens inställningar":"Notiser är inte påslagna");return false}
+  try{const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
+    if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(PUSHKEY)});
+    if(!await pushSave(sub)){toast("Kunde inte slå på notiser. Försök igen.");return false}
+    set.push={on:true,ep:sub.endpoint,prefs:pushPrefs()};saveSet();HAPTIC("success");toast("Notiserna är påslagna");return true}
+  catch(e){toast("Kunde inte slå på notiser. Försök igen.");return false}
+}
+async function pushOff(){
+  try{const reg=await navigator.serviceWorker.ready;const sub=await reg.pushManager.getSubscription();if(sub){await SB.from("push_subs").delete().eq("endpoint",sub.endpoint);await sub.unsubscribe()}}catch(e){}
+  set.push=Object.assign({},set.push||{},{on:false});saveSet();toast("Notiserna är avstängda");
+}
+function renderNotis(){
+  const el=$("#pf-push");if(!el)return;const on=!!(set.push&&set.push.on),p=pushPrefs();
+  el.innerHTML=swRow("pu-on","Notiser","Dagens pass, nedräkning till loppet och när dina vänner tränar.",on)
+   +(on?`<div class="pu-sub">${swRow("pu-plan","Dagens pass","Vilket pass som står på tur, och en knuff om du inte har en plan.",p.plan)}${swRow("pu-race","Nedräkning till loppet","Med tips om vad du ska tänka på veckorna innan.",p.race)}${swRow("pu-fr","Vänner","När en vän tränar eller tävlar.",p.friends)}
+     <div class="field"><label for="pu-h">Tid för påminnelser</label><select id="pu-h">${Array.from({length:17},(_,i)=>i+5).map(h=>`<option value="${h}"${h===(+set.hour||8)?" selected":""}>${String(h).padStart(2,"0")}:00</option>`).join("")}</select></div></div>`:"");
+  $("#pu-on").onclick=async()=>{const b=$("#pu-on");b.disabled=true;if(on)await pushOff();else await pushOn();b.disabled=false;renderNotis()};
+  const tg=(id,k)=>{const b=$(id);if(b)b.onclick=()=>{const pr=pushPrefs();pr[k]=!pr[k];set.push.prefs=pr;saveSet();renderNotis();pushSave(null)}};
+  tg("#pu-plan","plan");tg("#pu-race","race");tg("#pu-fr","friends");
+  const h=$("#pu-h");if(h)h.onchange=e=>{set.hour=+e.target.value;saveSet();pushSave(null)};
+}
+
+/* ============ Kalender att prenumerera på ============ */
+async function calSync(){
+  const {data,error}=await SB.from("cal_feeds").upsert({user_id:SBUSER.id,ics:icsText(),updated_at:new Date().toISOString()}).select("token").maybeSingle();
+  if(error||!data)return null;return data.token;
+}
+function calUrl(t){return (window.VARV_SUPABASE.url||"").replace(/^https:/,"webcal:")+"/functions/v1/varv-cal?t="+t}
+
 /* ============ Routing ============ */
-const VIEWS=["hem","stationer","plan","race","logg","profil"];
+const VIEWS=["hem","stationer","plan","race","logg","vanner","profil"];
 function route(){
   const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):"hem";
   $$(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
   $$(".tab").forEach(a=>{if(a.dataset.v===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
   closeSheet();try{window.scrollTo(0,0)}catch(e){}if(v==="race"){if(RACE&&!RACE.end)set.tsub="run";renderTv()}
-  $("#avatar-btn").hidden=v==="profil";if(v==="profil")renderProfile();
+  $("#avatar-btn").hidden=v==="profil";$("#fr-btn").hidden=v==="profil";$("#fr-btn").classList.toggle("on",v==="vanner");if(v==="profil"){renderProfile();renderNotis()}if(v==="vanner")renderFriends();frDot();
   if(v==="hem")["#h-days","#h-target","#h-pace","#h-week","#h-streak"].forEach(id=>countUp($(id)));
   if(v==="logg"){drawRings(true);renderLog()}
 }
@@ -2895,7 +3065,7 @@ if(!window.claude)initSupabase();
 (async()=>{await initDb();try{if(window.claude&&window.claude.use){MCP=await window.claude.use("mcp");renderStrava();if(MCP&&set.strava){await FIRST;syncStrava(false)}}}catch(e){}})();
 (async()=>{try{if(window.claude&&window.claude.use){DL=await window.claude.use("downloads");if(DL)$("#cal-btn").hidden=false;renderGarmin()}}catch(e){}})();
 if(!window.claude&&"serviceWorker" in navigator&&location.protocol==="https:"){try{navigator.serviceWorker.register("sw.js")}catch(e){}}
-if(!window.claude){DL={raw:true,save:async({filename,data})=>{const u=URL.createObjectURL(new Blob([data],{type:"application/octet-stream"}));const a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return {status:"saved"}}};$("#cal-btn").hidden=false}
+if(!window.claude){DL={raw:true,save:async({filename,data})=>{if(/\.ics$/.test(filename)&&isIOS()){location.href="data:text/calendar;charset=utf-8,"+encodeURIComponent(data);return {status:"saved"}}const u=URL.createObjectURL(new Blob([data],{type:"application/octet-stream"}));const a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return {status:"saved"}}};$("#cal-btn").hidden=false}
 renderComm();renderGarmin();renderAvatar();renderEvents();
 GATE.then(()=>{const wait=Math.max(400,2300-performance.now());
   if(!set.onboarded){set.onboarded=true;saveSet()}

@@ -31,3 +31,10 @@ Inloggningssätt: e-post och lösenord, kod eller länk via e-post, glömt löse
 - Rekommenderade inställningar i Supabase under Authentication: Confirm email på, minsta lösenordslängd 8, Site URL och Redirect URLs satta till hemsidan.
 - Profiler, användarnamn#kod, vänner och profilbilder: kör `supabase/profiler.sql` i Supabase.
 - Ekonomi på den interna sidan (fliken Ekonomi): kör `supabase/ekonomi.sql` i Supabase.
+
+Notiser, vänners aktivitet och kalender att prenumerera på
+
+    Kör supabase/notiser.sql i Supabase. Byt först ut HEMLIG_NYCKEL längst ned i avsnittet om inställningar mot en lång slumpad hemlighet.
+    Skapa två Edge Functions i Supabase (Edge Functions → Deploy a new function → Via editor): varv-push med koden i supabase/functions/varv-push/index.ts och varv-cal med koden i supabase/functions/varv-cal/index.ts. Slå av "Enforce JWT verification" för båda.
+    Lägg in hemligheterna under Edge Functions → Secrets: VAPID_PUBLIC_KEY (samma som pushKey i supabase-config.js), VAPID_PRIVATE_KEY och CRON_SECRET (samma som HEMLIG_NYCKEL). Den privata nyckeln får aldrig ligga i koden.
+    På iPhone fungerar notiser bara när VARV. ligger på hemskärmen (iOS 16.4 eller senare).
