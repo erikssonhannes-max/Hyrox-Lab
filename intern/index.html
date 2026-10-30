@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>VARV. Statistik</title>
+<link rel="icon" href="../icons/varv-32.png">
+<link rel="apple-touch-icon" href="../icons/varv-180.png">
+<style>
+/* Intern statistiksida. Samma tokens som appen. En kolumn, rutor överst, diagram och tabell under. */
+:root{
+  --bg:#ffffff; --tile:#f4f4f6; --card:#ffffff; --ink:#111114; --muted:#6e6e76; --hair:#dcdce1;
+  --accent:#f0124a; --accent2:#ff6a3d; --link:#e0123f; --green:#1fae4b; --cyan:#0aa7c4; --good:#1a9a45; --bad:#e0123f;
+  --hot:linear-gradient(135deg,#ff2d55 0%,#ff4e45 55%,#ff7a3d 100%); --glow:rgba(240,18,74,.4);
+  --f:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --r:20px; --ease:cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#000000; --tile:#141416; --card:#232327; --ink:#f5f5f7; --muted:#9a9aa3; --hair:#2e2e33;
+  --accent:#ff2d55; --accent2:#ff7a45; --link:#ff4d6d; --green:#30d158; --cyan:#32c8e6; --good:#30d158; --bad:#ff4d6d; --glow:rgba(255,45,85,.45); color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.47 var(--f);letter-spacing:-.022em;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;grid-template-columns:minmax(0,1fr);padding:calc(28px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(48px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:grid;gap:12px}
+h1,h2,h3,p{margin:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem;letter-spacing:-.01em;color:var(--ink);text-decoration:none}
+.brand img{width:30px;height:30px;border-radius:8px;display:block}
+.pagehead{display:grid;gap:6px;padding:18px 0 10px}
+.eyebrow{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.pagehead h1{font-size:clamp(2.2rem,9vw,3.2rem);letter-spacing:-.045em;line-height:1.04;font-weight:600}
+.pagehead p{color:var(--muted)}
+.sechead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:26px 0 2px}
+.sechead h2{font-size:1.35rem;letter-spacing:-.03em;font-weight:600}
+.small{font-size:.82rem;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:700px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tile{background:var(--tile);border-radius:var(--r);padding:18px 16px;display:grid;gap:4px;min-width:0}
+.tile small{font-size:.74rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.tile b{font-size:clamp(1.9rem,8vw,2.5rem);font-weight:700;letter-spacing:-.045em;line-height:1.05;font-variant-numeric:tabular-nums}
+.tile span{font-size:.85rem;color:var(--muted)}
+.tile span.up{color:var(--good);font-weight:600}
+.tile.hot{background:var(--hot);color:#fff;box-shadow:0 18px 36px -20px var(--glow)}
+.tile.hot small,.tile.hot span{color:rgba(255,255,255,.88)}
+.card{background:var(--tile);border-radius:var(--r);padding:18px;display:grid;gap:12px;min-width:0}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-size:15px;font-family:var(--f)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.82rem;color:var(--muted)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+.seg{display:flex;background:var(--card);border-radius:10px;padding:2px;width:100%;max-width:340px}
+.seg button{all:unset;flex:1;text-align:center;cursor:pointer;padding:7px 6px;border-radius:8px;font-size:.88rem;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--tile);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
+@media (prefers-color-scheme:dark){.seg button[aria-pressed="true"]{background:#48484f}}
+.tablewrap{overflow-x:auto;background:var(--tile);border-radius:var(--r)}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{padding:12px 16px;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-size:.74rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+tbody tr+tr td{border-top:1px solid var(--hair)}
+td:first-child{font-weight:600}
+.pill{display:inline-flex;align-items:center;justify-content:center;border:0;cursor:pointer;border-radius:980px;padding:11px 20px;font:inherit;font-size:.95rem;font-weight:600;background:var(--hot);color:#fff;min-height:44px;box-shadow:0 10px 22px -12px var(--glow)}
+.pill.ghost{background:var(--tile);color:var(--ink);box-shadow:none;font-weight:500}
+.pill:focus-visible,.linkbtn:focus-visible,input:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+.linkbtn{background:none;border:0;color:var(--link);font:inherit;font-size:.92rem;cursor:pointer;padding:0}
+.login{max-width:440px;margin:6vh auto 0;display:grid;gap:14px}
+.login .card{gap:14px}
+input{font:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:11px 12px;width:100%;min-height:44px}
+.msg{min-height:1.2em;font-size:.88rem;color:var(--bad)}
+.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:22px}
+.demo{background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--accent);font-size:.82rem;font-weight:600;padding:8px 12px;border-radius:12px}
+@media (prefers-reduced-motion:no-preference){.bar{transform-box:fill-box;transform-origin:50% 100%;animation:grow .6s var(--ease) both}@keyframes grow{from{transform:scaleY(0)}}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="../"><img src="../icons/varv-192.png" alt="">VARV.</a>
+    <span class="small" id="stamp"></span>
+  </div>
+
+  <section id="login" class="login" hidden>
+    <div class="pagehead"><span class="eyebrow">Internt</span><h1>Statistik.</h1><p>Bara för VARV.-teamet. Skriv in koden för att se siffrorna.</p></div>
+    <form class="card" id="loginform">
+      <label class="small" for="code">Kod</label>
+      <input id="code" type="password" autocomplete="current-password" placeholder="32 tecken" required>
+      <p class="msg" id="msg" role="status"></p>
+      <button class="pill" type="submit">Visa statistik</button>
+    </form>
+    <p class="small">Koden får ni när ni kör filen supabase/stats.sql i Supabase. Den sparas bara i den här webbläsaren.</p>
+  </section>
+
+  <section id="dash" hidden>
+    <div class="pagehead"><span class="eyebrow">Internt</span><h1>Statistik.</h1><p>Användare och träning i VARV., direkt från appen. Uppdateras varje minut.</p></div>
+    <p class="demo" id="demo" hidden>Exempeldata. Logga in med koden för att se riktiga siffror.</p>
+
+    <div class="tiles" id="tiles"></div>
+
+    <div class="sechead"><h2>Senaste 30 dagarna</h2></div>
+    <div class="card chart">
+      <div class="seg" role="group" aria-label="Visa">
+        <button data-k="new_users" aria-pressed="true">Nya</button>
+        <button data-k="active_users" aria-pressed="false">Aktiva</button>
+        <button data-k="sessions" aria-pressed="false">Pass</button>
+      </div>
+      <svg id="daily" viewBox="0 0 640 172" role="img" aria-label="Diagram per dag"></svg>
+    </div>
+
+    <div class="sechead"><h2>Per månad</h2><span class="small">Aktiva = loggade minst ett pass</span></div>
+    <div class="card chart">
+      <div class="legend"><span><i style="background:var(--accent)"></i>Användare totalt</span><span><i style="background:var(--green)"></i>Aktiva</span></div>
+      <svg id="monthly" viewBox="0 0 640 172" role="img" aria-label="Användare per månad"></svg>
+    </div>
+    <div class="tablewrap" style="margin-top:10px"><table>
+      <thead><tr><th>Månad</th><th>Nya</th><th>Totalt</th><th>Aktiva</th><th>Pass</th></tr></thead>
+      <tbody id="mtable"></tbody>
+    </table></div>
+
+    <div class="foot">
+      <button class="pill ghost" id="refresh">Uppdatera nu</button>
+      <button class="linkbtn" id="logout">Logga ut från statistiken</button>
+    </div>
+    <p class="small" style="margin-top:8px">Räknar konton på hemsidan. Appen i Claude har egen lagring och syns inte här. Inga namn eller e-postadresser hämtas.</p>
+  </section>
+</div>
+
+<script>
+const SB_URL="https://kwjnezbazyahyzsmpuyg.supabase.co";
+const SB_KEY="sb_publishable_rsSw4ZNaOGdesoK8KkA55Q_1qZCngdD";
+const KEY="varv-intern-kod";
+const $=s=>document.querySelector(s);
+const fmt=n=>Number(n||0).toLocaleString("sv-SE");
+const MON=["jan","feb","mar","apr","maj","jun","jul","aug","sep","okt","nov","dec"];
+const MONL=["januari","februari","mars","april","maj","juni","juli","augusti","september","oktober","november","december"];
+let DATA=null,KDAY="new_users",TIMER=null;
+const getCode=()=>{try{return localStorage.getItem(KEY)||""}catch(e){return ""}};
+const setCode=c=>{try{c?localStorage.setItem(KEY,c):localStorage.removeItem(KEY)}catch(e){}};
+
+async function load(code){
+  const r=await fetch(SB_URL+"/rest/v1/rpc/varv_dashboard",{method:"POST",headers:{"apikey":SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({p_token:code})});
+  if(!r.ok){let t="";try{t=(await r.json()).message||""}catch(e){}
+    if(/Fel kod/.test(t))throw new Error("Fel kod. Kontrollera att du har kopierat hela koden.");
+    if(r.status===404)throw new Error("Statistiken är inte uppsatt än. Kör supabase/stats.sql i Supabase.");
+    throw new Error("Kunde inte hämta statistiken. Försök igen.")}
+  return r.json();
+}
+function show(view){$("#login").hidden=view!=="login";$("#dash").hidden=view!=="dash"}
+
+function render(d){
+  DATA=d;const t=d.totals;
+  const tile=(lab,val,sub,cls,hot)=>`<div class="tile${hot?" hot":""}"><small>${lab}</small><b>${fmt(val)}</b><span class="${cls||""}">${sub}</span></div>`;
+  $("#tiles").innerHTML=
+    tile("Användare totalt",t.users,t.users_7d?`+${fmt(t.users_7d)} senaste 7 dagarna`:"Inga nya senaste 7 dagarna",t.users_7d?"up":"",true)+
+    tile("Nya i dag",t.users_today,"konton skapade i dag")+
+    tile("Aktiva, 7 dagar",t.active_7d,"loggade minst ett pass")+
+    tile("Aktiva, 30 dagar",t.active_30d,t.users?`${Math.round(t.active_30d/t.users*100)} % av alla användare`:"av alla användare")+
+    tile("Loggade pass",t.sessions,"totalt sedan start")+
+    tile("Pass, 7 dagar",t.sessions_7d,t.active_7d?`${(t.sessions_7d/t.active_7d).toFixed(1).replace(".",",")} per aktiv användare`:"senaste veckan");
+  drawDaily();drawMonthly();
+  $("#mtable").innerHTML=[...d.monthly].reverse().map(m=>{const x=new Date(m.month+"T12:00:00");return `<tr><td>${MONL[x.getMonth()]} ${x.getFullYear()}</td><td>${fmt(m.new_users)}</td><td>${fmt(m.total_users)}</td><td>${fmt(m.active_users)}</td><td>${fmt(m.sessions)}</td></tr>`}).join("");
+  const u=new Date(d.updated);$("#stamp").textContent="Uppdaterad "+u.toLocaleTimeString("sv-SE",{hour:"2-digit",minute:"2-digit"});
+}
+function drawDaily(){
+  const rows=DATA.daily,W=640,H=170,B=140,T=20,n=rows.length,gap=4,bw=(W-gap*(n-1))/n;
+  const max=Math.max(1,...rows.map(r=>r[KDAY]));const step=Math.max(1,Math.ceil(max/4));const top=step*4;
+  let h=`<defs><linearGradient id="dg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent2)"/></linearGradient></defs>`;
+  for(let i=0;i<=4;i++){const y=B-(B-T)*i/4;h+=`<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="var(--hair)" stroke-width="${i?0.6:1}"/>`;if(i)h+=`<text x="${W}" y="${y-4}" text-anchor="end">${fmt(step*i)}</text>`}
+  rows.forEach((r,i)=>{const v=r[KDAY],x=i*(bw+gap),hh=v?Math.max(3,v/top*(B-T)):0;const last=i===n-1;
+    if(hh)h+=`<rect class="bar" style="animation-delay:${i*12}ms" x="${x.toFixed(1)}" y="${(B-hh).toFixed(1)}" width="${bw.toFixed(1)}" height="${hh.toFixed(1)}" rx="3" fill="${last?"url(#dg)":"var(--accent)"}" opacity="${last?1:.55}"><title>${r.day}: ${v}</title></rect>`;
+    const d=new Date(r.day+"T12:00:00");if((i%7===0&&i<n-4)||last)h+=`<text x="${last?W:(x+bw/2).toFixed(1)}" y="${B+22}" text-anchor="${last?"end":i===0?"start":"middle"}">${last?"I dag":d.getDate()+" "+MON[d.getMonth()]}</text>`});
+  $("#daily").innerHTML=h;
+}
+function drawMonthly(){
+  const rows=DATA.monthly,W=640,B=140,T=20,n=rows.length;
+  const max=Math.max(1,...rows.map(r=>r.total_users));const step=Math.max(1,Math.ceil(max/4));const top=step*4;
+  const X=i=>n<2?W/2:30+i*(W-90)/(n-1),Y=v=>B-v/top*(B-T);
+  let h="";for(let i=0;i<=4;i++){const y=B-(B-T)*i/4;h+=`<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="var(--hair)" stroke-width="${i?0.6:1}"/>`;if(i)h+=`<text x="${W}" y="${y-4}" text-anchor="end">${fmt(step*i)}</text>`}
+  const line=(k,c)=>{const pts=rows.map((r,i)=>`${X(i).toFixed(1)},${Y(r[k]).toFixed(1)}`);
+    h+=`<polyline points="${pts.join(" ")}" fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
+    rows.forEach((r,i)=>{h+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(r[k]).toFixed(1)}" r="${i===n-1?5:3.5}" fill="${c}" stroke="var(--tile)" stroke-width="2"><title>${r[k]}</title></circle>`})};
+  line("total_users","var(--accent)");line("active_users","var(--green)");
+  rows.forEach((r,i)=>{const d=new Date(r.month+"T12:00:00");if(n<=8||i%2===0||i===n-1)h+=`<text x="${X(i).toFixed(1)}" y="${B+22}" text-anchor="middle">${MON[d.getMonth()]} ${String(d.getFullYear()).slice(2)}</text>`});
+  $("#monthly").innerHTML=h;
+}
+async function start(code,quiet){
+  try{const d=await load(code);setCode(code);show("dash");$("#demo").hidden=true;render(d);
+    clearInterval(TIMER);TIMER=setInterval(()=>load(code).then(render).catch(()=>{}),60000);return true}
+  catch(e){if(!quiet){$("#msg").textContent=e.message}else{show("login")}return false}
+}
+function demo(){
+  const today=new Date();const daily=[];for(let i=29;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);const k=30-i;daily.push({day:d.toISOString().slice(0,10),new_users:Math.round(2+k*.4+(k%3)),active_users:Math.round(8+k*.9),sessions:Math.round(14+k*1.7)})}
+  const monthly=[];let tot=0;["2026-11-01","2026-12-01","2027-01-01","2027-02-01"].forEach((m,i)=>{const nu=[40,85,130,190][i];tot+=nu;monthly.push({month:m,new_users:nu,total_users:tot,active_users:Math.round(tot*.55),sessions:Math.round(tot*3.2)})});
+  show("dash");$("#demo").hidden=false;
+  render({updated:new Date().toISOString(),totals:{users:445,users_today:6,users_7d:41,active_7d:118,active_30d:236,sessions:1424,sessions_7d:362},monthly,daily});
+}
+$("#loginform").addEventListener("submit",e=>{e.preventDefault();$("#msg").textContent="";const c=$("#code").value.trim();if(c)start(c)});
+document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b||!DATA)return;KDAY=b.dataset.k;document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b));drawDaily()});
+$("#refresh").onclick=()=>{const c=getCode();if(c)start(c);else if(!$("#demo").hidden)demo()};
+$("#logout").onclick=()=>{setCode("");clearInterval(TIMER);DATA=null;$("#code").value="";show("login")};
+if(location.hash==="#exempel")demo();
+else{const c=getCode();if(c)start(c,true);else show("login")}
+</script>
+</body>
+</html>
