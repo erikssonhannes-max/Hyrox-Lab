@@ -2421,7 +2421,7 @@ function renderHome(){
   const me=myEvent();$("#h-racedate").textContent=(me?me.c+" · ":"")+$("#h-racedate").textContent;
   const nx=me&&me.e>=today()?me:evUpcoming().find(e=>e.r==="norden");$("#h-next").innerHTML=nx?evRow(nx):'<div class="empty">Inga kommande lopp i Norden just nu.</div>';
   const el=$("#today");
-  if(!set.test){el.innerHTML=`<span class="tag">Kom igång</span><h3>Gör starttestet</h3><p>Tre korta tester på gymmet ger dig en personlig måltid, rätt tempo i passen och pulszoner.</p><div class="acts"><button class="pill" data-open="test">Starta testet</button><a class="pill ghost" href="#plan">Se planen</a></div>`;return}
+  if(!set.test){el.innerHTML=`<span class="tag">Träning</span><h3>Logga ditt pass</h3><p>Spara passet direkt efter träningen. Då följer du hur mycket du tränar och hur formen utvecklas.</p><div class="acts"><button class="pill" id="today-log">Logga pass</button><a class="pill ghost" href="#plan">Se planen</a></div>`;$("#today-log").onclick=()=>$("#log-new").click();return}
   const w=PLAN[curWeekIdx()];
   if(!w){el.innerHTML="";return}
   const td=today(),pend=w.ses.filter(s=>!sesDone(w,s));
@@ -2711,7 +2711,7 @@ $("#pf-del").onclick=async()=>{const b=$("#pf-del");
   LOGS=[];PRS={};PK={};RACE=null;const keepDate=new Date();keepDate.setDate(keepDate.getDate()+84);
   set=JSON.parse(JSON.stringify(DEF));set.date=iso(keepDate);set.days=DEFDAYS[4];set.per=4;saveSet();
   $("#p-range").value=set.target;$("#p-date").value=set.date;renderDays();renderSplits();renderAllData();renderPack();renderRace();renderCues();renderAvatar();renderProfile();
-  delete b.dataset.c;toast("Allt är raderat");setTimeout(()=>openTest(true),600)};
+  delete b.dataset.c;toast("Allt är raderat");set.onboarded=true;saveSet();renderHome()};
 
 /* ============ Routing ============ */
 const VIEWS=["hem","stationer","plan","race","logg","profil"];
@@ -2743,8 +2743,8 @@ if(!window.claude&&"serviceWorker" in navigator&&location.protocol==="https:"){t
 if(!window.claude){DL={raw:true,save:async({filename,data})=>{const u=URL.createObjectURL(new Blob([data],{type:"application/octet-stream"}));const a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return {status:"saved"}}};$("#cal-btn").hidden=false}
 renderComm();renderGarmin();renderAvatar();renderEvents();
 GATE.then(()=>{const wait=Math.max(400,2300-performance.now());
-  if(!set.onboarded)setTimeout(()=>{if(!set.onboarded){if(location.hash&&location.hash!=="#hem")location.hash="#hem";openTest(true)}},wait);
-  else if(!set.toured)setTimeout(maybeTour,Math.max(0,wait-400))});
+  if(!set.onboarded){set.onboarded=true;saveSet()}
+  if(!set.toured)setTimeout(maybeTour,Math.max(0,wait-400))});
 /* Startanimation */
 (()=>{const sp=document.getElementById("splash");if(!sp)return;let done=false;
   const end=()=>{if(done)return;done=true;sp.remove();const v=document.querySelector(".view.on");if(v&&!RM()){v.classList.remove("on");void v.offsetWidth;v.classList.add("on")}
