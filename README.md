@@ -30,3 +30,4 @@ Inloggningssätt: e-post och lösenord, kod eller länk via e-post, glömt löse
 - Radera konto i Profil → Konto. Kräver att `supabase/konto.sql` körts i Supabase.
 - Rekommenderade inställningar i Supabase under Authentication: Confirm email på, minsta lösenordslängd 8, Site URL och Redirect URLs satta till hemsidan.
 - Profiler, användarnamn#kod, vänner och profilbilder: kör `supabase/profiler.sql` i Supabase.
+- Ekonomi på den interna sidan (/intern/, fliken Ekonomi): kör `supabase/ekonomi.sql` i Supabase.
