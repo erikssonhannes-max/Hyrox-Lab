@@ -139,6 +139,26 @@ Kurvor: lättnad `cubic-bezier(.2,.8,.2,1)`, fjädring `cubic-bezier(.34,1.4,.64
 | Rak och oförändrad | Roterad, sträckt eller beskuren |
 | VARV. | Varv, varv eller VARV utan punkt |
 
+## Framsteg och belöningar
+
+Belöningar ska kännas som Apple Fitness, inte som ett spel. Inga ord som XP, level up eller poäng. Färgerna i medaljerna är den enda plats där metalltoner används.
+
+| Del | Vad den visar | Regel |
+| --- | --- | --- |
+| **Form** | Ett tal och en kurva för de senaste tio veckorna, plus en streckad linje till loppet om du följer planen | Viktat snitt av träningen de senaste sex veckorna. Hårda pass räknas lite mer. En nedgång visas i grått, aldrig i rött. |
+| **Varv** | Hur mycket du har tränat | Ett varv per tio minuter, högst tolv per pass. Två extra för ett pass från planen och fem extra för ett klarat veckomål. |
+| **Nivåer** | Start, Brons, Silver, Guld, Platina, Elit | 0, 50, 150, 350, 700 och 1 200 varv. Nivån sjunker aldrig. |
+| **Utmärkelser** | 16 milstolpar: antal pass, timmar, veckor i rad, alla åtta stationer, pass från planen, rekord, första loppet, under måltid | Rund medalj. Tagen är i färg, inte tagen är grå med en ring som visar hur långt du har kommit. |
+| **Topplista** | Varv denna vecka, flikarna Vänner och Alla | Jämför flit, inte fart. Börjar om på måndag. Du syns bara om du har slagit på reglaget. |
+
+Medaljfärger efter typ: hot för antal och plan, turkos för tid, grönt för veckor och stationer, guld för rekord och lopp.
+
+En ny utmärkelse eller nivå visas i ett ark med stor medalj, en glansanimation, konfetti och en dubbel vibration. Visa högst ett sådant ark åt gången.
+
+## Genomgång
+
+Första gången appen öppnas efter starttestet får användaren en genomgång i tio steg. Varje steg tonar ner skärmen och lyfter fram en del med en ljus ring, med ett kort som har stegnummer, rubrik, en eller två meningar och knapparna Tillbaka och Nästa. Hoppa över finns alltid. Genomgången kan visas igen under Profil, Hjälp.
+
 ## För dig som kodar
 
 All kod ligger i `index.html`. Färgerna är CSS-variabler på `:root` med egna värden för mörkt läge. Använd alltid variablerna, aldrig hex direkt.
