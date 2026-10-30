@@ -113,9 +113,15 @@ async function runLike(activityId: number, liker: string) {
   return sent;
 }
 
+async function runTest(user: string) {
+  const { data: subs } = await SB.from("push_subs").select("*").eq("user_id", user);
+  for (const s of (subs || []) as Sub[]) await send(s, { title: "Notiserna fungerar", body: "Så här ser det ut när VARV. påminner dig om dagens pass.", url: "/#hem", tag: "test" });
+  return (subs || []).length;
+}
+
 Deno.serve(async (req) => {
   if (req.headers.get("x-varv-secret") !== Deno.env.get("CRON_SECRET")) return new Response("Nej", { status: 401 });
   const b = await req.json().catch(() => ({}));
-  const n = b.kind === "daily" ? await runDaily() : b.kind === "activity" ? await runActivity(+b.id) : b.kind === "like" ? await runLike(+b.activity, String(b.user)) : 0;
+  const n = b.kind === "daily" ? await runDaily() : b.kind === "activity" ? await runActivity(+b.id) : b.kind === "like" ? await runLike(+b.activity, String(b.user)) : b.kind === "test" ? await runTest(String(b.user)) : 0;
   return Response.json({ sent: n });
 });
