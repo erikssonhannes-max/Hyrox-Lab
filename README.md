@@ -4,6 +4,10 @@ Träningsapp för Hyrox: stationsguider, plan efter måltid, splittider, racetid
 
 VARV. är ett fristående projekt och har ingen koppling till HYROX.
 
+Följ VARV.: [TikTok](https://www.tiktok.com/@varvtraining) · [LinkedIn](https://www.linkedin.com/company/varv)
+
+Intern statistik: [/intern/](https://erikssonhannes-max.github.io/Hyrox-Lab/intern/) (kräver kod, se `supabase/stats.sql`).
+
 ## Inloggning med Supabase
 
 Appen fungerar utan konto. När Supabase är inkopplat kan man skapa konto och logga in, och då sparas pass, rekord och inställningar i kontot och följer med mellan enheter. Det man loggat på enheten innan flyttas till kontot vid första inloggningen.
