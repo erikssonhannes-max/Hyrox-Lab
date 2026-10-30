@@ -262,7 +262,8 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 .pr{background:var(--tile);border-radius:18px;padding:14px;display:grid;gap:3px;border:0;text-align:left;cursor:pointer;min-width:0}
 .pr small{color:var(--muted);font-size:.78rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pr b{font-size:1.4rem;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.pr b.none{color:var(--accent);font-size:1rem;font-weight:500;padding-block:4px}
+.pr b.none{color:var(--link);font-size:.95rem;font-weight:600;padding-block:5px}
+.pr:has(b.none){background:transparent;box-shadow:inset 0 0 0 1px var(--hair)}
 .pr .vs{font-size:.76rem}
 .filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;scrollbar-width:none}
 .filters::-webkit-scrollbar{display:none}
@@ -409,6 +410,13 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 .tr-foot .pill{flex:1;min-height:46px;padding:10px 16px}
 .tr-foot .pill.ghost{background:var(--tile)}
 .tr-foot .pill:focus-visible{outline-offset:3px}
+/* Finputs */
+.sheet:focus{outline:none}
+.small a,.note a,p a{color:var(--link);text-decoration:none}
+.today .acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.today .acts .pill{padding-inline:14px}
+#hist-more{background:var(--tile)}
+.close:focus:not(:focus-visible){outline:none}
 /* Anpassning, puls, gemenskap */
 .banner{background:var(--tile);border-radius:var(--r);padding:16px;display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:12px}
 .banner b{display:block;font-size:1rem;letter-spacing:-.01em}
@@ -828,7 +836,7 @@ a.row{color:inherit;text-decoration:none}
 <canvas id="confetti" aria-hidden="true"></canvas>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="scrim" id="scrim" hidden></div>
-<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Detaljer" hidden><div class="in" id="sheet-in"></div></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Detaljer" tabindex="-1" hidden><div class="in" id="sheet-in"></div></div>
 
 <div class="tabbar"><nav aria-label="Huvudmeny">
   <a class="tab" href="#hem" data-v="hem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Hem</a>
@@ -979,7 +987,7 @@ function openSheet(html,mount){
   $("#sheet-in").innerHTML=`<div class="shtop"><span></span><span class="grab"></span><button class="close" id="sh-x" aria-label="Stäng">✕</button></div>`+html;
   const sh=$("#sheet"),sc=$("#scrim");sh.hidden=false;sc.hidden=false;sh.scrollTop=0;
   requestAnimationFrame(()=>{sh.classList.add("on");sc.classList.add("on")});
-  $("#sh-x").onclick=closeSheet;if(mount)mount();setTimeout(()=>$("#sh-x").focus({preventScroll:true}),50);
+  $("#sh-x").onclick=closeSheet;if(mount)mount();setTimeout(()=>$("#sheet").focus({preventScroll:true}),50);
 }
 function closeSheet(){const sh=$("#sheet"),sc=$("#scrim");if(sh.hidden)return;sh.classList.remove("on");sc.classList.remove("on");setTimeout(()=>{if(!sh.classList.contains("on")){sh.hidden=true;sc.hidden=true}},300)}
 $("#scrim").onclick=closeSheet;
@@ -1632,10 +1640,10 @@ function renderForm(){
   h+=`<text x="2" y="130">10 v sedan</text><text x="${pp[ti][0].toFixed(1)}" y="130" text-anchor="${fp.length>1?"middle":"end"}">I dag</text>`;
   if(fp.length>1)h+=`<text x="${W}" y="130" text-anchor="end">${fd.raceIn?"Loppet":"+5 v"}</text>`;
   const nx=P.next;
-  el.innerHTML=`<div class="formhead"><div class="formnum"><b>${Math.round(fd.now)}</b><span>i form</span></div>${LOGS.length?`<span class="delta${dl>0?" up":""}">${dl>0?"+":dl<0?"−":"±"}${Math.abs(dl)} på 4 veckor</span>`:""}</div>
+  el.innerHTML=`<div class="formhead"><div class="formnum"><b>${Math.round(fd.now)}</b><span>formtal</span></div>${LOGS.length?`<span class="delta${dl>0?" up":""}">${dl>0?"+":dl<0?"−":"±"}${Math.abs(dl)} på 4 veckor</span>`:""}</div>
    <p class="formmsg">${esc(formMsg(fd))}</p>
    <svg class="formsvg" viewBox="0 0 ${W} 136" role="img" aria-label="Formkurva för de senaste tio veckorna">${h}</svg>
-   <button class="lvl" id="lvl-btn">${tierHTML(P.tier)}<div><b>${P.tier.n} · ${P.varv} varv</b><small>${P.weekVarv} varv denna vecka${nx?` · ${P.toNext} kvar till ${nx.n}`:" · Högsta nivån"}</small><div class="lvbar"><i style="width:${Math.round(P.frac*100)}%"></i></div></div><span class="chev">›</span></button>`;
+   <button class="lvl" id="lvl-btn">${tierHTML(P.tier)}<div><b>${P.tier.n} · ${P.varv} varv</b><small>${P.weekVarv} denna vecka · ${nx?`${P.toNext} till ${nx.n}`:"högsta nivån"}</small><div class="lvbar"><i style="width:${Math.round(P.frac*100)}%"></i></div></div><span class="chev">›</span></button>`;
   $("#lvl-btn").onclick=openLevels;
 }
 function sparkHome(){
@@ -1794,6 +1802,7 @@ function weekStats(){
   while(m[iso(cur)]){streak++;cur.setDate(cur.getDate()-7)}
   return {now:m[ws]||{n:0,min:0,types:{}},bars,streak,total:LOGS.reduce((a,l)=>a+(+l.min||0),0)};
 }
+let HN=10;
 function renderLog(){
   noteStore();const st=weekStats(),goal=set.per;
   const wk=PLAN[curWeekIdx()];const mg=wk?wk.ses.reduce((a,x)=>a+x.m,0):goal*50;
@@ -1810,8 +1819,9 @@ function renderLog(){
   $("#filters").innerHTML=LOGS.length>1?types.map(t=>`<button class="chip" data-f="${esc(t)}" aria-pressed="${t===filt}">${esc(t)}</button>`).join(""):"";
   $("#hist-count").textContent=LOGS.length?`${LOGS.length} pass`:"";
   const list=[...LOGS].filter(l=>filt==="Alla"||l.type===filt).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(b.created||0)-(a.created||0));
-  $("#hist").innerHTML=list.length?list.slice(0,80).map(l=>{const d=new Date(l.date+"T12:00:00");
+  $("#hist").innerHTML=list.length?list.slice(0,HN).map(l=>{const d=new Date(l.date+"T12:00:00");
     return `<div class="row hrow" data-edit="${esc(l.id)}" role="button" tabindex="0" aria-label="Ändra ${esc(l.type)}"><div class="badge">${d.getDate()}<br>${d.toLocaleDateString("sv-SE",{month:"short"}).replace(".","")}</div><div><h3>${esc(l.type)}${l.src==="strava"?'<span class="src">Strava</span>':""}</h3><p>${l.min} min${l.rpe?" · känsla "+l.rpe+"/5":""}${l.stations&&l.stations.length?" · "+esc(l.stations.join(", ")):""}</p>${l.note?`<p>${esc(l.note)}</p>`:""}</div><span class="chev">›</span></div>`}).join(""):`<div class="empty">Inga pass ännu. Tryck Logga pass ovan, eller Logga passet i din plan.</div>`;
+  {let mb=$("#hist-more");if(!mb){mb=document.createElement("button");mb.id="hist-more";mb.className="pill ghost block";mb.style.marginTop="10px";$("#hist").after(mb);mb.onclick=()=>{HN+=20;renderLog()}}mb.hidden=list.length<=HN;mb.textContent=`Visa fler pass (${list.length-HN} till)`}
   renderProgress();
 }
 
@@ -1824,7 +1834,7 @@ function renderHome(){
   $("#h-target").textContent=fmtHM(set.target);$("#h-pace").textContent=fmt(t.pace);
   $("#h-week").textContent=`${st.now.n}/${set.per}`;$("#h-streak").textContent=st.streak;
   const med=set.g==="w"?5780:5276,src=PRS.race||set.target*60,dm=Math.round((src-med)/60);
-  $("#h-med").innerHTML=`${PRS.race?"Ditt rekord":"Din måltid"} är <b class="${dm<=0?"ahead":"behind"}">${dm===0?"lika med":Math.abs(dm)+" min "+(dm<0?"snabbare än":"långsammare än")}</b> mediantiden i Open ${set.g==="w"?"dam, 1:36":"herr, 1:28"}.`;
+  $("#h-med").innerHTML=`${PRS.race?"Ditt rekord":"Din måltid"} är <b style="color:var(--ink);font-weight:600">${dm===0?"lika med":Math.abs(dm)+" min "+(dm<0?"snabbare än":"långsammare än")}</b> mediantiden i Open ${set.g==="w"?"dam, 1:36":"herr, 1:28"}.`;
   const me=myEvent();$("#h-racedate").textContent=(me?me.c+" · ":"")+$("#h-racedate").textContent;
   const nx=me&&me.e>=today()?me:evUpcoming().find(e=>e.r==="norden");$("#h-next").innerHTML=nx?evRow(nx):'<div class="empty">Inga kommande lopp i Norden just nu.</div>';
   const el=$("#today");
@@ -1836,7 +1846,7 @@ function renderHome(){
   const tod=pend.find(s=>s.date===td),late=pend.find(s=>s.date<td),next=tod||late||pend[0];
   const tag=tod?"Dagens pass":late?`Att ta igen · ${dayLbl(next.date)}`:`Nästa pass · ${dayLbl(next.date)}`;
   const am=ADAPT&&["progress","lighter","recover"].includes(ADAPT.mode)?`<p class="small">${{progress:"Planen har ökat",lighter:"Planen är lättare",recover:"Planen är lugnare"}[ADAPT.mode]} den här veckan utifrån din logg.</p>`:"";
-  el.innerHTML=`<span class="tag">${tag} · vecka ${w.w}</span><h3>${next.t} <span class="muted" style="font-weight:400;font-size:1rem">${next.m} min</span></h3><span class="zone z${next.z[0]}">${zoneTxt(next.z)}</span><p>${next.d}</p>${am}<div class="acts"><button class="pill" id="today-log">Logga när du är klar</button><a class="pill ghost" href="#plan">Hela planen</a></div>`;
+  el.innerHTML=`<span class="tag">${tag} · vecka ${w.w}</span><h3>${next.t} <span class="muted" style="font-weight:400;font-size:1rem">${next.m} min</span></h3><span class="zone z${next.z[0]}">${zoneTxt(next.z)}</span><p>${next.d}</p>${am}<div class="acts"><button class="pill" id="today-log">Logga passet</button><a class="pill ghost" href="#plan">Hela planen</a></div>`;
   $("#today-log").onclick=()=>prefill({type:next.t,min:next.m,stations:next.s||[],note:`Vecka ${w.w}`,plan:next.key+"@"+set.date});
 }
 
