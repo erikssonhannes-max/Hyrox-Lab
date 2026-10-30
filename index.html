@@ -739,6 +739,17 @@ a.row{color:inherit;text-decoration:none}
 .pk-add .box{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:var(--link);font-weight:600;font-size:1.2rem;justify-self:center}
 .pk-add input{border:0;background:none;padding:8px 0;min-height:40px}
 .pk-add input:focus-visible{outline:none}
+.near{display:grid;grid-auto-flow:column;grid-auto-columns:min(46%,190px);gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:2px 16px 6px;scrollbar-width:none}
+.near::-webkit-scrollbar{display:none}
+.near-card{scroll-snap-align:start;display:grid;gap:4px;align-content:start;text-align:left;border:0;background:var(--tile);color:var(--ink);border-radius:var(--r);padding:16px;min-height:150px;cursor:pointer;font:inherit}
+.near-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.near-date{display:grid;justify-items:center;background:var(--card);border-radius:12px;width:46px;height:50px;align-content:center;font-size:.72rem;color:var(--accent);font-weight:600;line-height:1.1}
+.near-date b{font-size:1.25rem;color:var(--ink)}
+.near-city{font-size:1.15rem;font-weight:600;letter-spacing:-.02em;line-height:1.2}
+.near-sub{font-size:.82rem;color:var(--muted)}
+.near-when{font-size:.85rem;font-weight:600;color:var(--accent);margin-top:auto;padding-top:8px}
+.near-card.mine{box-shadow:inset 0 0 0 2px var(--accent)}
+.near-foot{margin-top:8px}.near-foot .linkbtn{font-size:inherit}
 </style>
 
 <div id="gate" hidden role="dialog" aria-modal="true" aria-labelledby="gt-h">
@@ -783,8 +794,9 @@ a.row{color:inherit;text-decoration:none}
     <div class="sechead"><h2>Din form</h2><a href="#logg">Framsteg</a></div>
     <a class="tile tap formmini" href="#logg" id="h-form" aria-label="Din form och nivå"></a>
 
-    <div class="sechead"><h2>Nästa tävling</h2><a href="#race" data-tv-go="kal">Alla tävlingar</a></div>
-    <div class="group" id="h-next"></div>
+    <div class="sechead"><h2>Tävlingar nära dig</h2><a href="#race" data-tv-go="kal">Alla tävlingar</a></div>
+    <div class="near" id="h-next"></div>
+    <p class="small near-foot" id="h-near-foot"></p>
   </div>
 </section>
 
@@ -1583,7 +1595,7 @@ $("#p-days").onclick=e=>{const b=e.target.closest("[data-day]");if(!b)return;con
 renderDays();
 let tmr;
 pr.oninput=()=>{set.target=+pr.value;renderSplits();renderHome();if(set.fmt!=="singel")updDbl();clearTimeout(tmr);tmr=setTimeout(()=>{saveSet();renderPlan();renderPRs();renderHome();renderGarmin()},250)};
-pd.onchange=()=>{if(pd.value){set.date=pd.value;set.noRace=false;set.planStart=today();saveSet();renderPlan();renderHome()}};
+pd.onchange=()=>{if(pd.value){const cur=myEvent();set.date=pd.value;set.noRace=false;if(!(cur&&cur.s<=set.date&&set.date<=cur.e))delete set.race;else set.race=raceKey(cur);set.planStart=today();saveSet();renderPlan();renderHome()}};
 
 /* ============ Lagring: logg och rekord ============ */
 let LOGS=[],PRS={},mode="local",col=null;
@@ -2655,7 +2667,7 @@ function renderHome(){
   const med=set.g==="w"?5780:5276,src=PRS.race||set.target*60,dm=Math.round((src-med)/60);
   $("#h-med").innerHTML=`${PRS.race?"Ditt rekord":"Din måltid"} är <b style="color:var(--ink);font-weight:600">${dm===0?"lika med":Math.abs(dm)+" min "+(dm<0?"snabbare än":"långsammare än")}</b> mediantiden i Open ${set.g==="w"?"dam, 1:36":"herr, 1:28"}.`;
   const me=myEvent();if(!set.noRace)$("#h-racedate").textContent=(me?me.c+" · ":"")+$("#h-racedate").textContent;
-  const nx=me&&me.e>=today()?me:evUpcoming().find(e=>e.r==="norden");$("#h-next").innerHTML=nx?evRow(nx):'<div class="empty">Inga kommande lopp i Norden just nu.</div>';
+  renderNear();
   const el=$("#today");
   if(!set.test){el.innerHTML=`<span class="tag">Träning</span><h3>Logga ditt pass</h3><p>Spara passet direkt efter träningen. Då följer du hur mycket du tränar och hur formen utvecklas.</p><div class="acts"><button class="pill" id="today-log">Logga pass</button><a class="pill ghost" href="#plan">Se planen</a></div>`;$("#today-log").onclick=()=>$("#log-new").click();return}
   const w=PLAN[curWeekIdx()];
@@ -2914,7 +2926,13 @@ async function loadEvents(){const C=window.VARV_SUPABASE||{};if(!C.url||!C.anonK
     const rows=await r.json();if(applyEvents(rows)){try{localStorage.setItem("varv-events2",JSON.stringify(rows))}catch(e){}try{renderEvents();renderHome()}catch(e){}}}catch(e){}}
 setTimeout(loadEvents,1200);
 const evUpcoming=()=>EVENTS.filter(e=>e.e>=today()).sort((a,b)=>a.s.localeCompare(b.s));
-const myEvent=()=>set.noRace?null:(EVENTS.find(e=>e.s<=set.date&&set.date<=e.e)||null);
+/* Mitt lopp sparas som stad och startdatum, aldrig bara som datum: flera lopp kan pågå samma dagar. */
+const raceKey=e=>e?{c:e.c,s:e.s}:null;
+function myEvent(){if(set.noRace)return null;
+  const k=set.race;if(k&&k.c){const hit=EVENTS.find(e=>e.c===k.c&&e.s===k.s)||EVENTS.find(e=>e.c===k.c&&e.s<=set.date&&set.date<=e.e);if(hit)return hit}
+  const m=EVENTS.filter(e=>e.s<=set.date&&set.date<=e.e);if(!m.length)return null;if(m.length===1)return m[0];
+  let g=null;try{g=myGeo()}catch(x){}
+  return m.slice().sort((a,b)=>(a.r==="norden"?0:1)-(b.r==="norden"?0:1)||(g&&GEO[a.c]&&GEO[b.c]?kmTo(g,GEO[a.c])-kmTo(g,GEO[b.c]):0))[0]}
 function freeDate(){const d=new Date(today()+"T12:00:00");d.setDate(d.getDate()+84);while(EVENTS.some(e=>e.s<=iso(d)&&iso(d)<=e.e))d.setDate(d.getDate()+1);return iso(d)}
 function evWhen(e){if(evLive(e))return '<span class="ev-live">Pågår</span>';const d=evIn(e);return d===1?"i morgon":`om ${d} d`}
 function evRow(e){const a=evD(e.s),me=myEvent()===e;
@@ -2950,9 +2968,9 @@ function openEvent(i){const e=EVENTS[i];if(!e)return;const me=myEvent()===e,live
    ${me?`<button class="pill ghost block" id="ev-rm">Ta bort som mitt lopp</button>`:""}
    <div class="grid2"><a class="pill ghost" href="https://hyrox.com" target="_blank" rel="noopener">Biljetter ↗</a>${DL?'<button class="pill ghost" id="ev-cal">Lägg i kalendern</button>':'<span></span>'}</div>`,()=>{
     const rm=$("#ev-rm");if(rm)rm.onclick=()=>{if(!rm.dataset.c){rm.dataset.c=1;rm.textContent="Tryck igen för att ta bort";rm.style.color="var(--bad)";return}
-      set.noRace=true;set.date=freeDate();set.planStart=today();saveSet();const pd=$("#p-date");if(pd)pd.value=set.date;
+      set.noRace=true;delete set.race;set.date=freeDate();set.planStart=today();saveSet();const pd=$("#p-date");if(pd)pd.value=set.date;
       renderPlan();renderHome();renderEvents();try{syncProfile()}catch(x){}closeSheet();toast(`${e.c} är inte längre ditt lopp. Planen fortsätter utan tävling.`)};
-    const b=$("#ev-set");if(b)b.onclick=()=>{set.noRace=false;set.date=$("#ev-day").value;set.planStart=today();saveSet();const pd=$("#p-date");if(pd)pd.value=set.date;
+    const b=$("#ev-set");if(b)b.onclick=()=>{set.noRace=false;set.race=raceKey(e);set.date=$("#ev-day").value;set.planStart=today();saveSet();const pd=$("#p-date");if(pd)pd.value=set.date;
       renderPlan();renderHome();renderEvents();closeSheet();toast(`${e.c} är ditt lopp. Planen är uppdaterad.`);HAPTIC("success")};
     const c=$("#ev-cal");if(c)c.onclick=async()=>{try{const nm=`varv-${e.c.toLowerCase().replace(/[^a-z]/g,"")}`;const r=await DL.save(DL.raw?{filename:nm+".ics",data:evIcs(e)}:{filename:nm+".zip",data:makeZip([{name:nm+".ics",data:evIcs(e)}])});if(r&&r.status==="saved")toast("Loppet är sparat i en kalenderfil")}catch(err){saveErr(err)}};
   });
@@ -3044,7 +3062,7 @@ async function loadFriendData(force){
   FRC=out;return out;
 }
 function raceLine(nr,partnerId){
-  const ev=nr.date?EVENTS.find(e=>e.s<=nr.date&&nr.date<=e.e):null;
+  const ev=nr.date?(EVENTS.find(e=>e.c===nr.name&&e.s<=nr.date&&nr.date<=e.e)||(nr.name?null:EVENTS.find(e=>e.s<=nr.date&&nr.date<=e.e))):null;
   const where=nr.name||(ev&&ev.c)||"Lopp";const when=ev?evRange(ev):nr.date?new Date(nr.date+"T12:00:00").toLocaleDateString("sv-SE",{day:"numeric",month:"short",year:"numeric"}):"";
   const venue=nr.venue||(ev&&ev.v)||"";const div=nr.div||"";
   const dbl=/Doubles/.test(div)&&partnerId&&NAMES[partnerId]?` med ${esc(NAMES[partnerId].username)}`:"";
@@ -3197,7 +3215,7 @@ function openStart(){
       else if(d.sg){st.target=+d.sg}else if(d.fmt){set.fmt=d.fmt;if(set.fmt==="mixed")set.k="open"}else if(d.k){set.k=d.k}else if(d.g){set.g=d.g}else return;draw()});
     r.addEventListener("change",e=>{if(e.target.id==="st-d"&&e.target.value){st.date=e.target.value;st.ev=null;st.none=false;draw()}});
     r.addEventListener("input",e=>{if(e.target.id==="st-g"){st.target=+e.target.value;$("#st-gv").textContent=fmtHM(st.target);$$("#st-body [data-sg]").forEach(c=>c.setAttribute("aria-pressed",+c.dataset.sg===st.target))}});
-    const fin=go=>{if(go){const ev=st.ev!=null?EVENTS[st.ev]:null;set.noRace=!ev&&!st.date;set.date=ev?ev.s:st.date||freeDate();set.target=st.target;set.planStart=today()}
+    const fin=go=>{if(go){const ev=st.ev!=null?EVENTS[st.ev]:null;set.noRace=!ev&&!st.date;if(ev)set.race=raceKey(ev);else delete set.race;set.date=ev?ev.s:st.date||freeDate();set.target=st.target;set.planStart=today()}
       set.onboarded=true;saveSet();refreshSettingsUI();renderPlan();renderHome();renderPRs();closeSheet();
       if(go){toast("Din plan är klar");HAPTIC("success")}setTimeout(maybeTour,500)};
     $("#st-go").onclick=()=>fin(true);$("#st-skip").onclick=()=>fin(false);
@@ -3262,6 +3280,42 @@ async function checkPRs(items){const nw=prFromItems(items);if(!nw.length)return;
   nw.forEach(o=>{PRS[o.k]=Math.round(o.t)});await savePRs();try{renderPRs()}catch(e){}
   const o=nw[0];setTimeout(()=>{toast(`Nytt rekord: ${o.n} ${fmt(o.t)}`);HAPTIC("success")},900);
   nw.forEach(x=>postActivity("rekord",x.n,fmt(x.t)));
+}
+
+
+/* ============ Tävlingar nära dig ============ */
+const GEO={"Stockholm":[59.33,18.07],"Helsingfors":[60.17,24.94],"Köpenhamn":[55.68,12.57],"Oslo":[59.91,10.75],"Göteborg":[57.71,11.97],"Malmö":[55.6,13],
+ "Hamburg":[53.55,9.99],"Düsseldorf":[51.23,6.78],"Frankfurt":[50.11,8.68],"Köln":[50.94,6.96],"Berlin":[52.52,13.4],"München":[48.14,11.58],"Karlsruhe":[49.01,8.4],
+ "Birmingham":[52.49,-1.89],"London":[51.51,-0.02],"Manchester":[53.48,-2.24],"Glasgow":[55.86,-4.25],"Cardiff":[51.48,-3.18],"Dublin":[53.35,-6.26],
+ "Nice":[43.7,7.27],"Paris":[48.86,2.35],"Toulouse":[43.6,1.44],"Lyon":[45.76,4.84],"Bordeaux":[44.84,-0.58],"Barcelona":[41.39,2.17],"Madrid":[40.42,-3.7],"Bilbao":[43.26,-2.93],"Málaga":[36.72,-4.42],"Valencia":[39.47,-0.38],
+ "Milano":[45.46,9.19],"Verona":[45.44,10.99],"Bari":[41.12,16.87],"Rimini":[44.06,12.57],"Rom":[41.9,12.5],"Utrecht":[52.09,5.12],"Amsterdam":[52.37,4.9],"Rotterdam":[51.92,4.48],"Maastricht":[50.85,5.69],
+ "Gent":[51.05,3.72],"Mechelen":[51.03,4.48],"Basel":[47.56,7.59],"Genève":[46.2,6.14],"Wien":[48.21,16.37],"Poznań":[52.41,16.93],"Katowice":[50.26,19.02],"Warszawa":[52.23,21.01],"Kraków":[50.06,19.94],"Gdańsk":[54.35,18.65],
+ "Riga":[56.95,24.11],"Tallinn":[59.44,24.75],"Mexico City":[19.43,-99.13],"Cancún":[21.16,-86.85],"Guadalajara":[20.66,-103.35],"Monterrey":[25.69,-100.32],"Puebla":[19.04,-98.21],
+ "Denver":[39.74,-104.99],"Dallas":[32.78,-96.8],"Anaheim":[33.84,-117.91],"Nashville":[36.16,-86.78],"Chicago":[41.88,-87.63],"Phoenix":[33.45,-112.07],"Las Vegas":[36.17,-115.14],"Miami Beach":[25.79,-80.13],
+ "Houston":[29.76,-95.37],"Atlanta":[33.75,-84.39],"San Diego":[32.72,-117.16],"Portland":[45.52,-122.68],"Vancouver":[49.28,-123.12],"Ottawa":[45.42,-75.7],"Toronto":[43.65,-79.38],
+ "Seoul":[37.57,126.98],"Incheon":[37.46,126.71],"Kairo":[30.04,31.24],"Guangzhou":[23.13,113.26],"Sanya":[18.25,109.51],"Hongkong":[22.32,114.17],"Shanghai":[31.23,121.47],"Rio de Janeiro":[-22.91,-43.17],"São Paulo":[-23.55,-46.63],"Buenos Aires":[-34.6,-58.38],
+ "Gujarat":[23.02,72.57],"Noida":[28.54,77.39],"Bengaluru":[12.97,77.59],"Singapore":[1.35,103.82],"Kuala Lumpur":[3.14,101.69],"Bangkok":[13.76,100.5],"Hanoi":[21.03,105.85],"Taipei":[25.03,121.57],"Osaka":[34.69,135.5],"Nagoya":[35.18,136.91],
+ "Johannesburg":[-26.2,28.05],"Kapstaden":[-33.92,18.42],"Dubai":[25.2,55.27],"Melbourne":[-37.81,144.96],"Brisbane":[-27.47,153.03],"Auckland":[-36.85,174.76]};
+const TZGEO={"Europe/Stockholm":"Stockholm","Europe/Helsinki":"Helsingfors","Europe/Copenhagen":"Köpenhamn","Europe/Oslo":"Oslo","Europe/Berlin":"Berlin","Europe/London":"London","Europe/Paris":"Paris","Europe/Amsterdam":"Amsterdam","Europe/Madrid":"Madrid","Europe/Rome":"Rom","Europe/Vienna":"Wien","Europe/Warsaw":"Warszawa","Europe/Riga":"Riga","Europe/Tallinn":"Tallinn","Europe/Dublin":"Dublin","Europe/Brussels":"Gent","Europe/Zurich":"Basel"};
+function myGeo(){if(set.geo&&set.geo.lat!=null)return {lat:set.geo.lat,lng:set.geo.lng,exact:true};
+  let tz="";try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone}catch(e){}const c=GEO[TZGEO[tz]||"Stockholm"];return {lat:c[0],lng:c[1],exact:false,city:TZGEO[tz]||"Stockholm"}}
+function kmTo(a,b){const R=6371,r=x=>x*Math.PI/180,dl=r(b[0]-a.lat),dg=r(b[1]-a.lng);const h=Math.sin(dl/2)**2+Math.cos(r(a.lat))*Math.cos(r(b[0]))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+function distTxt(km){if(km<15)return "Nära dig";if(km<100)return Math.round(km)+" km bort";const m=Math.round(km/10);return (m>=1000?m.toLocaleString("sv-SE"):m)+" mil bort"}
+function renderNear(){const el=$("#h-next");if(!el)return;const g=myGeo(),me=myEvent();
+  const up=evUpcoming().filter(e=>GEO[e.c]).map(e=>({e,km:kmTo(g,GEO[e.c])}));
+  const seen=new Set();let L=up.sort((a,b)=>a.km-b.km||a.e.s.localeCompare(b.e.s)).filter(x=>{if(seen.has(x.e.c))return false;seen.add(x.e.c);return true}).slice(0,6);
+  L.sort((a,b)=>a.e.s.localeCompare(b.e.s));
+  if(me&&me.e>=today()){L=L.filter(x=>x.e!==me);L.unshift({e:me,km:GEO[me.c]?kmTo(g,GEO[me.c]):null})}
+  L=L.slice(0,6);
+  el.innerHTML=L.length?L.map(({e,km})=>{const a=evD(e.s),d=evIn(e),mine=e===me,live=evLive(e);
+    return `<button class="near-card${mine?" mine":""}" data-ev="${e.i}"><span class="near-top"><span class="near-date"><b>${a.getDate()}</b>${MON[a.getMonth()]}</span>${mine?'<span class="evtag me">Mitt lopp</span>':e.vm?'<span class="evtag">VM</span>':""}</span>
+      <span class="near-city">${esc(e.c)}</span><span class="near-sub">${esc(e.n)}${km!=null?" · "+distTxt(km):""}</span>
+      <span class="near-when">${live?"Pågår nu":d===0?"I dag":d===1?"I morgon":`Om ${d} dagar`}</span></button>`}).join("")
+    :'<div class="empty">Inga kommande lopp just nu.</div>';
+  const f=$("#h-near-foot");if(f)f.innerHTML=g.exact?`Avstånd från din position. <button class="linkbtn" id="near-clear">Sluta använda den</button>`:`Avstånd från ${esc(g.city)}. <button class="linkbtn" id="near-loc">Använd min position</button>`;
+  const lb=$("#near-loc");if(lb)lb.onclick=()=>{if(!navigator.geolocation){toast("Din webbläsare kan inte visa din position");return}lb.textContent="Hämtar…";
+    navigator.geolocation.getCurrentPosition(p=>{set.geo={lat:Math.round(p.coords.latitude*100)/100,lng:Math.round(p.coords.longitude*100)/100};saveSet();renderNear()},()=>{lb.textContent="Använd min position";toast("Kunde inte hämta din position")},{maximumAge:864e5,timeout:10000})};
+  const cb=$("#near-clear");if(cb)cb.onclick=()=>{delete set.geo;saveSet();renderNear()};
 }
 
 /* ============ Routing ============ */
