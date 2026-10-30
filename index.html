@@ -147,7 +147,7 @@ button.row{cursor:pointer}
 .card{background:var(--tile);border-radius:var(--r);padding:18px;display:grid;gap:16px;min-width:0}
 .field{display:grid;gap:7px;min-width:0}
 .lbl,.field label{font-size:.82rem;color:var(--muted);font-weight:500}
-input[type=date],input[type=number],select,textarea,input[type=text]{
+input[type=date],input[type=number],select,textarea,input[type=text],input[type=email],input[type=password]{
   font:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:11px 12px;width:100%;min-width:0;min-height:44px;-webkit-appearance:none;appearance:none}
 select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
 textarea{min-height:84px;resize:vertical}
@@ -466,6 +466,13 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 .strava .acts{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .src{font-size:.72rem;font-weight:600;color:var(--accent);margin-left:6px}
 
+/* Konto och inloggning */
+.au-or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.82rem}
+.au-or::before,.au-or::after{content:"";flex:1;height:1px;background:var(--hair)}
+.au-alt{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 16px}
+.au-msg{min-height:1.2em;margin:0}
+.au-msg.bad{color:var(--bad)}
+.au-g svg{width:18px;height:18px}
 /* Tävlingar och profil */
 .evhero{background:var(--hot);border-radius:var(--r);padding:22px;display:grid;gap:4px;color:#fff;box-shadow:0 18px 36px -20px var(--glow);margin-bottom:16px;position:relative;overflow:hidden}
 .evhero::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%);pointer-events:none}
@@ -922,7 +929,7 @@ try{const s=JSON.parse(localStorage.getItem("hyrox-set")||"null");if(s)set=Objec
 if(!set.split)set.split={};if(!set.moves)set.moves={};if(!set.cues)set.cues={sound:true,voice:true};
 const DEFDAYS={3:[1,3,5],4:[0,2,4,6],5:[0,1,3,5,6]};if(!Array.isArray(set.days)||set.days.length<3)set.days=DEFDAYS[set.per]||DEFDAYS[4];set.per=set.days.length;
 if(set.fmt==="mixed")set.k="open";
-function saveSet(){try{localStorage.setItem("hyrox-set",JSON.stringify(set))}catch(e){}}
+function saveSet(){try{localStorage.setItem("hyrox-set",JSON.stringify(set))}catch(e){}pushSettings()}
 function iso(d){const x=new Date(d);x.setMinutes(x.getMinutes()-x.getTimezoneOffset());return x.toISOString().slice(0,10)}
 const today=()=>iso(new Date());
 if(!set.date){const d=new Date();d.setDate(d.getDate()+84);set.date=iso(d)}
@@ -1385,6 +1392,12 @@ try{PRS=JSON.parse(localStorage.getItem("hyrox-prs")||"{}")}catch(e){}
 const saveLocal=()=>{try{localStorage.setItem("hyrox-logs",JSON.stringify(LOGS));localStorage.setItem("hyrox-prs",JSON.stringify(PRS))}catch(e){}};
 function noteStore(){$("#store-note").textContent=mode==="db"?"Dina pass och rekord sparas privat i ditt konto och syns bara för dig.":"Dina pass och rekord sparas i den här webbläsaren."}
 let FIRST_RES=null;const FIRST=new Promise(r=>{FIRST_RES=r;setTimeout(r,4000)});
+function onDataSnap(snap){
+  if(FIRST_RES){FIRST_RES();FIRST_RES=null}
+  const logs=[];let prs={};
+  snap.docs.forEach(d=>{const v=d.data()||{};if(d.id==="meta")prs=Object.assign({},v.prs||{});else if(d.id==="settings")return;else if(v.hidden)HIDDEN.add(d.id);else logs.push(Object.assign({id:d.id},v))});
+  LOGS=logs;PRS=prs;renderAllData();
+}
 async function initDb(){
   try{
     if(!window.claude||!window.claude.use)return;
@@ -1393,12 +1406,7 @@ async function initDb(){
     col=db.collection("data/users/"+id);mode="db";noteStore();
     DBH=db;USR=user;ME=id;renderComm();try{user.me().then(m=>{MEINFO=m;renderAvatar();if(location.hash==="#profil")renderProfile()})}catch(e){}
     db.collection("board").onSnapshot(snap=>{const b={};snap.docs.forEach(d=>{b[d.id]=d.data()||{}});BOARD=b;if(BOARD[ME])lastBoard=JSON.stringify(BOARD[ME]);renderComm()},()=>{});
-    col.onSnapshot(snap=>{
-      if(FIRST_RES){FIRST_RES();FIRST_RES=null}
-      const logs=[];let prs={};
-      snap.docs.forEach(d=>{const v=d.data()||{};if(d.id==="meta")prs=Object.assign({},v.prs||{});else if(v.hidden)HIDDEN.add(d.id);else logs.push(Object.assign({id:d.id},v))});
-      LOGS=logs;PRS=prs;renderAllData();
-    },()=>{mode="local";col=null;noteStore()});
+    col.onSnapshot(onDataSnap,()=>{mode="local";col=null;noteStore()});
   }catch(e){}
 }
 async function addLog(e){
@@ -1433,6 +1441,203 @@ async function savePRs(){
   saveLocal();renderAllData();
 }
 function renderAllData(){renderLog();renderPlan();renderHome();renderPRs();renderAvatar();if(location.hash==="#profil")renderProfile();clearTimeout(renderAllData.t);renderAllData.t=setTimeout(syncBoard,800)}
+
+/* ============ Konto: inloggning med Supabase ============ */
+/* Används när appen körs som vanlig webbapp. Pass, rekord och inställningar sparas
+   i tabellen user_docs (se supabase/schema.sql) och följer med mellan enheter. */
+var SB=null,SBUSER=null,SBCOL=null,SBSETOK=false,SBGOOGLE=false;
+const SB_CACHE="varv-sb-cache";
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.append(s)})}
+function sbConf(){const c=window.VARV_SUPABASE;return c&&/^https:\/\/[^/]+/.test(c.url||"")&&c.anonKey&&!/DITT-PROJEKT|DIN_PUBLIKA/.test(c.url+c.anonKey)?c:null}
+function sbRedirect(){return location.origin+location.pathname}
+function sbCollection(uid){
+  let docs=new Map(),subs=[];
+  const T=()=>SB.from("user_docs");
+  const emit=()=>{try{localStorage.setItem(SB_CACHE,JSON.stringify({uid,docs:[...docs]}))}catch(e){}
+    const snap={docs:[...docs].map(([id,d])=>({id,data:()=>d}))};subs.forEach(f=>f(snap))};
+  async function refresh(){const {data,error}=await T().select("id,data").eq("user_id",uid);if(error)throw error;docs=new Map(data.map(r=>[r.id,r.data]));emit();return docs}
+  return {refresh,get:id=>docs.get(id),
+    doc:id=>({
+      async set(d){const {error}=await T().upsert({user_id:uid,id,data:d,updated_at:new Date().toISOString()});if(error)throw error;docs.set(id,d);emit()},
+      async delete(){const {error}=await T().delete().eq("user_id",uid).eq("id",id);if(error)throw error;docs.delete(id);emit()}}),
+    onSnapshot(cb,onErr){subs.push(cb);
+      refresh().catch(e=>{ /* utan nät: visa det som hämtades senast */
+        try{const c=JSON.parse(localStorage.getItem(SB_CACHE)||"null");if(c&&c.uid===uid){docs=new Map(c.docs);emit();return}}catch(x){}
+        if(onErr)onErr(e)});
+      return ()=>{subs=subs.filter(f=>f!==cb)}}};
+}
+function pushSettings(){
+  if(!SBCOL||!SBSETOK)return;clearTimeout(pushSettings.t);
+  pushSettings.t=setTimeout(()=>{SBCOL.doc("settings").set(JSON.parse(JSON.stringify(set))).catch(()=>{})},1200);
+}
+function refreshSettingsUI(){try{$("#p-range").value=set.target;$("#p-date").value=set.date;renderDays();renderSplits();refreshDivision();renderPack();renderRace();renderCues();renderAvatar();renderEvents()}catch(e){}}
+
+async function initSupabase(){
+  let c=sbConf();
+  if(!c){try{await loadScript("supabase-config.js")}catch(e){}c=sbConf()}
+  if(!c)return;
+  try{if(!window.supabase)await loadScript("vendor/supabase.js")}catch(e){return}
+  SBGOOGLE=!!c.google;
+  SB=window.supabase.createClient(c.url,c.anonKey,{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  SB.auth.onAuthStateChange((ev,session)=>{
+    const u=session&&session.user;
+    /* inga andra Supabase-anrop direkt i lyssnaren, därav setTimeout */
+    setTimeout(()=>{
+      if(ev==="PASSWORD_RECOVERY")openNewPassword();
+      if(u&&(!SBUSER||SBUSER.id!==u.id))sbStart(u);
+      else if(u)SBUSER=u;
+      if(location.hash==="#profil")renderProfile();
+    },0);
+  });
+  /* felmeddelanden från länkar i mejl, och städa adressen */
+  const q=new URLSearchParams(location.search+"&"+location.hash.replace(/^#/,""));
+  try{await SB.auth.getSession()}catch(e){}
+  if(q.get("error_code")==="otp_expired")toast("Länken har gått ut eller redan använts. Be om en ny.");
+  else if(q.get("error"))toast("Inloggningen avbröts. Försök igen.");
+  if(q.has("code")||q.has("error")||q.has("access_token")){
+    const h=location.hash&&!/[=&]/.test(location.hash)?location.hash:"";
+    try{history.replaceState(null,"",location.pathname+h)}catch(e){}if(!h)route();
+  }
+  if(location.hash==="#profil")renderProfile();
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&SBCOL)SBCOL.refresh().catch(()=>{})});
+}
+
+async function sbStart(u){
+  SBUSER=u;SBSETOK=false;const C=sbCollection(u.id);SBCOL=C;
+  const md=u.user_metadata||{};MEINFO={name:md.full_name||md.name||"",avatarUrl:md.avatar_url||md.picture||""};
+  let remote=null;try{remote=await C.refresh()}catch(e){}
+  if(remote){
+    const s=remote.get("settings");
+    if(s&&typeof s==="object"){set=Object.assign({},DEF,set,s);try{localStorage.setItem("hyrox-set",JSON.stringify(set))}catch(e){}refreshSettingsUI()}
+    SBSETOK=true;if(!s)pushSettings();
+    /* första inloggningen: flytta det som loggats på enheten till kontot */
+    const hasLogs=[...remote.keys()].some(k=>k!=="meta"&&k!=="settings");
+    const local=LOGS.filter(l=>l&&l.date&&!String(l.id).startsWith("strava-"));
+    if(!hasLogs&&(local.length||Object.keys(PRS).length)){
+      let n=0,fail=0;
+      for(const l of local){const b=Object.assign({},l);const id=String(b.id||("l"+Date.now()+n));delete b.id;try{await C.doc(id).set(b);n++}catch(e){fail++}}
+      if(Object.keys(PRS).length&&!remote.get("meta")){try{await C.doc("meta").set({kind:"meta",prs:PRS})}catch(e){fail++}}
+      if(!fail){try{localStorage.removeItem("hyrox-logs");localStorage.removeItem("hyrox-prs")}catch(e){}}
+      if(n)toast(`${n} pass flyttades till ditt konto`);
+    }
+  }
+  if(SBCOL!==C)return; /* hann logga ut under tiden */
+  col=C;mode="db";noteStore();
+  C.onSnapshot(onDataSnap,()=>{toast("Kunde inte hämta dina data. Kontrollera nätet.")});
+  renderAvatar();if(location.hash==="#profil")renderProfile();
+}
+
+async function sbSignOut(){
+  const b=$("#au-out");if(b)b.disabled=true;
+  try{await SB.auth.signOut()}catch(e){}
+  try{localStorage.removeItem(SB_CACHE)}catch(e){}
+  location.hash="#profil";location.reload();
+}
+
+function renderAccount(){
+  const el=$("#pf-acc");if(!el)return;
+  if(SBUSER){
+    el.innerHTML=`<div class="row"><span class="badge pf-mini">${avatarHtml()}</span><div><h3>Inloggad</h3><p>${esc(SBUSER.email||"")}<br>Dina pass, rekord och din plan sparas i kontot och följer med mellan enheter.</p></div><span></span></div>
+      <button class="row" id="au-out"><span class="badge">↩</span><div><h3>Logga ut</h3><p>Dina data ligger kvar i kontot tills du loggar in igen.</p></div><span class="chev">›</span></button>`;
+    $("#au-out").onclick=sbSignOut;
+  }else{
+    el.innerHTML=`<button class="row" id="au-open"><span class="badge">→</span><div><h3>Logga in eller skapa konto</h3><p>Spara dina pass i ett konto och använd VARV. på flera enheter. Det du loggat hittills följer med.</p></div><span class="chev">›</span></button>`;
+    $("#au-open").onclick=()=>openAuth("in");
+  }
+}
+
+function sbErr(e){
+  const c=(e&&e.code)||"",m=String((e&&e.message)||"");
+  if(c==="invalid_credentials"||/invalid login/i.test(m))return "Fel e-post eller lösenord.";
+  if(c==="email_not_confirmed"||/not confirmed/i.test(m))return "Bekräfta din e-post först. Kolla inkorgen.";
+  if(c==="user_already_exists"||/already registered/i.test(m))return "Det finns redan ett konto med den e-posten. Logga in istället.";
+  if(c==="weak_password"||/password/i.test(m)&&/(weak|short|least)/i.test(m))return "Lösenordet är för svagt. Använd minst 8 tecken.";
+  if(c==="same_password")return "Välj ett annat lösenord än det gamla.";
+  if(/rate_limit/.test(c)||(e&&e.status===429))return "För många försök. Vänta en stund och försök igen.";
+  if(c==="otp_expired"||/expired|invalid.*(otp|token)/i.test(m))return "Koden stämmer inte eller har gått ut. Be om en ny.";
+  if(c==="signup_disabled")return "Nya konton är avstängda just nu.";
+  if(/fetch|network/i.test(m))return "Ingen anslutning. Försök igen.";
+  return "Något gick fel. Försök igen.";
+}
+const okMail=v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+async function busy(btn,fn){if(!btn||btn.disabled)return;btn.disabled=true;try{await fn()}finally{if(btn.isConnected)btn.disabled=false}}
+const GSVG=`<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.9 6.2C12.4 13.7 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.5 5.8c4.4-4 6.8-10 6.8-17.1z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.2C1 16.5 0 20.1 0 24s1 7.5 2.6 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.2-13.5-10l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg>`;
+
+function openAuth(view){
+  const up=view==="up",reset=view==="reset";
+  const title=up?"Skapa konto":reset?"Nytt lösenord":"Logga in";
+  const intro=reset?"Skriv din e-post så skickar vi en länk där du väljer ett nytt lösenord.":"Dina pass, rekord och din plan sparas i kontot och följer med mellan dina enheter.";
+  openSheet(`<div><span class="small">Konto</span><h2>${title}</h2><p class="small">${intro}</p></div>
+   ${!reset&&SBGOOGLE?`<button class="pill ghost block au-g" id="au-g" type="button">${GSVG} Fortsätt med Google</button><div class="au-or">eller med e-post</div>`:""}
+   <form id="au-f" novalidate style="display:grid;gap:14px">
+     <div class="field"><label for="au-mail">E-post</label><input type="email" id="au-mail" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" required></div>
+     ${reset?"":`<div class="field"><label for="au-pw">Lösenord</label><input type="password" id="au-pw" autocomplete="${up?"new-password":"current-password"}" minlength="8"${up?' placeholder="Minst 8 tecken"':""}></div>`}
+     <p class="small au-msg" id="au-msg" role="status" aria-live="polite"></p>
+     <button class="pill block" id="au-go" type="submit">${up?"Skapa konto":reset?"Skicka länk":"Logga in"}</button>
+   </form>
+   ${reset?"":`<button class="pill ghost block" id="au-otp" type="button">Logga in med kod via e-post</button>`}
+   <div class="au-alt">${up?`<button class="linkbtn" type="button" data-au="in">Har du ett konto? Logga in</button>`:reset?`<button class="linkbtn" type="button" data-au="in">‹ Tillbaka till inloggning</button>`:`<button class="linkbtn" type="button" data-au="up">Ny här? Skapa konto</button><button class="linkbtn" type="button" data-au="reset">Glömt lösenordet?</button>`}</div>`,()=>{
+    const mail=$("#au-mail"),msg=$("#au-msg");
+    const say=(t,bad)=>{msg.textContent=t;msg.classList.toggle("bad",!!bad)};
+    if(openAuth.mail)mail.value=openAuth.mail;
+    mail.addEventListener("input",()=>{openAuth.mail=mail.value.trim()});
+    $$("[data-au]").forEach(b=>b.onclick=()=>openAuth(b.dataset.au));
+    const g=$("#au-g");if(g)g.onclick=()=>busy(g,async()=>{const {error}=await SB.auth.signInWithOAuth({provider:"google",options:{redirectTo:sbRedirect()}});if(error)say(sbErr(error),true)});
+    const otp=$("#au-otp");if(otp)otp.onclick=()=>busy(otp,async()=>{
+      const em=mail.value.trim();if(!okMail(em)){say("Skriv en giltig e-postadress.",true);mail.focus();return}
+      say("Skickar…");const {error}=await SB.auth.signInWithOtp({email:em,options:{emailRedirectTo:sbRedirect()}});
+      if(error){say(sbErr(error),true);return}openCode(em)});
+    $("#au-f").onsubmit=e=>{e.preventDefault();busy($("#au-go"),async()=>{
+      const em=mail.value.trim();if(!okMail(em)){say("Skriv en giltig e-postadress.",true);mail.focus();return}
+      if(reset){say("Skickar…");const {error}=await SB.auth.resetPasswordForEmail(em,{redirectTo:sbRedirect()});
+        if(error)say(sbErr(error),true);else say(`Klart. Öppna länken i mejlet till ${em} på den här enheten.`);return}
+      const pw=$("#au-pw").value;if(pw.length<(up?8:1)){say(up?"Lösenordet behöver minst 8 tecken.":"Skriv ditt lösenord.",true);$("#au-pw").focus();return}
+      say(up?"Skapar konto…":"Loggar in…");
+      if(up){const {data,error}=await SB.auth.signUp({email:em,password:pw,options:{emailRedirectTo:sbRedirect()}});
+        if(error){say(sbErr(error),true);return}
+        if(data.user&&Array.isArray(data.user.identities)&&!data.user.identities.length){say("Det finns redan ett konto med den e-posten. Logga in istället.",true);return}
+        if(!data.session){say(`Nästan klart. Bekräfta kontot via länken vi skickade till ${em}.`);return}
+        closeSheet();toast("Kontot är skapat");HAPTIC("success");return}
+      const {error}=await SB.auth.signInWithPassword({email:em,password:pw});
+      if(error){say(sbErr(error),true);return}
+      closeSheet();toast("Du är inloggad");HAPTIC("success")})};
+    setTimeout(()=>mail.focus({preventScroll:true}),350);
+  });
+}
+function openCode(em){
+  openSheet(`<div><span class="small">Konto</span><h2>Kolla din e-post</h2><p class="small">Vi har skickat ett mejl till ${esc(em)}. Skriv in koden här, eller öppna länken i mejlet på den här enheten.</p></div>
+   <form id="cd-f" novalidate style="display:grid;gap:14px">
+     <div class="field"><label for="cd-in">Kod</label><input type="text" id="cd-in" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="123456"></div>
+     <p class="small au-msg" id="cd-msg" role="status" aria-live="polite"></p>
+     <button class="pill block" id="cd-go" type="submit">Logga in</button>
+   </form>
+   <div class="au-alt"><button class="linkbtn" type="button" id="cd-back">‹ Tillbaka</button></div>`,()=>{
+    const msg=$("#cd-msg"),inp=$("#cd-in");
+    $("#cd-back").onclick=()=>openAuth("in");
+    $("#cd-f").onsubmit=e=>{e.preventDefault();busy($("#cd-go"),async()=>{
+      const t=inp.value.replace(/\D/g,"");if(t.length<6){msg.textContent="Skriv koden från mejlet.";msg.classList.add("bad");return}
+      msg.textContent="Kontrollerar…";msg.classList.remove("bad");
+      const {error}=await SB.auth.verifyOtp({email:em,token:t,type:"email"});
+      if(error){msg.textContent=sbErr(error);msg.classList.add("bad");return}
+      closeSheet();toast("Du är inloggad");HAPTIC("success")})};
+    setTimeout(()=>inp.focus({preventScroll:true}),350);
+  });
+}
+function openNewPassword(){
+  openSheet(`<div><span class="small">Konto</span><h2>Välj nytt lösenord</h2></div>
+   <form id="np-f" novalidate style="display:grid;gap:14px">
+     <div class="field"><label for="np-in">Nytt lösenord</label><input type="password" id="np-in" autocomplete="new-password" minlength="8" placeholder="Minst 8 tecken"></div>
+     <p class="small au-msg" id="np-msg" role="status" aria-live="polite"></p>
+     <button class="pill block" id="np-go" type="submit">Spara lösenord</button>
+   </form>`,()=>{
+    const msg=$("#np-msg");
+    $("#np-f").onsubmit=e=>{e.preventDefault();busy($("#np-go"),async()=>{
+      const pw=$("#np-in").value;if(pw.length<8){msg.textContent="Lösenordet behöver minst 8 tecken.";msg.classList.add("bad");return}
+      const {error}=await SB.auth.updateUser({password:pw});
+      if(error){msg.textContent=sbErr(error);msg.classList.add("bad");return}
+      closeSheet();toast("Lösenordet är ändrat")})};
+  });
+}
 
 /* ============ Strava ============ */
 let MCP=null,STRAVA={state:"idle",msg:"",last:null};
@@ -2090,6 +2295,7 @@ function renderProfile(){
   const s=evD(set.since);$("#pf-sub").textContent=`Tränar med VARV. sedan ${MONL[s.getMonth()]} ${s.getFullYear()}`;
   $("#pf-stats").innerHTML=`<div class="tile"><b>${LOGS.length}</b><span>pass loggade</span></div><div class="tile"><b>${String(hrs).replace(".",",")} h</b><span>träningstid</span></div><div class="tile"><b>${PRS.race?fmt(PRS.race):"–"}</b><span>bästa Hyrox-tid</span></div><div class="tile"><b>${st.streak}</b><span>veckor i rad</span></div>`;
   const db=mode==="db";
+  if(SB){renderAccount();}else
   $("#pf-acc").innerHTML=db?`<div class="row"><span class="badge pf-mini">${avatarHtml()}</span><div><h3>Inloggad via Claude</h3><p>Din logg, dina rekord och din plan sparas i ditt konto och följer med mellan enheter.</p></div><span></span></div>`
    :`<div class="row"><span class="badge">✓</span><div><h3>Sparas på den här enheten</h3><p>Allt ligger kvar i webbläsaren. Exportera dina data nedan för att flytta dem till en annan enhet. Inloggning med Google är på väg.</p></div><span></span></div>`;
   const nm=$("#pf-in-name");if(document.activeElement!==nm)nm.value=set.name||"";
@@ -2121,7 +2327,7 @@ $("#pf-imp-file").addEventListener("change",async e=>{const f=e.target.files&&e.
   e.target.value=""});
 $("#pf-del").onclick=async()=>{const b=$("#pf-del");
   if(!b.dataset.c){b.dataset.c=1;b.querySelector("h3").textContent="Tryck igen för att radera allt";setTimeout(()=>{if(b.isConnected){delete b.dataset.c;b.querySelector("h3").textContent="Radera alla data"}},3500);return}
-  if(mode==="db"&&col){for(const l of LOGS){try{await col.doc(l.id).delete()}catch(e){}}try{await col.doc("meta").delete()}catch(e){}}
+  if(mode==="db"&&col){for(const l of LOGS){try{await col.doc(l.id).delete()}catch(e){}}try{await col.doc("meta").delete()}catch(e){}if(SBCOL){try{await col.doc("settings").delete()}catch(e){}}}
   ["hyrox-logs","hyrox-prs","hyrox-pack","hyrox-race","hyrox-hidden","hyrox-set"].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
   LOGS=[];PRS={};PK={};RACE=null;const keepDate=new Date();keepDate.setDate(keepDate.getDate()+84);
   set=JSON.parse(JSON.stringify(DEF));set.date=iso(keepDate);set.days=DEFDAYS[4];set.per=4;saveSet();
@@ -2145,12 +2351,13 @@ window.addEventListener("hashchange",route);
 drawOval();refreshDivision();renderSplits();renderPlan();renderLog();renderPRs();renderHome();renderPack();renderRace();
 if(RACE&&!RACE.end){startTick();keepAwake()}
 route();
+if(!window.claude)initSupabase();
 (async()=>{await initDb();try{if(window.claude&&window.claude.use){MCP=await window.claude.use("mcp");renderStrava();if(MCP&&set.strava){await FIRST;syncStrava(false)}}}catch(e){}})();
 (async()=>{try{if(window.claude&&window.claude.use){DL=await window.claude.use("downloads");if(DL)$("#cal-btn").hidden=false;renderGarmin()}}catch(e){}})();
 if(!window.claude&&"serviceWorker" in navigator&&location.protocol==="https:"){try{navigator.serviceWorker.register("sw.js")}catch(e){}}
 if(!window.claude){DL={raw:true,save:async({filename,data})=>{const u=URL.createObjectURL(new Blob([data],{type:"application/octet-stream"}));const a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return {status:"saved"}}};$("#cal-btn").hidden=false}
 renderComm();renderGarmin();renderAvatar();renderEvents();
-if(!set.onboarded)setTimeout(()=>{if(!location.hash||location.hash==="#hem")openTest(true)},2300);
+if(!set.onboarded)setTimeout(()=>{if(!set.onboarded&&(!location.hash||location.hash==="#hem"))openTest(true)},2300);
 else if(!set.toured)setTimeout(maybeTour,1900);
 /* Startanimation */
 (()=>{const sp=document.getElementById("splash");if(!sp)return;let done=false;
