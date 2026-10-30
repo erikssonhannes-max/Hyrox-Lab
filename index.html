@@ -274,6 +274,13 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 
 .toast{position:fixed;left:50%;bottom:calc(98px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(16px) scale(.92);transition:opacity .25s,transform .4s var(--spring)!important;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:980px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:70;max-width:calc(100% - 32px);text-align:center}
 .toast.on{opacity:1;transform:translateX(-50%)}
+.toast.act.on{pointer-events:auto;display:flex;align-items:center;gap:14px;padding-right:8px}
+.toast-btn{border:0;background:none;color:var(--accent2);font:inherit;font-weight:700;padding:6px 10px;cursor:pointer;min-height:32px}
+.hist-wk{display:flex;justify-content:space-between;align-items:baseline;padding:14px 16px 6px;font-size:.82rem;color:var(--muted)}.hist-wk b{color:var(--ink);font-weight:600;font-size:.9rem}
+.hist-wk + .row::before{display:none}
+.st-nav{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.st-arrows{display:flex;gap:8px}.st-arrows button{width:40px;height:40px;border-radius:50%;border:0;background:var(--tile);color:var(--ink);font-size:1.4rem;line-height:1;cursor:pointer}.st-arrows button:disabled{opacity:.3;cursor:default}
+.lg-draft{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--tile);border-radius:12px;padding:10px 14px;font-size:.88rem;color:var(--muted)}
 .coach-out{white-space:pre-wrap;font-size:.95rem;line-height:1.55;background:var(--card);border-radius:14px;padding:14px}
 
 .brandbar{display:flex;justify-content:center;margin-bottom:6px;color:var(--ink)}
@@ -780,6 +787,8 @@ a.row{color:inherit;text-decoration:none}
 .nt-acts{display:flex;gap:6px}.nt-acts .pill{min-height:36px;padding:7px 14px;font-size:.9rem}
 @media (max-width:420px){.nt-req{grid-template-columns:44px minmax(0,1fr)}.nt-acts{grid-column:2;margin-top:4px}}
 .fr-reqcard{display:flex;justify-content:space-between;align-items:center;text-decoration:none;color:inherit;margin-bottom:14px;box-shadow:inset 0 0 0 2px var(--accent)}
+.fr-lb,.fr-race,.fr-act{cursor:pointer}.fr-lb:active,.fr-race:active,.fr-act:active{background:var(--card)}
+@media (hover:hover){.fr-lb:hover h3,.fr-race:hover h3,.fr-act:hover h3{color:var(--link)}}
 </style>
 
 <div id="gate" hidden role="dialog" aria-modal="true" aria-labelledby="gt-h">
@@ -1183,7 +1192,9 @@ const fmtHM=min=>`${Math.floor(min/60)}:${String(min%60).padStart(2,"0")}`;
 const parseT=s=>{const p=String(s).trim().replace(/[.,]/g,":").split(":").map(Number);if(!p.length||p.some(isNaN))return null;return p.reduce((a,b)=>a*60+b,0)||null};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const RM=()=>{try{return matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){return false}};
-function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),2200)}
+function toast(t,o){const el=$("#toast");el.textContent=t;el.classList.toggle("act",!!(o&&o.action));
+  if(o&&o.action){const b=document.createElement("button");b.className="toast-btn";b.textContent=o.label||"Ångra";b.onclick=()=>{el.classList.remove("on");clearTimeout(toast.t);o.action()};el.append(b)}
+  el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),o&&o.action?5000:2200)}
 function weekStart(d){const x=new Date(d+"T12:00:00");x.setDate(x.getDate()-(x.getDay()+6)%7);return iso(x)}
 function getWeek(s){const d=new Date(s+"T12:00:00");d.setDate(d.getDate()+3-(d.getDay()+6)%7);const w1=new Date(d.getFullYear(),0,4);return 1+Math.round(((d-w1)/864e5-3+(w1.getDay()+6)%7)/7)}
 function wval(s){
@@ -1237,7 +1248,7 @@ function openSheet(html,mount){
   requestAnimationFrame(()=>{sh.classList.add("on");sc.classList.add("on")});
   $("#sh-x").onclick=closeSheet;if(mount)mount();setTimeout(()=>$("#sheet").focus({preventScroll:true}),50);
 }
-function closeSheet(){const sh=$("#sheet"),sc=$("#scrim");if(sh.hidden)return;sh.classList.remove("on");sc.classList.remove("on");setTimeout(()=>{if(!sh.classList.contains("on")){sh.hidden=true;sc.hidden=true}},300)}
+function closeSheet(){const sh=$("#sheet"),sc=$("#scrim");if(sh.hidden)return;if($("#lg"))keepDraft();sh.classList.remove("on");sc.classList.remove("on");setTimeout(()=>{if(!sh.classList.contains("on")){sh.hidden=true;sc.hidden=true}},300)}
 $("#scrim").onclick=closeSheet;
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 
@@ -1478,7 +1489,7 @@ function renderCourse(){
 function openStation(i){
   const s=S[i],t=planTimes(),pr=PRS[s.id];
   openSheet(`<div class="art">${ART[s.id]}</div>
-   <div><span class="small">Station ${i+1} av 8</span><h2>${s.n}</h2></div>
+   <div class="st-nav"><div><span class="small">Station ${i+1} av 8</span><h2>${s.n}</h2></div><div class="st-arrows"><button type="button" id="st-prev" aria-label="Föregående station"${i?"":" disabled"}>‹</button><button type="button" id="st-next" aria-label="Nästa station"${i<7?"":" disabled"}>›</button></div></div>
    <div class="facts3"><div><small>Mängd</small><b>${s.q}</b></div><div><small>${set.fmt==="mixed"?"Mixed":set.k==="pro"?"Pro":"Open"}</small><b>${wval(s)}</b></div><div><small>Mål vid ${fmtHM(set.target)}</small><b>${fmt(t.st[i])}</b></div></div>
    ${pr?`<p class="small">Ditt rekord: <b style="color:var(--ink)">${fmt(pr)}</b>, <span class="${pr<=t.st[i]?"ahead":"behind"}">${fmtD(pr-t.st[i])}</span> mot planen.</p>`:""}
    <div><h4>Teknik</h4><ul>${s.tech.map(x=>`<li>${x}</li>`).join("")}</ul></div>
@@ -1488,7 +1499,8 @@ function openStation(i){
    <div><h4>Träna så här</h4><ul>${s.drill.map(x=>`<li><b>${x}</b></li>`).join("")}</ul></div>
    <a class="pill ghost block" href="https://www.youtube.com/results?search_query=${encodeURIComponent("HYROX "+s.n+" technique")}" target="_blank" rel="noopener">Se teknikvideor ↗</a>
    <div class="grid2"><button class="pill ghost" id="sh-pr">Sätt rekord</button><button class="pill" id="sh-log">Logga pass</button></div>`,
-  ()=>{$("#sh-log").onclick=()=>{closeSheet();prefill({type:"Styrka och stationer",min:45,stations:[s.n]})};$("#sh-pr").onclick=()=>{closeSheet();setTimeout(()=>openPR(s.id),330)}});
+  ()=>{$("#st-prev").onclick=()=>openStation(i-1);$("#st-next").onclick=()=>openStation(i+1);
+    $("#sh-log").onclick=()=>{closeSheet();prefill({type:"Styrka och stationer",min:45,stations:[s.n]})};$("#sh-pr").onclick=()=>{closeSheet();setTimeout(()=>openPR(s.id),330)}});
 }
 document.addEventListener("click",e=>{const b=e.target.closest("button[data-st]");if(b)openStation(+b.dataset.st)});
 
@@ -1683,6 +1695,9 @@ async function updLog(id,f){const l=LOGS.find(x=>x.id===id);if(!l)return false;c
   if(mode==="db"&&col){const b=Object.assign({},n);delete b.id;try{await col.doc(id).set(b);return true}catch(err){toast("Kunde inte spara ändringen.");return false}}
   LOGS=LOGS.map(x=>x.id===id?n:x);saveLocal();renderAllData();return true}
 function openEditLog(id){const l=LOGS.find(x=>x.id===id);if(l)openLogger({edit:l})}
+async function delWithUndo(id){const l=LOGS.find(x=>x.id===id);if(!l)return;const copy=Object.assign({},l);await delLog(id);
+  if(String(id).startsWith("strava-")){toast("Passet är dolt");return}
+  toast("Passet är borttaget",{label:"Ångra",action:async()=>{const c=Object.assign({},copy);delete c.id;if(await addLog(c))toast("Passet är tillbaka")}})}
 async function delLog(id){
   if(String(id).startsWith("strava-")){HIDDEN.add(id);try{localStorage.setItem("hyrox-hidden",JSON.stringify([...HIDDEN]))}catch(e){}}
   if(mode==="db"&&col){try{if(String(id).startsWith("strava-")){const l=LOGS.find(x=>x.id===id)||{};const b=Object.assign({},l,{hidden:true});delete b.id;await col.doc(id).set(b)}else await col.doc(id).delete()}catch(err){toast("Kunde inte ta bort passet.")}return}
@@ -2558,19 +2573,26 @@ function autoType(){const it=LG.items;if(!it.length)return "Styrka och stationer
   if(run&&!other)return run.sets.length>1?"Intervaller":"Löpning";return "Styrka och stationer"}
 const lgType=()=>LG.typeSet?LG.type:autoType();
 let LG=null;
+let LGDRAFT=null;try{const d=JSON.parse(localStorage.getItem("varv-draft")||"null");if(d&&Date.now()-d.at<12*3600e3)LGDRAFT=d.lg}catch(e){}
+function keepDraft(){try{if(LG&&!LG.edit&&!LG.saved&&(LG.items.length||(LG.note||"").trim())){const d=Object.assign({},LG,{view:"main",pick:[],q:"",delArm:false});LGDRAFT=d;localStorage.setItem("varv-draft",JSON.stringify({at:Date.now(),lg:d}))}}catch(e){}}
+function dropDraft(){LGDRAFT=null;try{localStorage.removeItem("varv-draft")}catch(e){}}
 function openLogger(o){o=o||{};const ed=o.edit;
+  if(!ed&&!o.type&&!o.stations&&LGDRAFT){LG=Object.assign({},LGDRAFT,{draft:true});openSheet(`<div id="lg" class="lg"></div>`,lgMount);return}
   LG={edit:ed?ed.id:null,src:ed?ed.src:null,date:ed?ed.date:today(),min:ed?(+ed.min||45):(o.min||45),type:ed?ed.type:(o.type||null),typeSet:!!(ed||o.type),
     rpe:ed?(ed.rpe||3):3,note:ed?(ed.note||""):(o.note||""),plan:o.plan||null,kicker:o.kicker||(ed?(ed.src==="strava"?"Från Strava":"Pass"):"Nytt pass"),
     items:ed&&ed.items?JSON.parse(JSON.stringify(ed.items)):[],view:"main",pick:[],q:"",showNote:!!((ed&&ed.note)||o.note),delArm:false};
   if(ed&&!ed.items&&ed.stations)ed.stations.forEach(n=>{const x=EX.find(e=>e.n===n);if(x)LG.items.push(newItem(x,true))});
   if(!ed){(o.stations||[]).forEach(n=>{const x=EX.find(e=>e.n===n);if(x)LG.items.push(newItem(x))});
     if(o.type&&/Intervall|Löpning|distans|Kompromiss/.test(o.type)&&!LG.items.some(i=>i.ex==="run"))LG.items.unshift(newItem(EX.find(e=>e.id==="run")))}
-  openSheet(`<div id="lg" class="lg"></div>`,()=>{const r=$("#lg");
+  openSheet(`<div id="lg" class="lg"></div>`,lgMount);
+}
+function lgMount(){const r=$("#lg");
+    r.addEventListener("keydown",e=>{if(e.key!=="Enter"||!e.target.matches(".lg-set input"))return;e.preventDefault();
+      const all=[...r.querySelectorAll(".lg-set input")],i=all.indexOf(e.target);if(all[i+1])all[i+1].focus();else e.target.blur()});
     r.addEventListener("click",lgClick);r.addEventListener("input",lgInput);r.addEventListener("change",lgChange);
     r.addEventListener("focusin",e=>{const t=e.target;if(t.matches&&t.matches(".lg-set input,#lg-minv"))setTimeout(()=>{try{t.select()}catch(x){}},0)});
     r.addEventListener("focusout",e=>{const t=e.target;if(t.dataset&&t.dataset.f==="t"&&t.value){const v=parseT(t.value);if(v)t.value=fmt(v)}});
-    renderLG()});
-}
+    renderLG()}
 function lgYest(){const d=new Date(today()+"T12:00:00");d.setDate(d.getDate()-1);return iso(d)}
 function lgSum(){const n=LG.items.length,s=LG.items.reduce((a,i)=>a+(i.sets||[]).filter(x=>setTxt(i.k,x)).length,0);
   return [n?`${n} ${n===1?"övning":"övningar"}`:"",s?`${s} set`:"",`${LG.min} min`].filter(Boolean).join(" · ")}
@@ -2584,10 +2606,11 @@ function renderLG(){const r=$("#lg");if(!r)return;
     return `<div class="lg-ex" data-i="${i}"><div class="lg-exh"><span class="lg-dot${it.st?" st":""}" aria-hidden="true"></span><div><h4>${esc(it.n)}</h4>${hint?`<p class="small">Förra gången: ${esc(hint.replace(it.n+" ",""))}</p>`:""}</div><button type="button" class="lg-x" data-rm="${i}" aria-label="Ta bort ${esc(it.n)}">✕</button></div>
       <div class="lg-cols" style="grid-template-columns:${gc}"><span>Set</span>${cols.map(c=>`<span>${c[1]}${c[0]==="kg"&&it.ex==="farm"?" per hand":""}</span>`).join("")}<span></span></div>
       ${it.sets.map((s,j)=>`<div class="lg-set" style="grid-template-columns:${gc}"><span class="lg-n">${j+1}</span>${cols.map(c=>{const v=s[c[0]];const val=nz(v)?(c[0]==="t"?fmt(v):c[0]==="kg"?fmtKg(v):v):"";
-        return `<input type="text" data-i="${i}" data-j="${j}" data-f="${c[0]}" inputmode="${c[0]==="kg"||c[0]==="t"?"decimal":"numeric"}" autocomplete="off" placeholder="${c[0]==="t"?"m:ss":"–"}" value="${val}" aria-label="${c[1]}, set ${j+1}">`}).join("")}
+        return `<input type="text" enterkeyhint="next" data-i="${i}" data-j="${j}" data-f="${c[0]}" inputmode="${c[0]==="kg"||c[0]==="t"?"decimal":"numeric"}" autocomplete="off" placeholder="${c[0]==="t"?"m:ss":"–"}" value="${val}" aria-label="${c[1]}, set ${j+1}">`}).join("")}
         <button type="button" class="lg-sx" data-rs="${i}:${j}" aria-label="Ta bort set ${j+1}"${it.sets.length<2?" disabled":""}>−</button></div>`).join("")}
       <button type="button" class="lg-add" data-as="${i}">+ Lägg till set</button></div>`}).join("");
   r.innerHTML=`<div><span class="small">${esc(LG.kicker)}</span><h2>${LG.edit?"Ändra pass":"Logga pass"}</h2></div>
+   ${LG.draft?`<div class="lg-draft"><span>Du fortsätter där du slutade.</span><button type="button" class="linkbtn" data-fresh>Börja om</button></div>`:""}
    <section class="lg-sec"><div class="chips lg-day"><button type="button" class="chip" data-day="${td}" aria-pressed="${LG.date===td}">Idag</button><button type="button" class="chip" data-day="${yd}" aria-pressed="${LG.date===yd}">Igår</button>
      <label class="chip lg-dchip" aria-pressed="${other}">${other?esc(dl):"Annat datum"}<input type="date" id="lg-date" max="${td}" value="${esc(LG.date)}" aria-label="Datum"></label></div>
      <div class="lg-step"><button type="button" data-min="-5" aria-label="5 minuter kortare">−</button><label><input type="text" id="lg-minv" inputmode="numeric" value="${LG.min}" aria-label="Minuter"><span>min</span></label><button type="button" data-min="5" aria-label="5 minuter längre">+</button></div></section>
@@ -2619,6 +2642,7 @@ function renderPick(r){const q=LG.q.trim().toLowerCase(),added=new Set(LG.items.
    <div class="lg-foot"><button type="button" class="pill block" id="lg-addsel"${n?"":" disabled"}>${n?`Lägg till ${n} ${n===1?"övning":"övningar"}`:"Välj övningar"}</button></div>`;
 }
 function lgClick(e){const t=e.target.closest("button,[data-day]");if(!t||t.disabled)return;const d=t.dataset;
+  if(d.fresh!==undefined){dropDraft();LG=null;openLogger();return}
   if(t.id==="lg-open"){LG.view="pick";LG.pick=[];LG.q="";renderLG();$("#sheet").scrollTop=0;return}
   if(t.id==="lg-back"){LG.view="main";renderLG();return}
   if(t.id==="lg-addsel"){const n0=LG.items.length;LG.pick.forEach(id=>{const x=exDesc(id);if(x)LG.items.push(newItem(x))});LG.view="main";LG.pick=[];renderLG();
@@ -2642,7 +2666,7 @@ function lgClick(e){const t=e.target.closest("button,[data-day]");if(!t||t.disab
   if(d.rpe){LG.rpe=+d.rpe;lg$$("#lg .lg-rpe button").forEach(b=>b.setAttribute("aria-pressed",b===t));return}
   if(d.note!==undefined){LG.showNote=true;renderLG();const n=$("#lg-note");if(n)n.focus();return}
   if(t.id==="lg-save"){saveLG(t);return}
-  if(t.id==="lg-del"){if(!LG.delArm){LG.delArm=true;renderLG();return}delLog(LG.edit);closeSheet();toast("Passet är borttaget");return}
+  if(t.id==="lg-del"){if(!LG.delArm){LG.delArm=true;renderLG();return}delWithUndo(LG.edit);closeSheet();return}
 }
 function lgInput(e){const t=e.target;
   if(t.id==="lg-q"){LG.q=t.value;const pos=t.selectionStart;renderLG();const q=$("#lg-q");q.focus();try{q.setSelectionRange(pos,pos)}catch(x){}return}
@@ -2662,7 +2686,7 @@ async function saveLG(btn){if(btn.disabled)return;
   btn.disabled=true;
   if(LG.edit){const ok=await updLog(LG.edit,f);btn.disabled=false;if(ok){closeSheet();toast("Passet är ändrat")}return}
   const entry=Object.assign(f,{created:Date.now()});if(LG.plan)entry.plan=LG.plan;
-  const before=weekStats().now.n;const ok=await addLog(entry);btn.disabled=false;if(!ok)return;
+  const before=weekStats().now.n;const ok=await addLog(entry);btn.disabled=false;if(!ok)return;LG.saved=true;dropDraft();
   const after=weekStats().now.n;closeSheet();HAPTIC("success");
   if(before<set.per&&after>=set.per){toast("Veckans mål är klart");confetti()}else toast("Passet är sparat");
   try{if(typeof onLogged==="function")onLogged(entry)}catch(x){}
@@ -2675,7 +2699,7 @@ let filt="Alla";
 $("#filters").onclick=e=>{const c=e.target.closest(".chip");if(!c)return;filt=c.dataset.f;renderLog()};
 $("#hist").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.edit)openEditLog(e.target.dataset.edit)});
 $("#hist").addEventListener("click",e=>{const b=e.target.closest(".del");if(!b){const r=e.target.closest("[data-edit]");if(r)openEditLog(r.dataset.edit);return}
-  if(b.classList.contains("confirm")){delLog(b.dataset.id);toast("Passet är borttaget")}
+  if(b.classList.contains("confirm")){delWithUndo(b.dataset.id)}
   else{b.classList.add("confirm");b.textContent="Ta bort?";setTimeout(()=>{if(b.isConnected){b.classList.remove("confirm");b.textContent="Ta bort"}},3000)}});
 
 function weekStats(){
@@ -2704,8 +2728,10 @@ function renderLog(){
   $("#filters").innerHTML=LOGS.length>1?types.map(t=>`<button class="chip" data-f="${esc(t)}" aria-pressed="${t===filt}">${esc(t)}</button>`).join(""):"";
   $("#hist-count").textContent=LOGS.length?`${LOGS.length} pass`:"";
   const list=[...LOGS].filter(l=>filt==="Alla"||l.type===filt).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(b.created||0)-(a.created||0));
-  $("#hist").innerHTML=list.length?list.slice(0,HN).map(l=>{const d=new Date(l.date+"T12:00:00");
-    return `<div class="row hrow" data-edit="${esc(l.id)}" role="button" tabindex="0" aria-label="Ändra ${esc(l.type)}"><div class="badge">${d.getDate()}<br>${d.toLocaleDateString("sv-SE",{month:"short"}).replace(".","")}</div><div><h3>${esc(l.type)}${l.src==="strava"?'<span class="src">Strava</span>':""}</h3><p>${l.min} min${l.rpe?" · känsla "+l.rpe+"/5":""}${!(l.items&&l.items.length)&&l.stations&&l.stations.length?" · "+esc(l.stations.join(", ")):""}</p>${l.items&&l.items.length?`<p class="lg-hist">${esc(l.items.map(itemTxt).join(" · "))}</p>`:""}${l.note?`<p>${esc(l.note)}</p>`:""}</div><span class="chev">›</span></div>`}).join(""):`<div class="empty">Inga pass ännu. Tryck Logga pass ovan, eller Logga passet i din plan.</div>`;
+  let lastWk="";const wkSum={};list.forEach(l=>{const k=weekStart(l.date);wkSum[k]=wkSum[k]||{n:0,m:0};wkSum[k].n++;wkSum[k].m+=+l.min||0});
+  $("#hist").innerHTML=list.length?list.slice(0,HN).map(l=>{const d=new Date(l.date+"T12:00:00"),wk=weekStart(l.date),cw=weekStart(today());
+    let head="";if(wk!==lastWk){lastWk=wk;const w=wkSum[wk];head=`<div class="hist-wk"><b>${wk===cw?"Den här veckan":"Vecka "+getWeek(wk)}</b><span>${w.n} pass · ${w.m} min</span></div>`}
+    return head+`<div class="row hrow" data-edit="${esc(l.id)}" role="button" tabindex="0" aria-label="Ändra ${esc(l.type)}"><div class="badge">${d.getDate()}<br>${d.toLocaleDateString("sv-SE",{month:"short"}).replace(".","")}</div><div><h3>${esc(l.type)}${l.src==="strava"?'<span class="src">Strava</span>':""}</h3><p>${l.min} min${l.rpe?" · känsla "+l.rpe+"/5":""}${!(l.items&&l.items.length)&&l.stations&&l.stations.length?" · "+esc(l.stations.join(", ")):""}</p>${l.items&&l.items.length?`<p class="lg-hist">${esc(l.items.map(itemTxt).join(" · "))}</p>`:""}${l.note?`<p>${esc(l.note)}</p>`:""}</div><span class="chev">›</span></div>`}).join(""):`<div class="empty">Inga pass ännu. Tryck Logga pass ovan, eller Logga passet i din plan.</div>`;
   {let mb=$("#hist-more");if(!mb){mb=document.createElement("button");mb.id="hist-more";mb.className="pill ghost block";mb.style.marginTop="10px";$("#hist").after(mb);mb.onclick=()=>{HN+=20;renderLog()}}mb.hidden=list.length<=HN;mb.textContent=`Visa fler pass (${list.length-HN} till)`}
   renderProgress();try{renderExList()}catch(e){}
 }
@@ -3089,7 +3115,7 @@ $("#pf-imp-file").addEventListener("change",async e=>{const f=e.target.files&&e.
 $("#pf-del").onclick=async()=>{const b=$("#pf-del");
   if(!b.dataset.c){b.dataset.c=1;b.querySelector("h3").textContent="Tryck igen för att radera allt";setTimeout(()=>{if(b.isConnected){delete b.dataset.c;b.querySelector("h3").textContent="Radera alla data"}},3500);return}
   if(mode==="db"&&col){for(const l of LOGS){try{await col.doc(l.id).delete()}catch(e){}}try{await col.doc("meta").delete()}catch(e){}if(SBCOL){try{await col.doc("settings").delete()}catch(e){}}}
-  ["hyrox-logs","hyrox-prs","hyrox-pack","hyrox-race","hyrox-hidden","hyrox-set","varv-geo","varv-events2"].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
+  ["hyrox-logs","hyrox-prs","hyrox-pack","hyrox-race","hyrox-hidden","hyrox-set","varv-geo","varv-events2","varv-draft"].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
   LOGS=[];PRS={};PK={};RACE=null;const keepDate=new Date();keepDate.setDate(keepDate.getDate()+84);
   set=JSON.parse(JSON.stringify(DEF));set.date=iso(keepDate);set.days=DEFDAYS[4];set.per=4;saveSet();
   $("#p-range").value=set.target;$("#p-date").value=set.date;renderDays();renderSplits();renderAllData();renderPack();renderRace();renderCues();renderAvatar();renderProfile();
@@ -3144,11 +3170,11 @@ async function renderFriends(force){
    ${FRQ_IN.length?`<a class="card fr-reqcard" href="#notiser"><b>${FRQ_IN.length===1?esc((NAMES[FRQ_IN[0].from_user]||{username:"Någon"}).username)+" vill bli din vän":FRQ_IN.length+" vill bli din vän"}</b><span class="linkbtn">Svara ›</span></a>`:""}
    ${FRIENDS.length?"":`<div class="card fr-empty"><h3>Lägg till din första vän</h3><p class="small">Skicka en vänförfrågan med vännens namn och kod, eller dela din länk. Ditt namn och kod är <b style="color:var(--ink)">${esc(handleTxt(MYPROF))}</b>.</p></div>`}
    <div class="sechead"><h2>Den här veckan</h2><span class="small">Varv</span></div>
-   <div class="group">${board.map((b,i)=>`<div class="row fr-lb${b.me?" me":""}"><span class="fr-rank">${i+1}</span><div class="fr-who">${avImg(b.avatar_url,b.username)}<div><h3>${b.me?"Du":esc(b.username)}</h3><p>${b.n} ${b.n===1?"pass":"pass"}</p></div></div><b class="fr-v">${b.wv}</b></div>`).join("")}</div>
+   <div class="group">${board.map((b,i)=>`<div class="row fr-lb${b.me?" me":""}" data-prof="${esc(b.user_id)}" role="button" tabindex="0" aria-label="Visa ${b.me?"din profil":esc(b.username)+"s profil"}"><span class="fr-rank">${i+1}</span><div class="fr-who">${avImg(b.avatar_url,b.username)}<div><h3>${b.me?"Du":esc(b.username)}</h3><p>${b.n} ${b.n===1?"pass":"pass"}</p></div></div><b class="fr-v">${b.wv}</b></div>`).join("")}</div>
    <p class="small fr-foot">Ett varv per tio minuters träning. Topplistan jämför flit, inte fart, och börjar om på måndag.</p>
    <div class="sechead"><h2>Kommande lopp</h2><a href="#race">Alla lopp</a></div>
    ${races.length?`<div class="group">${races.map(r=>{const L=raceLine(r.nr,r.pid);const same=!r.u.me&&myNr&&myNr.date===r.nr.date;const d=Math.round((evD(r.nr.date)-evD(today()))/864e5);
-     return `<div class="row fr-race">${avImg(r.u.avatar_url,r.u.username)}<div><h3>${r.u.me?"Du":esc(r.u.username)} · ${esc(L.where)}</h3><p>${esc(L.when)}${L.sub?"<br>"+L.sub:""}</p>${same?`<span class="fr-same">Samma lopp som du</span>`:""}</div><span class="fr-days"><b>${d}</b>${d===1?"dag":"dagar"}</span></div>`}).join("")}</div>`
+     return `<div class="row fr-race" data-prof="${esc(r.u.user_id)}" role="button" tabindex="0">${avImg(r.u.avatar_url,r.u.username)}<div><h3>${r.u.me?"Du":esc(r.u.username)} · ${esc(L.where)}</h3><p>${esc(L.when)}${L.sub?"<br>"+L.sub:""}</p>${same?`<span class="fr-same">Samma lopp som du</span>`:""}</div><span class="fr-days"><b>${d}</b>${d===1?"dag":"dagar"}</span></div>`}).join("")}</div>`
      :`<div class="card"><p class="small">Ingen av er har valt ett lopp än. Välj ditt under Tävla, så syns det här för dina vänner.</p></div>`}
    <div class="sechead"><h2>Senaste</h2></div>
    ${!D.actOk?`<div class="card"><p class="small">Aktiviteten är inte uppsatt än. Kör supabase/notiser.sql i Supabase.</p></div>`
@@ -3157,9 +3183,9 @@ async function renderFriends(force){
        const who=L.filter(u=>u!==SBUSER.id).map(u=>(NAMES[u]||{}).username).filter(Boolean);
        const like=!D.likeOk?"":mine?(L.length?`<p class="fr-got">${THUMB} ${esc(who.slice(0,2).join(" och "))}${who.length>2?` och ${who.length-2} till`:""}</p>`:"")
          :`<button class="fr-like" data-like="${a.id}" aria-pressed="${liked}" aria-label="${liked?"Ta bort tumme upp":"Ge tumme upp"}">${THUMB}<span>${L.length||""}</span></button>`;
-       return `<div class="row fr-act">${avImg(p.avatar_url,p.username)}<div><h3>${mine?"Du":esc(p.username)} ${kindTxt[a.kind]||"tränade"}</h3><p>${esc([a.title,a.detail].filter(Boolean).join(" · "))}</p>${mine?like:""}</div><div class="fr-side"><span class="small fr-ago">${agoTxt(a.created_at)}</span>${mine?"":like}</div></div>`}).join("")}</div>`
+       return `<div class="row fr-act" data-prof="${esc(a.user_id)}" role="button" tabindex="0">${avImg(p.avatar_url,p.username)}<div><h3>${mine?"Du":esc(p.username)} ${kindTxt[a.kind]||"tränade"}</h3><p>${esc([a.title,a.detail].filter(Boolean).join(" · "))}</p>${mine?like:""}</div><div class="fr-side"><span class="small fr-ago">${agoTxt(a.created_at)}</span>${mine?"":like}</div></div>`}).join("")}</div>`
      :`<div class="card"><p class="small">Här syns det när dina vänner tränar och tävlar.</p></div>`}
-   ${waiting.length?`<div class="sechead"><h2>Väntar på svar</h2></div><div class="group">${waiting.map(id=>{const p=NAMES[id]||{username:"Okänd",tag:"0000"};return `<div class="row">${avImg(p.avatar_url,p.username)}<div><h3>${handleHtml(p)}</h3><p>Väntar på svar på din vänförfrågan</p></div><span></span></div>`}).join("")}</div>`:""}
+   ${waiting.length?`<div class="sechead"><h2>Väntar på svar</h2></div><div class="group">${waiting.map(id=>{const p=NAMES[id]||{username:"Okänd",tag:"0000"};return `<div class="row" data-prof="${esc(id)}" role="button" tabindex="0">${avImg(p.avatar_url,p.username)}<div><h3>${handleHtml(p)}</h3><p>Väntar på svar på din vänförfrågan</p></div><span class="chev">›</span></div>`}).join("")}</div>`:""}
    <div class="fr-acts"><button class="pill block" id="fr-add2">Lägg till vän</button><div class="grid2"><button class="pill ghost" id="fr-link2">Dela vänlänk</button><button class="pill ghost" id="fr-qr2">Visa QR-kod</button></div></div>`;
   const fd=$("#fr-feed");if(fd)fd.onclick=async e=>{const b=e.target.closest("[data-like]");if(!b||b.disabled)return;const id=+b.dataset.like,L=D.likes[id]=D.likes[id]||[],on=L.includes(SBUSER.id);
     b.disabled=true;if(on)L.splice(L.indexOf(SBUSER.id),1);else{L.push(SBUSER.id);HAPTIC("light")}
@@ -3167,6 +3193,8 @@ async function renderFriends(force){
     const {error}=on?await SB.from("activity_likes").delete().eq("activity_id",id).eq("user_id",SBUSER.id):await SB.from("activity_likes").insert({activity_id:id});
     if(error&&error.code!=="23505"){if(on)L.push(SBUSER.id);else L.splice(L.indexOf(SBUSER.id),1);b.setAttribute("aria-pressed",on);b.querySelector("span").textContent=L.length||"";toast("Kunde inte spara. Försök igen.")}
     b.disabled=false};
+  el.onclick=e=>{if(e.target.closest("[data-like],a,.fr-like"))return;const r=e.target.closest("[data-prof]");if(r)viewProfile(r.dataset.prof)};
+  el.onkeydown=e=>{if(e.key==="Enter"){const r=e.target.closest&&e.target.closest("[data-prof]");if(r)viewProfile(r.dataset.prof)}};
   $("#fr-add2").onclick=openAddFriend;$("#fr-link2").onclick=shareFriendLink;$("#fr-qr2").onclick=showFriendQR;
   const top=D.acts[0];if(top){set.frSeen=top.created_at;saveSet()}frDot();
 }
@@ -3419,7 +3447,7 @@ async function loadNotis(){if(!SB||!SBUSER)return;
 }
 function notiBadge(){const b=$("#nt-btn");if(!b)return;b.hidden=!SBUSER||location.hash==="#profil";
   const n=Math.max(NOTIS.filter(x=>!x.read_at).length,FRQ_IN.length);const c=b.querySelector(".nt-count");
-  c.textContent=n>9?"9+":n;c.hidden=!n||location.hash==="#notiser";b.setAttribute("aria-label",n?`Notiser, ${n} nya`:"Notiser");b.classList.toggle("on",location.hash==="#notiser")}
+  c.textContent=n>9?"9+":n;c.hidden=!n||location.hash==="#notiser";appBadge(n);b.setAttribute("aria-label",n?`Notiser, ${n} nya`:"Notiser");b.classList.toggle("on",location.hash==="#notiser")}
 const NT_ICON={plan:"M3.5 5h17v15.5h-17zM3.5 10h17M8 3v4M16 3v4",race:"M7.5 2.5l4.5 8 4.5-8M12 10a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11z",test:"M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0"};
 function ntRow(n){const p=n.actor?NAMES[n.actor]:null,unread=!n.read_at;
   const ic=p?avImg(p.avatar_url,p.username):`<span class="nt-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${NT_ICON[n.kind]||NT_ICON.test}"/></svg></span>`;
@@ -3450,6 +3478,19 @@ async function notiRefresh(){try{await loadRequests();await loadNotis()}catch(e)
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&SBUSER)notiRefresh()});
 setInterval(()=>{if(document.visibilityState==="visible"&&SBUSER)notiRefresh()},60000);
 try{navigator.serviceWorker&&navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type==="push")notiRefresh()})}catch(e){}
+
+/* Tryck på fliken du redan är på för att komma upp till toppen */
+document.querySelector(".tabbar").addEventListener("click",e=>{const a=e.target.closest("a.tab");if(!a)return;HAPTIC("light");
+  if(location.hash==="#"+a.dataset.v||(!location.hash&&a.dataset.v==="hem")){e.preventDefault();window.scrollTo({top:0,behavior:RM()?"auto":"smooth"})}});
+/* Siffra på appikonen för olästa notiser */
+function appBadge(n){try{if("setAppBadge" in navigator){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}}
+/* Svep nedåt för att stänga ett ark */
+(()=>{const sh=$("#sheet");let y0=null,dy=0,t0=0;
+  sh.addEventListener("touchstart",e=>{if(sh.scrollTop>0||e.touches.length>1){y0=null;return}const t=e.target;if(t.closest("input,textarea,select,.near,.lg-set"))return;y0=e.touches[0].clientY;dy=0;t0=Date.now()},{passive:true});
+  sh.addEventListener("touchmove",e=>{if(y0==null)return;dy=e.touches[0].clientY-y0;if(dy<=0||sh.scrollTop>0){sh.style.transform="";return}
+    sh.style.transition="none";sh.style.transform=`translateY(${dy}px)`},{passive:true});
+  sh.addEventListener("touchend",()=>{if(y0==null)return;sh.style.transition="";const fast=dy>60&&Date.now()-t0<250;
+    if(dy>120||fast){sh.style.transform="";closeSheet()}else sh.style.transform="";y0=null})})();
 
 /* ============ Routing ============ */
 const VIEWS=["hem","stationer","plan","race","logg","vanner","notiser","profil"];
