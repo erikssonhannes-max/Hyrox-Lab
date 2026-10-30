@@ -1593,6 +1593,8 @@ function sbErr(e){
   if(c==="user_already_exists"||/already registered/i.test(m))return "Det finns redan ett konto med den e-posten. Logga in istället.";
   if(c==="weak_password"||/password/i.test(m)&&/(weak|short|least)/i.test(m))return "Lösenordet är för svagt. Använd minst 8 tecken.";
   if(c==="same_password")return "Välj ett annat lösenord än det gamla.";
+  if(c==="over_email_send_rate_limit"||/email rate limit/i.test(m))return "Vi kan inte skicka fler mejl just nu. Försök igen om en stund, eller logga in om du redan har ett konto.";
+  if(c==="over_request_rate_limit"||/for security purposes/i.test(m))return "Vänta en minut innan du ber om ett nytt mejl.";
   if(/rate_limit/.test(c)||(e&&e.status===429))return "För många försök. Vänta en stund och försök igen.";
   if(c==="otp_expired"||/expired|invalid.*(otp|token)/i.test(m))return "Koden stämmer inte eller har gått ut. Be om en ny.";
   if(c==="signup_disabled")return "Nya konton är avstängda just nu.";
