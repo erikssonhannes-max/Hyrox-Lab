@@ -426,7 +426,19 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 .gt{max-width:420px;margin:0 auto;display:grid;gap:18px}
 .gt-ic{width:64px;height:64px;filter:drop-shadow(0 14px 24px var(--glow))}
 .gt-head{display:grid;gap:8px}
-.gt-head h1{font-size:clamp(2rem,9vw,2.6rem);letter-spacing:-.045em;line-height:1.05}
+.gt-head h2{font-size:clamp(1.7rem,7vw,2.1rem);letter-spacing:-.04em;line-height:1.1}
+.gt-head{padding-top:14px;border-top:1px solid var(--hair);margin-top:8px}
+.gt-hero{display:grid;gap:12px}
+.gt-hero h1{font-size:clamp(2.4rem,11vw,3.4rem);letter-spacing:-.05em;line-height:1.02;font-weight:700}
+.gt-hero h1 span{background:var(--hot);-webkit-background-clip:text;background-clip:text;color:transparent}
+.gt-hero p{color:var(--muted);font-size:1.05rem;line-height:1.45}
+.gt-cta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.gt-feats{display:grid;gap:10px}
+.gt-feats>div{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;align-items:start;background:var(--tile);border-radius:18px;padding:14px 16px}
+.gt-feats b{display:block;font-size:1rem;font-weight:600;letter-spacing:-.01em}
+.gt-feats p{color:var(--muted);font-size:.9rem;line-height:1.4;margin-top:2px}
+.gt-fi{width:40px;height:40px;border-radius:12px;background:var(--card);display:grid;place-items:center;color:var(--accent)}
+.gt-fi svg{width:22px;height:22px}
 .gt-head p{color:var(--muted);font-size:1rem}
 .gt .card{gap:14px}
 .gt-check{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px;align-items:start;font-size:.9rem;line-height:1.4;cursor:pointer;min-height:44px}
@@ -467,6 +479,10 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 .pvlist b.none{color:var(--muted);font-weight:400}
 .fr-av{width:44px;height:44px;border-radius:50%;overflow:hidden;display:grid;place-items:center;color:#fff;font-weight:700;font-size:.9rem;background:linear-gradient(135deg,var(--accent),var(--accent2))}
 .fr-av img{width:100%;height:100%;object-fit:cover}
+.qrbox{background:#fff;border-radius:22px;padding:14px;width:min(240px,70vw);box-shadow:0 18px 36px -24px rgba(0,0,0,.4)}
+.qrbox svg{display:block;width:100%;height:auto}
+.qrbox svg path,.qrbox svg rect{shape-rendering:crispEdges}
+.fr-share{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 /* Anpassning, puls, gemenskap */
 .banner{background:var(--tile);border-radius:var(--r);padding:16px;display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:12px}
 .banner b{display:block;font-size:1rem;letter-spacing:-.01em}
@@ -636,7 +652,10 @@ a.row{color:inherit;text-decoration:none}
 <div id="gate" hidden role="dialog" aria-modal="true" aria-labelledby="gt-h">
   <div class="gt">
     <svg class="gt-ic" viewBox="0 0 1024 1024" aria-hidden="true"><defs><linearGradient id="gtg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff2d55"/><stop offset=".55" stop-color="#ff4e45"/><stop offset="1" stop-color="#ff7a3d"/></linearGradient></defs><rect width="1024" height="1024" rx="230" fill="url(#gtg)"/><path d="M512,332 H632 A180,180 0 0 1 632,692 H392 A180,180 0 0 1 392,332 H512" fill="none" stroke="#fff" stroke-width="88" stroke-linecap="round" stroke-dasharray="1272.7 1611"/><circle cx="343.5" cy="338.7" r="58" fill="#fff"/></svg>
-    <div class="gt-head"><span class="eyebrow" style="font-size:.82rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Välkommen till VARV.</span><h1 id="gt-h">Skapa ditt konto.</h1><p id="gt-intro">Kontot sparar din plan, dina pass och rekord, och följer med mellan dina enheter. Det är gratis.</p></div>
+    <section class="gt-hero"><h1>Träna <span>smartare</span> för Hyrox.</h1><p>En plan byggd från din måltid, alla åtta stationer förklarade och tidtagning på racedagen. Gratis att börja.</p>
+      <div class="gt-cta"><button class="pill" type="button" data-gtgo="up">Skapa konto</button><button class="pill ghost" type="button" data-gtgo="in">Logga in</button></div></section>
+    <div class="gt-feats"><div><span class="gt-fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span><div><b>Plan efter din måltid</b><p>Vecka för vecka, med tempo och pulszoner. Den anpassar sig efter det du faktiskt tränar.</p></div></div><div><span class="gt-fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7c3 0 5 2.2 5 5.2V20H7v-7.8C7 9.2 9 7 12 7z"/><path d="M9.5 7.5V6a2.5 2.5 0 0 1 5 0v1.5"/></svg></span><div><b>Alla åtta stationer</b><p>Rätt vikter för din klass, teknik och de vanligaste misstagen.</p></div></div><div><span class="gt-fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13.5" r="7"/><path d="M12 13.5V10M10 3h4"/></svg></span><div><b>Racedagen</b><p>Tidtagning med ljud, röst och vibration, och en kalender med lopp i hela världen.</p></div></div><div><span class="gt-fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l5-5 4 3 7-8"/><path d="M15 7h5v5"/></svg></span><div><b>Form och vänner</b><p>Se formen stiga, ta utmärkelser och jämför veckan med dina vänner.</p></div></div></div>
+    <div class="gt-head" id="gt-form"><span class="eyebrow" style="font-size:.82rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Kom igång</span><h2 id="gt-h">Skapa ditt konto.</h2><p id="gt-intro">Kontot sparar din plan, dina pass och rekord, och följer med mellan dina enheter. Det är gratis.</p></div>
     <div class="seg" role="group" aria-label="Konto"><button type="button" data-gt="up" aria-pressed="true">Skapa konto</button><button type="button" data-gt="in" aria-pressed="false">Logga in</button></div>
     <div id="gt-body"></div>
     <div class="gt-foot"><a href="legal/integritet.html" target="_blank" rel="noopener">Integritetspolicy</a><a href="legal/villkor.html" target="_blank" rel="noopener">Användarvillkor</a></div>
@@ -862,6 +881,8 @@ a.row{color:inherit;text-decoration:none}
     </div>
     <div class="sechead"><h2>Ljud och känsla</h2></div>
     <div class="card" id="pf-set"></div>
+    <div class="sechead"><h2>Påminnelser</h2></div>
+    <div class="group"><button class="row" id="pf-rem"><span class="badge"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></span><div><h3>Påminnelser för passen</h3><p>Lägg din plan i kalendern med en påminnelse före varje pass.</p></div><span class="chev">›</span></button></div>
     <div class="sechead"><h2>Kopplingar</h2></div>
     <div class="group" id="pf-con"></div>
     <div class="sechead"><h2>Följ VARV.</h2></div>
@@ -1152,6 +1173,7 @@ function openCal(){
   });
 }
 $("#cal-btn").onclick=openCal;
+$("#pf-rem").onclick=()=>{if(DL)openCal();else toast("Kalenderfiler går inte att spara här.")};
 /* ============ Zip (okomprimerad) ============ */
 const CRCT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
 function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRCT[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0}
@@ -1780,6 +1802,8 @@ function gateConsent(say){
   if(a&&!a.checked){say("Du behöver vara 16 år eller äldre för att skapa konto.",true);a.focus();return false}
   return true}
 document.addEventListener("click",e=>{const b=e.target.closest("#gate [data-gt]");if(!b)return;GATE_MODE=b.dataset.gt;renderGate()});
+document.addEventListener("click",e=>{const b=e.target.closest("#gate [data-gtgo]");if(!b)return;GATE_MODE=b.dataset.gtgo;renderGate();
+  const f=$("#gt-form");if(f)f.scrollIntoView({behavior:RM()?"auto":"smooth",block:"start"});setTimeout(()=>{const m=$("#gt-mail");if(m)m.focus({preventScroll:true})},RM()?0:450)});
 if(window.claude)gateDone();
 
 async function deleteAccount(){
@@ -1818,7 +1842,7 @@ async function loadMyProfile(){
   const {data,error}=await SB.from("profiles").select("*").eq("user_id",SBUSER.id).maybeSingle();
   if(error||!data){MYPROF=null;if(location.hash==="#profil")renderProfile();return}
   MYPROF=data;MEINFO=Object.assign({},MEINFO||{},{avatarUrl:data.avatar_url||(MEINFO&&MEINFO.avatarUrl)||""});
-  await loadFriends();renderAvatar();if(location.hash==="#profil")renderProfile();syncProfile();
+  await loadFriends();renderAvatar();if(location.hash==="#profil")renderProfile();syncProfile();pendingFriend();
 }
 async function loadFriends(){
   if(!SB||!SBUSER)return;
@@ -1860,8 +1884,9 @@ function renderSocial(){
   soc.innerHTML=`<div class="sechead"><h2>Vänner</h2><button class="linkbtn" id="fr-add">Lägg till vän</button></div>
    ${FRIENDS.length?`<div class="group">${FRIENDS.map(fid=>{const p=NAMES[fid]||{username:"Okänd",tag:"0000"};return `<button class="row" data-prof="${esc(fid)}">${avImg(p.avatar_url,p.username)}<div><h3>${handleHtml(p)}</h3><p>${fid===MYPROF.partner_id?"Din Doubles-partner":"Tryck för att se profilen"}</p></div><span class="chev">›</span></button>`}).join("")}</div>`
    :`<div class="card"><p class="small">Lägg till vänner med deras namn och kod, till exempel Johan#1234. Ditt är <b style="color:var(--ink)">${esc(handleTxt(MYPROF))}</b>. När ni har lagt till varandra ser ni varandras profiler.</p></div>`}
+   <div class="fr-share"><button class="pill ghost" id="fr-link" type="button">Dela vänlänk</button><button class="pill ghost" id="fr-qr" type="button">Visa QR-kod</button></div>
    <button class="pill ghost block" id="pf-view" style="margin-top:10px">Visa min profil som andra ser den</button>`;
-  $("#fr-add").onclick=openAddFriend;$("#pf-view").onclick=()=>viewProfile(SBUSER.id);
+  $("#fr-add").onclick=openAddFriend;$("#fr-link").onclick=shareFriendLink;$("#fr-qr").onclick=showFriendQR;$("#pf-view").onclick=()=>viewProfile(SBUSER.id);
   soc.querySelectorAll("[data-prof]").forEach(b=>b.onclick=()=>viewProfile(b.dataset.prof));
 }
 function openAddFriend(){
@@ -1969,6 +1994,25 @@ async function uploadAvatar(file){
 $("#pf-av-file").addEventListener("change",e=>{const f=e.target.files&&e.target.files[0];e.target.value="";uploadAvatar(f)});
 $("#pf-av").addEventListener("click",()=>{if(MYPROF)$("#pf-av-file").click()});
 
+/* ============ Vän via länk och QR-kod ============ */
+const FRIEND_URL=p=>`https://varvtraining.com/?van=${encodeURIComponent(p.username+"-"+p.tag)}`;
+(()=>{try{const q=new URLSearchParams(location.search),v=q.get("van");if(v){sessionStorage.setItem("varv-van",v);q.delete("van");
+  const rest=q.toString();history.replaceState(null,"",location.pathname+(rest?"?"+rest:"")+location.hash)}}catch(e){}})();
+function pendingFriend(){let v=null;try{v=sessionStorage.getItem("varv-van");if(v)sessionStorage.removeItem("varv-van")}catch(e){}
+  const m=v&&v.match(/^(.+)-(\d{4})$/);if(!m||!MYPROF)return;if(m[1].toLowerCase()===MYPROF.username.toLowerCase()&&m[2]===MYPROF.tag)return;
+  setTimeout(()=>{openAddFriend();setTimeout(()=>{const i=$("#fa-in");if(i){i.value=m[1]+"#"+m[2];$("#fa-go").click()}},420)},600)}
+async function shareFriendLink(){
+  const url=FRIEND_URL(MYPROF),text=`Lägg till mig som vän i VARV.: ${handleTxt(MYPROF)}`;
+  try{if(navigator.share){await navigator.share({title:"VARV.",text,url});return}}catch(e){if(e&&e.name==="AbortError")return}
+  try{await navigator.clipboard.writeText(url);toast("Länken är kopierad")}catch(e){toast(url)}
+}
+async function showFriendQR(){
+  try{if(!window.qrcode)await loadScript("vendor/qrcode.js")}catch(e){toast("Kunde inte visa QR-koden.");return}
+  const q=qrcode(0,"M");q.addData(FRIEND_URL(MYPROF));q.make();
+  const svg=q.createSvgTag({cellSize:6,margin:2,scalable:true});
+  openSheet(`<div class="medpop"><span class="small">Lägg till mig som vän</span><div class="qrbox">${svg}</div><h2>${handleHtml(MYPROF)}</h2><p>Låt en kompis skanna koden med kameran. Hen kommer till VARV. och lägger till dig direkt.</p></div>
+    <button class="pill block" id="qr-share" type="button">Dela länken</button>`,()=>{$("#qr-share").onclick=shareFriendLink});
+}
 /* ============ Strava ============ */
 let MCP=null,STRAVA={state:"idle",msg:"",last:null};
 const RUNT=["Run","TrailRun","VirtualRun"];
@@ -2631,7 +2675,7 @@ function renderProfile(){
   const nm=$("#pf-in-name");if(document.activeElement!==nm)nm.value=set.name||"";
   nm.placeholder=(MEINFO&&MEINFO.name)||"Ditt namn";
   $("#pf-in-age").value=set.age||"";$("#pf-in-max").value=set.maxhr||"";
-  $("#pf-set").innerHTML=swRow("pf-sw-sound","Ljud","Pip i tidtagningen",set.cues.sound)+swRow("pf-sw-voice","Röst","Säger nästa moment och om du ligger före planen",set.cues.voice)+swRow("pf-sw-hap","Vibration","Känn knapptryck och milstolpar",set.cues.haptic!==false);
+  $("#pf-set").innerHTML=themeSeg()+swRow("pf-sw-sound","Ljud","Pip i tidtagningen",set.cues.sound)+swRow("pf-sw-voice","Röst","Säger nästa moment och om du ligger före planen",set.cues.voice)+swRow("pf-sw-hap","Vibration","Känn knapptryck och milstolpar",set.cues.haptic!==false);
   $("#pf-sw-sound").onclick=()=>{set.cues.sound=!set.cues.sound;saveSet();renderProfile();renderCues()};
   $("#pf-sw-voice").onclick=()=>{set.cues.voice=!set.cues.voice;saveSet();renderProfile();renderCues()};
   $("#pf-sw-hap").onclick=()=>{set.cues.haptic=set.cues.haptic===false;saveSet();renderProfile();renderCues()};
@@ -2678,6 +2722,12 @@ function route(){
 }
 window.addEventListener("hashchange",route);
 
+/* ============ Utseende ============ */
+function applyTheme(){const t=set.theme;if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;else delete document.documentElement.dataset.theme}
+function themeSeg(){const t=set.theme||"auto";return `<div class="field"><label>Utseende</label><div class="seg" id="pf-theme" role="group" aria-label="Utseende">${[["auto","Automatiskt"],["light","Ljust"],["dark","Mörkt"]].map(([k,l])=>`<button type="button" data-th="${k}" aria-pressed="${k===t}">${l}</button>`).join("")}</div></div>`}
+document.addEventListener("click",e=>{const b=e.target.closest("#pf-theme [data-th]");if(!b)return;set.theme=b.dataset.th==="auto"?null:b.dataset.th;saveSet();applyTheme();
+  document.querySelectorAll("#pf-theme button").forEach(x=>x.setAttribute("aria-pressed",x===b))});
+applyTheme();
 /* ============ Start ============ */
 drawOval();refreshDivision();renderSplits();renderPlan();renderLog();renderPRs();renderHome();renderPack();renderRace();
 if(RACE&&!RACE.end){startTick();keepAwake()}
