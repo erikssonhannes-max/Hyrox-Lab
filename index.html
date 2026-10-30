@@ -435,6 +435,38 @@ details.week[open] summary .chev{transform:rotate(90deg)}
 .gt-foot{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
 .gt-foot a{color:var(--muted);font-size:.82rem;text-decoration:none}
 .gt-sent{display:grid;gap:12px;text-align:center;justify-items:center}
+/* Profiler och vänner */
+.pf-av{position:relative}
+.pf-av.edit{cursor:pointer}
+.pf-cam{position:absolute;right:2px;bottom:2px;width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;border:3px solid var(--bg)}
+.pf-cam svg{width:15px;height:15px}
+.pf-wrapav{position:relative;display:inline-block}
+.pf-id{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+.tagchip{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--tile);border-radius:980px;padding:7px 12px;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;color:var(--ink);min-height:36px;font-variant-numeric:tabular-nums}
+.tagchip span{color:var(--muted);font-weight:500}
+.tagchip svg{width:14px;height:14px;color:var(--muted)}
+.handle{font-weight:600}
+.handle small{color:var(--muted);font-weight:500;font-size:.85em;margin-left:1px}
+.pv-head{display:grid;justify-items:center;text-align:center;gap:8px}
+.pv-av{width:96px;height:96px;border-radius:50%;overflow:hidden;display:grid;place-items:center;color:#fff;font-size:2.1rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 16px 30px -18px var(--glow)}
+.pv-av img{width:100%;height:100%;object-fit:cover}
+.pv-head h2{font-size:1.7rem;letter-spacing:-.035em}
+.pv-chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.pv-chips span{font-size:.78rem;font-weight:600;padding:4px 10px;border-radius:980px;background:var(--tile);color:var(--muted)}
+.pv-chips span.hot{background:var(--hot);color:#fff}
+.pv3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pv3 div{background:var(--tile);border-radius:16px;padding:12px;display:grid;gap:2px;min-width:0}
+.pv3 small{font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.pv3 b{font-size:1rem;letter-spacing:-.02em;font-variant-numeric:tabular-nums;overflow-wrap:break-word;hyphens:auto;line-height:1.25}
+.pv3 span{font-size:.75rem;color:var(--muted)}
+.pvlist{background:var(--tile);border-radius:18px;padding:4px 14px}
+.pvlist div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;font-size:.93rem}
+.pvlist div+div{border-top:1px solid var(--hair)}
+.pvlist span{color:var(--muted)}
+.pvlist b{font-variant-numeric:tabular-nums;font-weight:600}
+.pvlist b.none{color:var(--muted);font-weight:400}
+.fr-av{width:44px;height:44px;border-radius:50%;overflow:hidden;display:grid;place-items:center;color:#fff;font-weight:700;font-size:.9rem;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.fr-av img{width:100%;height:100%;object-fit:cover}
 /* Anpassning, puls, gemenskap */
 .banner{background:var(--tile);border-radius:var(--r);padding:16px;display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:12px}
 .banner b{display:block;font-size:1rem;letter-spacing:-.01em}
@@ -815,9 +847,10 @@ a.row{color:inherit;text-decoration:none}
 <section class="view" id="v-profil">
   <div class="wrap">
     <div class="pf-top"><button class="linkbtn" id="pf-back">‹ Tillbaka</button></div>
-    <div class="pf-head"><div class="pf-av" id="pf-av"></div><h1 id="pf-name">Din profil</h1><p class="small" id="pf-sub"></p>
+    <div class="pf-head"><div class="pf-av" id="pf-av"></div><h1 id="pf-name">Din profil</h1><div class="pf-id" id="pf-id" hidden></div><p class="small" id="pf-sub"></p>
       <button class="divchip" data-open="division"><span class="divtxt">Open · Herr · Singel</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6l4 4 4-4"/></svg></button></div>
     <div class="tiles" id="pf-stats"></div>
+    <div id="pf-social"></div>
     <div class="sechead"><h2>Konto</h2></div>
     <div class="group" id="pf-acc"></div>
     <div class="sechead"><h2>Om mig</h2></div>
@@ -850,6 +883,7 @@ a.row{color:inherit;text-decoration:none}
       <button class="row" id="pf-del"><span class="badge" style="color:var(--bad)">✕</span><div><h3 style="color:var(--bad)">Radera alla data</h3><p>Tar bort pass, rekord och inställningar.</p></div><span></span></button>
     </div>
     <input type="file" id="pf-imp-file" accept="application/json,.json" hidden>
+    <input type="file" id="pf-av-file" accept="image/jpeg,image/png,image/webp,image/heic" hidden>
     <p class="small" style="text-align:center;margin-top:24px">VARV. 1.0 · Fristående app, ingen koppling till HYROX.<br>VARV. ger träningsråd, inte medicinsk rådgivning. Rådfråga läkare vid skada eller sjukdom.</p>
   </div>
 </section>
@@ -1504,6 +1538,7 @@ function sbCollection(uid){
       return ()=>{subs=subs.filter(f=>f!==cb)}}};
 }
 function pushSettings(){
+  if(MYPROF)syncProfile();
   if(!SBCOL||!SBSETOK)return;clearTimeout(pushSettings.t);
   pushSettings.t=setTimeout(()=>{SBCOL.doc("settings").set(JSON.parse(JSON.stringify(set))).catch(()=>{})},1200);
 }
@@ -1564,6 +1599,7 @@ async function sbStart(u){
   col=C;mode="db";noteStore();
   C.onSnapshot(onDataSnap,()=>{toast("Kunde inte hämta dina data. Kontrollera nätet.")});
   renderAvatar();if(location.hash==="#profil")renderProfile();
+  loadMyProfile();
 }
 
 async function sbSignOut(){
@@ -1704,6 +1740,7 @@ function renderGate(sentTo){
   body.innerHTML=`${SBGOOGLE?`<button class="pill ghost block au-g" id="gt-g" type="button">${GSVG} Fortsätt med Google</button><div class="au-or">eller med e-post</div>`:""}
    <form class="card" id="gt-f" novalidate>
      <div class="field"><label for="gt-mail">E-post</label><input type="email" id="gt-mail" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" required></div>
+     ${up?`<div class="field"><label for="gt-name">Användarnamn</label><input type="text" id="gt-name" maxlength="20" autocomplete="nickname" autocapitalize="off" spellcheck="false" placeholder="Till exempel Hannes"><span class="small">Du får en fast fyrsiffrig kod, till exempel Hannes#4821, som vänner hittar dig med.</span></div>`:""}
      <div class="field"><label for="gt-pw">Lösenord</label><input type="password" id="gt-pw" autocomplete="${up?"new-password":"current-password"}" ${up?'placeholder="Minst 8 tecken, bokstäver och siffror"':""} required></div>
      ${up?`<label class="gt-check" for="gt-terms"><input type="checkbox" id="gt-terms"><span>Jag godkänner <a href="legal/villkor.html" target="_blank" rel="noopener">användarvillkoren</a> och har läst <a href="legal/integritet.html" target="_blank" rel="noopener">integritetspolicyn</a>.</span></label>
      <label class="gt-check" for="gt-health"><input type="checkbox" id="gt-health"><span>Jag samtycker till att VARV. sparar mina träningsuppgifter, till exempel pass, känsla och puls, för att anpassa min plan. Jag kan ta tillbaka samtycket genom att radera kontot.</span></label>
@@ -1722,9 +1759,10 @@ function renderGate(sentTo){
     if(!okMail(em)){say("Skriv en giltig e-postadress.",true);mail.focus();return}
     if(up){
       if(pw.length<8||!/[a-zA-ZåäöÅÄÖ]/.test(pw)||!/\d/.test(pw)){say("Lösenordet behöver minst 8 tecken, med både bokstäver och siffror.",true);$("#gt-pw").focus();return}
+      const un=$("#gt-name").value.trim();if(!NAME_RE.test(un)){say("Välj ett användarnamn med 2–20 tecken: bokstäver, siffror, _ och punkt.",true);$("#gt-name").focus();return}
       if(!gateConsent(say))return;
       say("Skapar konto…");
-      const {data,error}=await SB.auth.signUp({email:em,password:pw,options:{emailRedirectTo:sbRedirect(),data:{terms_version:TERMS_VERSION,privacy_version:TERMS_VERSION,health_consent:true,age_16:true,consent_at:new Date().toISOString()}}});
+      const {data,error}=await SB.auth.signUp({email:em,password:pw,options:{emailRedirectTo:sbRedirect(),data:{username:un,terms_version:TERMS_VERSION,privacy_version:TERMS_VERSION,health_consent:true,age_16:true,consent_at:new Date().toISOString()}}});
       if(error){say(sbErr(error),true);return}
       if(data.user&&Array.isArray(data.user.identities)&&!data.user.identities.length){say("Det finns redan ett konto med den e-posten. Välj Logga in.",true);return}
       if(!data.session){renderGate(em);return}
@@ -1755,6 +1793,7 @@ async function deleteAccount(){
     $("#dl-f").onsubmit=e=>{e.preventDefault();busy($("#dl-go"),async()=>{
       if($("#dl-in").value.trim().toUpperCase()!=="RADERA"){msg.textContent="Skriv RADERA i rutan.";msg.classList.add("bad");return}
       msg.textContent="Raderar…";msg.classList.remove("bad");
+      try{await SB.storage.from("avatars").remove([SBUSER.id+"/avatar.jpg"])}catch(x){}
       const {error}=await SB.rpc("delete_my_account");
       if(error){msg.textContent=/delete_my_account|404|not find/i.test(String(error.message||error.code||""))?"Radering är inte uppsatt i databasen än. Kontakta oss så raderar vi kontot.":sbErr(error);msg.classList.add("bad");return}
       try{await SB.auth.signOut()}catch(x){}
@@ -1762,6 +1801,173 @@ async function deleteAccount(){
       location.hash="";location.reload()})};
   });
 }
+
+/* ============ Profiler, användarnamn#kod och vänner ============ */
+var MYPROF=null,FRIENDS=[],NAMES={};
+const EXP=[["ny","Ny på Hyrox"],["motionar","Motionär"],["erfaren","Erfaren"],["elit","Elit"]];
+const expTxt=k=>(EXP.find(e=>e[0]===k)||[])[1]||"";
+const NAME_RE=/^[A-Za-z0-9ÅÄÖåäöÉé_.]{2,20}$/;
+const handleHtml=p=>p?`<span class="handle">${esc(p.username)}<small>#${esc(p.tag)}</small></span>`:"";
+const handleTxt=p=>p?`${p.username}#${p.tag}`:"";
+const CAM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+const COPY='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>';
+function avImg(url,name,cls){return `<span class="${cls||"fr-av"}">${url?`<img src="${esc(url)}" alt="" loading="lazy">`:esc(initials(name))}</span>`}
+
+async function loadMyProfile(){
+  if(!SB||!SBUSER)return;
+  const {data,error}=await SB.from("profiles").select("*").eq("user_id",SBUSER.id).maybeSingle();
+  if(error||!data){MYPROF=null;if(location.hash==="#profil")renderProfile();return}
+  MYPROF=data;MEINFO=Object.assign({},MEINFO||{},{avatarUrl:data.avatar_url||(MEINFO&&MEINFO.avatarUrl)||""});
+  await loadFriends();renderAvatar();if(location.hash==="#profil")renderProfile();syncProfile();
+}
+async function loadFriends(){
+  if(!SB||!SBUSER)return;
+  const {data}=await SB.from("friends").select("friend_id,created_at").eq("user_id",SBUSER.id).order("created_at",{ascending:false});
+  FRIENDS=(data||[]).map(r=>r.friend_id);
+  const ids=[...new Set(FRIENDS.concat(MYPROF&&MYPROF.partner_id?[MYPROF.partner_id]:[]))];
+  if(ids.length){const {data:n}=await SB.rpc("varv_names",{p_ids:ids});(n||[]).forEach(p=>{NAMES[p.user_id]=p})}
+}
+function profilePayload(){
+  const st=weekStats(),P=PROG||progress(),me=myEvent();
+  const prs={};PRKEYS.forEach(([k])=>{if(k!=="race"&&PRS[k])prs[k]=PRS[k]});
+  const bt=PRS.race&&PRS.race>=600&&PRS.race<=36000?PRS.race:null;
+  return {best_time:bt,best_division:divText().slice(0,60),prs,
+    next_race:set.date&&set.date>=today()?{name:me?me.c:null,country:me?me.n:null,date:me?me.s:set.date}:null,
+    stats:{sessions:LOGS.length,hours:Math.round(st.total/6)/10,streak:st.streak,week:st.now.n,varv:P.varv,tier:P.tier.n,medals:P.recent.length,since:set.since||null}};
+}
+function syncProfile(){
+  if(!MYPROF||!SB||!SBUSER)return;clearTimeout(syncProfile.t);
+  syncProfile.t=setTimeout(async()=>{const p=profilePayload(),j=JSON.stringify(p);if(j===syncProfile.last)return;
+    const {error}=await SB.from("profiles").update(p).eq("user_id",SBUSER.id);if(!error){syncProfile.last=j;Object.assign(MYPROF,p)}},1500);
+}
+function profErr(e){const c=e&&e.code;if(c==="23505")return "Det namnet är redan taget med din kod. Välj ett annat.";
+  if(c==="23514")return "Användarnamnet får ha 2–20 tecken: bokstäver, siffror, _ och punkt.";return sbErr(e)}
+
+function renderSocial(){
+  const id=$("#pf-id"),soc=$("#pf-social");if(!id||!soc)return;
+  const av=$("#pf-av");av.classList.toggle("edit",!!MYPROF);
+  if(!SBUSER){id.hidden=true;soc.innerHTML="";return}
+  if(!MYPROF){id.hidden=true;soc.innerHTML=`<div class="sechead"><h2>Vänner</h2></div><div class="card"><p class="small">Profiler och vänner är inte uppsatta än. Kör supabase/profiler.sql i Supabase.</p></div>`;return}
+  $("#pf-name").textContent=MYPROF.username;
+  if(!av.querySelector(".pf-cam"))av.insertAdjacentHTML("beforeend",`<span class="pf-cam" aria-hidden="true">${CAM}</span>`);
+  id.hidden=false;
+  id.innerHTML=`<button class="tagchip" id="pf-copy" aria-label="Kopiera ${esc(handleTxt(MYPROF))}">${esc(MYPROF.username)}<span>#${esc(MYPROF.tag)}</span>${COPY}</button><button class="divchip" id="pf-edit">Redigera profil</button>`;
+  $("#pf-copy").onclick=async()=>{try{await navigator.clipboard.writeText(handleTxt(MYPROF));toast("Kopierat. Skicka det till dina vänner.")}catch(e){toast(handleTxt(MYPROF))}};
+  $("#pf-edit").onclick=openEditProfile;
+  const sub=[expTxt(MYPROF.experience),MYPROF.races_count?`${MYPROF.races_count} ${MYPROF.races_count===1?"tävling":"tävlingar"}`:"",MYPROF.is_public?"Profilen syns för alla":"Profilen syns för vänner"].filter(Boolean).join(" · ");
+  $("#pf-sub").textContent=sub;
+  const partner=MYPROF.partner_id&&NAMES[MYPROF.partner_id];
+  soc.innerHTML=`<div class="sechead"><h2>Vänner</h2><button class="linkbtn" id="fr-add">Lägg till vän</button></div>
+   ${FRIENDS.length?`<div class="group">${FRIENDS.map(fid=>{const p=NAMES[fid]||{username:"Okänd",tag:"0000"};return `<button class="row" data-prof="${esc(fid)}">${avImg(p.avatar_url,p.username)}<div><h3>${handleHtml(p)}</h3><p>${fid===MYPROF.partner_id?"Din Doubles-partner":"Tryck för att se profilen"}</p></div><span class="chev">›</span></button>`}).join("")}</div>`
+   :`<div class="card"><p class="small">Lägg till vänner med deras namn och kod, till exempel Johan#1234. Ditt är <b style="color:var(--ink)">${esc(handleTxt(MYPROF))}</b>. När ni har lagt till varandra ser ni varandras profiler.</p></div>`}
+   <button class="pill ghost block" id="pf-view" style="margin-top:10px">Visa min profil som andra ser den</button>`;
+  $("#fr-add").onclick=openAddFriend;$("#pf-view").onclick=()=>viewProfile(SBUSER.id);
+  soc.querySelectorAll("[data-prof]").forEach(b=>b.onclick=()=>viewProfile(b.dataset.prof));
+}
+function openAddFriend(){
+  openSheet(`<div><span class="small">Vänner</span><h2>Lägg till vän</h2><p class="small">Skriv vännens namn och kod, till exempel Johan#1234. Koden hittar hen under sin profil.</p></div>
+   <form id="fa-f" novalidate style="display:grid;gap:14px">
+     <div class="field"><label for="fa-in">Namn#kod</label><input type="text" id="fa-in" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Johan#1234"></div>
+     <p class="small au-msg" id="fa-msg" role="status" aria-live="polite"></p>
+     <button class="pill block" id="fa-go" type="submit">Lägg till</button>
+   </form>
+   <div class="card"><p class="small">Ditt namn och kod: <b style="color:var(--ink)">${esc(handleTxt(MYPROF))}</b></p></div>`,()=>{
+    const msg=$("#fa-msg"),say=(t,b)=>{msg.textContent=t;msg.classList.toggle("bad",!!b)};
+    $("#fa-f").onsubmit=e=>{e.preventDefault();busy($("#fa-go"),async()=>{
+      const m=$("#fa-in").value.trim().match(/^(.+?)\s*#\s*(\d{4})$/);
+      if(!m){say("Skriv både namn och kod, till exempel Johan#1234.",true);return}
+      const {data,error}=await SB.rpc("varv_find_user",{p_username:m[1],p_tag:m[2]});
+      if(error){say(sbErr(error),true);return}
+      const p=data&&data[0];if(!p){say("Hittar ingen med det namnet och koden. Kontrollera stavningen.",true);return}
+      if(p.user_id===SBUSER.id){say("Det där är du.",true);return}
+      const {error:e2}=await SB.from("friends").insert({user_id:SBUSER.id,friend_id:p.user_id});
+      if(e2&&e2.code!=="23505"){say(sbErr(e2),true);return}
+      NAMES[p.user_id]=p;await loadFriends();closeSheet();renderSocial();toast(e2?`${handleTxt(p)} är redan din vän`:`${handleTxt(p)} är tillagd`);HAPTIC("success")})};
+    setTimeout(()=>$("#fa-in").focus({preventScroll:true}),350);
+  });
+}
+async function viewProfile(uid){
+  const me=uid===SBUSER.id;
+  const {data:p}=await SB.from("profiles").select("*").eq("user_id",uid).maybeSingle();
+  const basic=p||NAMES[uid];
+  if(!p){openSheet(`<div class="pv-head">${avImg(basic&&basic.avatar_url,basic&&basic.username,"pv-av")}<h2>${handleHtml(basic)}</h2><p class="small">Profilen visas bara för vänner som ${esc(basic?basic.username:"användaren")} har lagt till. Be hen lägga till dig också.</p></div>${friendBtns(uid,me)}`,()=>bindFriendBtns(uid));return}
+  if(p.partner_id&&!NAMES[p.partner_id]){const {data:n}=await SB.rpc("varv_names",{p_ids:[p.partner_id]});(n||[]).forEach(x=>{NAMES[x.user_id]=x})}
+  const st=p.stats||{},nr=p.next_race,prs=p.prs||{};
+  let nrTxt="–",nrSub="";if(nr&&nr.date){const d=Math.round((new Date(nr.date+"T12:00:00")-new Date(today()+"T12:00:00"))/864e5);nrTxt=nr.name||evD(nr.date).toLocaleDateString("sv-SE",{day:"numeric",month:"short"});nrSub=d>=0?(d===0?"i dag":`om ${d} d`):""}
+  const partner=p.partner_id&&NAMES[p.partner_id];
+  const prRows=[["km","1 km löpning"],...S.map(x=>[x.id,x.n])].map(([k,n])=>`<div><span>${esc(n)}</span><b class="${prs[k]?"":"none"}">${prs[k]?fmt(prs[k]):"–"}</b></div>`).join("");
+  openSheet(`<div class="pv-head">${avImg(p.avatar_url,p.username,"pv-av")}<h2>${handleHtml(p)}</h2>
+     <div class="pv-chips">${p.experience?`<span class="hot">${esc(expTxt(p.experience))}</span>`:""}${p.best_division?`<span>${esc(p.best_division)}</span>`:""}${st.tier?`<span>${esc(st.tier)}</span>`:""}</div></div>
+   <div class="pv3"><div><small>Tävlingar</small><b>${p.races_count||0}</b><span>genomförda</span></div><div><small>Bästa tid</small><b>${p.best_time?fmt(p.best_time):"–"}</b><span>hel Hyrox</span></div><div><small>Nästa</small><b>${esc(nrTxt)}</b><span>${esc(nrSub)}</span></div></div>
+   <div><h4 style="margin-bottom:8px">Personliga rekord</h4><div class="pvlist">${prRows}</div></div>
+   <div><h4 style="margin-bottom:8px">Träning</h4><div class="pvlist">
+     <div><span>Pass totalt</span><b>${st.sessions||0}</b></div><div><span>Träningstid</span><b>${String(st.hours||0).replace(".",",")} h</b></div>
+     <div><span>Pass denna vecka</span><b>${st.week||0}</b></div><div><span>Veckor i rad</span><b>${st.streak||0}</b></div>
+     <div><span>Varv och nivå</span><b>${st.varv||0} · ${esc(st.tier||"Start")}</b></div><div><span>Utmärkelser</span><b>${st.medals||0}</b></div></div></div>
+   <div><h4 style="margin-bottom:8px">Doubles-partner</h4>${partner?`<button class="row" style="background:var(--tile);border-radius:18px" data-prof="${esc(partner.user_id)}">${avImg(partner.avatar_url,partner.username)}<div><h3>${handleHtml(partner)}</h3><p>Tryck för att se profilen</p></div><span class="chev">›</span></button>`:`<div class="pvlist"><div><span>Ingen partner vald</span></div></div>`}</div>
+   ${me?`<button class="pill block" id="pv-edit">Redigera profil</button>`:friendBtns(uid,me)}`,()=>{
+    bindFriendBtns(uid);const e=$("#pv-edit");if(e)e.onclick=openEditProfile;
+    document.querySelectorAll("#sheet-in [data-prof]").forEach(b=>b.onclick=()=>viewProfile(b.dataset.prof));
+  });
+}
+function friendBtns(uid,me){if(me)return "";return FRIENDS.includes(uid)?`<button class="pill ghost block" id="pv-rm">Ta bort som vän</button>`:`<button class="pill block" id="pv-add">Lägg till som vän</button>`}
+function bindFriendBtns(uid){
+  const a=$("#pv-add"),r=$("#pv-rm");
+  if(a)a.onclick=()=>busy(a,async()=>{const {error}=await SB.from("friends").insert({user_id:SBUSER.id,friend_id:uid});if(error&&error.code!=="23505"){toast(sbErr(error));return}await loadFriends();renderSocial();closeSheet();toast("Tillagd bland dina vänner")});
+  if(r)r.onclick=()=>busy(r,async()=>{const {error}=await SB.from("friends").delete().eq("user_id",SBUSER.id).eq("friend_id",uid);if(error){toast(sbErr(error));return}
+    if(MYPROF.partner_id===uid){await SB.from("profiles").update({partner_id:null}).eq("user_id",SBUSER.id);MYPROF.partner_id=null}
+    await loadFriends();renderSocial();closeSheet();toast("Borttagen från dina vänner")});
+}
+function openEditProfile(){
+  if(!MYPROF)return;let exp=MYPROF.experience||"",pub=!!MYPROF.is_public;
+  const opts=FRIENDS.map(fid=>{const p=NAMES[fid];return p?`<option value="${esc(fid)}"${fid===MYPROF.partner_id?" selected":""}>${esc(handleTxt(p))}</option>`:""}).join("");
+  openSheet(`<div><span class="small">Profil</span><h2>Redigera profil</h2></div>
+   <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="pill ghost" id="ep-pic" type="button">Byt profilbild</button>${MYPROF.avatar_url?`<button class="pill ghost" id="ep-nopic" type="button">Ta bort bild</button>`:""}</div>
+   <form id="ep-f" novalidate style="display:grid;gap:16px">
+     <div class="field"><label for="ep-name">Användarnamn</label><input type="text" id="ep-name" maxlength="20" autocomplete="nickname" autocapitalize="off" spellcheck="false" value="${esc(MYPROF.username)}"><span class="small">Din kod #${esc(MYPROF.tag)} är fast och följer med om du byter namn.</span></div>
+     <div class="field"><label>Hyrox-erfarenhet</label><div class="seg" id="ep-exp" role="group" aria-label="Hyrox-erfarenhet">${EXP.map(([k,l])=>`<button type="button" data-x="${k}" aria-pressed="${k===exp}">${l}</button>`).join("")}</div></div>
+     <div class="field"><label for="ep-races">Genomförda tävlingar</label><input type="number" id="ep-races" inputmode="numeric" min="0" max="500" value="${MYPROF.races_count||0}"></div>
+     <div class="field"><label for="ep-partner">Doubles-partner</label><select id="ep-partner"><option value="">Ingen</option>${opts}</select>${FRIENDS.length?"":`<span class="small">Lägg till din partner som vän först.</span>`}</div>
+     ${swRow("ep-pub","Visa profilen för alla","Av: bara vänner du har lagt till ser din profil. Namn och kod syns alltid för den som söker på dem.",pub)}
+     <p class="small au-msg" id="ep-msg" role="status" aria-live="polite"></p>
+     <button class="pill block" id="ep-go" type="submit">Spara</button>
+   </form>`,()=>{
+    const msg=$("#ep-msg");
+    $("#ep-exp").onclick=e=>{const b=e.target.closest("[data-x]");if(!b)return;exp=exp===b.dataset.x?"":b.dataset.x;$$("#ep-exp button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.x===exp))};
+    $("#ep-pub").onclick=()=>{pub=!pub;$("#ep-pub").setAttribute("aria-checked",pub)};
+    $("#ep-pic").onclick=()=>$("#pf-av-file").click();
+    const np=$("#ep-nopic");if(np)np.onclick=()=>busy(np,async()=>{try{await SB.storage.from("avatars").remove([SBUSER.id+"/avatar.jpg"])}catch(e){}
+      await SB.from("profiles").update({avatar_url:null}).eq("user_id",SBUSER.id);MYPROF.avatar_url=null;MEINFO.avatarUrl="";renderAvatar();renderProfile();closeSheet();toast("Profilbilden är borttagen")});
+    $("#ep-f").onsubmit=e=>{e.preventDefault();busy($("#ep-go"),async()=>{
+      const name=$("#ep-name").value.trim();if(!NAME_RE.test(name)){msg.textContent="Användarnamnet får ha 2–20 tecken: bokstäver, siffror, _ och punkt.";msg.classList.add("bad");return}
+      const races=Math.max(0,Math.min(500,Math.round(+$("#ep-races").value||0)));
+      const upd={username:name,experience:exp||null,races_count:races,partner_id:$("#ep-partner").value||null,is_public:pub};
+      const {error}=await SB.from("profiles").update(upd).eq("user_id",SBUSER.id);
+      if(error){msg.textContent=profErr(error);msg.classList.add("bad");return}
+      Object.assign(MYPROF,upd);await loadFriends();renderProfile();closeSheet();toast("Profilen är sparad");HAPTIC("success")})};
+  });
+}
+/* Profilbild: beskärs till en kvadrat och krymps innan den laddas upp */
+async function uploadAvatar(file){
+  if(!file||!SBUSER)return;
+  if(file.size>15e6){toast("Bilden är för stor. Välj en mindre bild.");return}
+  try{
+    const url=URL.createObjectURL(file);const img=new Image();img.src=url;await img.decode();
+    const sz=Math.min(img.naturalWidth,img.naturalHeight),c=document.createElement("canvas");c.width=c.height=320;
+    c.getContext("2d").drawImage(img,(img.naturalWidth-sz)/2,(img.naturalHeight-sz)/2,sz,sz,0,0,320,320);URL.revokeObjectURL(url);
+    const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",.85));
+    toast("Laddar upp…");
+    const path=SBUSER.id+"/avatar.jpg";
+    const {error}=await SB.storage.from("avatars").upload(path,blob,{upsert:true,contentType:"image/jpeg",cacheControl:"3600"});
+    if(error){toast("Kunde inte ladda upp bilden. Försök igen.");return}
+    const pub=SB.storage.from("avatars").getPublicUrl(path).data.publicUrl+"?v="+Date.now();
+    const {error:e2}=await SB.from("profiles").update({avatar_url:pub}).eq("user_id",SBUSER.id);
+    if(e2){toast(sbErr(e2));return}
+    MYPROF.avatar_url=pub;MEINFO=Object.assign({},MEINFO||{},{avatarUrl:pub});renderAvatar();renderProfile();closeSheet();toast("Ny profilbild sparad");HAPTIC("success");
+  }catch(e){toast("Kunde inte läsa bilden. Prova en JPG eller PNG.")}
+}
+$("#pf-av-file").addEventListener("change",e=>{const f=e.target.files&&e.target.files[0];e.target.value="";uploadAvatar(f)});
+$("#pf-av").addEventListener("click",()=>{if(MYPROF)$("#pf-av-file").click()});
 
 /* ============ Strava ============ */
 let MCP=null,STRAVA={state:"idle",msg:"",last:null};
@@ -2018,7 +2224,7 @@ function checkNewMedals(){
     else html=`<div class="medpop"><span class="small">Bra jobbat</span><div class="medrow">${ms.slice(0,4).map(m=>medHTML(m,{on:true,shine:true})).join("")}</div><h2>${ms.length} nya utmärkelser</h2><p>${ms.slice(0,3).map(m=>esc(m.n)).join(", ")}${ms.length>3?` och ${ms.length-3} till`:""}.${up?` Du är nu på nivå ${PROG.tier.n}.`:""}</p></div>`;
     openSheet(html+`<button class="pill block" id="mp-ok">Fortsätt</button>`,()=>{$("#mp-ok").onclick=closeSheet});setTimeout(confetti,350)};
   setTimeout(show,650)}
-function renderProgress(){PROG=progress();renderForm();sparkHome();renderMedals();checkNewMedals();if(DBH&&ME)renderComm()}
+function renderProgress(){if(typeof syncProfile==="function"&&MYPROF)syncProfile();PROG=progress();renderForm();sparkHome();renderMedals();checkNewMedals();if(DBH&&ME)renderComm()}
 
 /* ============ Genomgång ============ */
 const TOUR=[
@@ -2408,7 +2614,7 @@ $$("#tv-seg [data-tv]").forEach(b=>b.onclick=()=>{set.tsub=b.dataset.tv;saveSet(
 function initials(n){const p=String(n||"").trim().split(/\s+/).filter(Boolean);return p.length?(p[0][0]+(p.length>1?p[p.length-1][0]:"")).toUpperCase():"V"}
 let MEINFO=null;
 function pName(){return set.name||(MEINFO&&MEINFO.name)||""}
-function avatarHtml(){return MEINFO&&MEINFO.avatarUrl&&!set.name?`<img src="${esc(MEINFO.avatarUrl)}" alt="">`:`<span>${esc(initials(pName()))}</span>`}
+function avatarHtml(){return MEINFO&&MEINFO.avatarUrl&&(!set.name||MYPROF)?`<img src="${esc(MEINFO.avatarUrl)}" alt="">`:`<span>${esc(initials(pName()||(MYPROF&&MYPROF.username)||""))}</span>`}
 function renderAvatar(){const a=$("#avatar-btn");if(a)a.innerHTML=avatarHtml()}
 function swRow(id,title,sub,on){return `<button class="switchrow" id="${id}" role="switch" aria-checked="${!!on}"><span><b>${title}</b><small>${sub}</small></span><span class="sw"></span></button>`}
 function renderProfile(){
@@ -2432,6 +2638,7 @@ function renderProfile(){
   $("#pf-con").innerHTML=`<a class="row" href="#logg"><span class="badge">S</span><div><h3>Strava</h3><p>${MCP?(set.strava?"Kopplad. Synkar dina pass och pulszoner.":"Inte kopplad än."):"Kommer snart på hemsidan."}</p></div><span class="chev">›</span></a>
     <a class="row" href="#race" data-tv-go="run"><span class="badge">G</span><div><h3>Garmin</h3><p>Skapa ett racepass för klockan under Racedag.</p></div><span class="chev">›</span></a>`;
   $("#pf-exp").hidden=!DL;
+  if(typeof renderSocial==="function")renderSocial();
 }
 function saveProfileFields(){set.name=$("#pf-in-name").value.trim().slice(0,60);set.age=+$("#pf-in-age").value||null;set.maxhr=+$("#pf-in-max").value||null;saveSet();renderAvatar();$("#pf-av").innerHTML=avatarHtml();$("#pf-name").textContent=pName()||"Din profil"}
 ["#pf-in-name","#pf-in-age","#pf-in-max"].forEach(id=>{const el=$(id);el.addEventListener("input",()=>{clearTimeout(el._t);el._t=setTimeout(()=>{saveProfileFields();renderPlan();renderHome()},400)})});
