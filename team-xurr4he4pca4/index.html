@@ -117,7 +117,7 @@ td small{display:block;color:var(--muted);font-size:.78rem}
 
   <section id="dash" hidden>
     <div class="pagehead"><span class="eyebrow">Internt</span><h1>VARV. i siffror.</h1><p>Användare, träning och ekonomi på ett ställe. Bara för teamet.</p></div>
-    <div class="seg tabs" id="tabs" role="tablist" aria-label="Visa"><button data-tab="anv" aria-pressed="true">Användare</button><button data-tab="ekonomi" aria-pressed="false">Ekonomi</button></div>
+    <div class="seg tabs" id="tabs" role="tablist" aria-label="Visa"><button data-tab="anv" aria-pressed="true">Användare</button><button data-tab="ekonomi" aria-pressed="false">Ekonomi</button><button data-tab="fel" aria-pressed="false">Fel</button></div>
     <p class="demo" id="demo" hidden>Exempeldata. Logga in med koden för att se riktiga siffror.</p>
     <div id="v-anv">
 
@@ -143,6 +143,13 @@ td small{display:block;color:var(--muted);font-size:.78rem}
       <tbody id="mtable"></tbody>
     </table></div>
 
+    </div>
+
+    <div id="v-fel" hidden>
+      <div class="tiles" id="ftiles"></div>
+      <div id="f-setup" class="card" hidden><p>Felrapporterna är inte uppsatta än. Kör <b>supabase/varv-2.sql</b> i Supabase och ladda om sidan.</p></div>
+      <div id="f-list"></div>
+      <p class="small" style="margin-top:8px">Fel som har hänt i appen hos användare de senaste 30 dagarna, utan namn eller e-post. Samma fel räknas ihop.</p>
     </div>
 
     <div id="v-ekonomi" hidden>
@@ -288,6 +295,15 @@ async function finCall(fn,body){
   if(!r.ok){let t="";try{t=(await r.json()).message||""}catch(e){}if(r.status===404){const e=new Error("setup");e.setup=true;throw e}throw new Error(/Fel kod/.test(t)?"Fel kod.":"Kunde inte spara. Försök igen.")}
   return r.json();
 }
+async function loadErr(){
+  const L=$("#f-list"),T=$("#ftiles");
+  if(!$("#demo").hidden){T.innerHTML=`<div class="tile"><small>Fel senaste 7 dagarna</small><b>0</b></div>`;L.innerHTML=`<div class="card"><p class="small">Inga fel i exempeldatan.</p></div>`;return}
+  const c=getCode();if(!c)return;
+  try{const d=await finCall("varv_errors",{p_token:c});$("#f-setup").hidden=true;
+    T.innerHTML=`<div class="tile"><small>Fel senaste 7 dagarna</small><b>${d.total_7d}</b></div><div class="tile"><small>Olika fel, 30 dagar</small><b>${(d.top||[]).length}</b></div>`;
+    L.innerHTML=(d.top||[]).length?`<div class="card" style="display:grid;gap:12px">${d.top.map(x=>`<div><b>${esc(x.msg)}</b><p class="small">${x.n} ${x.n==1?"gång":"gånger"} · senast ${new Date(x.last).toLocaleString("sv-SE",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}${x.view?" · "+esc(x.view):""}${x.ver?" · "+esc(x.ver):""}</p></div>`).join("")}</div>`:`<div class="card"><p class="small">Inga fel de senaste 30 dagarna.</p></div>`}
+  catch(e){if(e.setup)$("#f-setup").hidden=false}
+}
 async function loadFin(){
   if(!$("#demo").hidden){renderFin(demoFin());return}
   const c=getCode();if(!c)return;
@@ -353,7 +369,7 @@ $("#sbf").addEventListener("submit",async e=>{e.preventDefault();await finSave("
 $("#tx-csv").onclick=()=>{if(!FIN)return;const rows=[["Datum","Vad","Kategori","Vem","In","Ut"]].concat(FIN.tx.map(t=>[t.day,t.what,t.category,t.who||"",t.direction==="in"?t.amount:"",t.direction==="in"?"":t.amount]));
   const csv="﻿"+rows.map(r=>r.map(v=>{v=String(v);return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(";")).join("\r\n");
   const u=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=u;a.download="varv-ekonomi.csv";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)};
-function setTab(t){TAB=t;$("#v-anv").hidden=t!=="anv";$("#v-ekonomi").hidden=t!=="ekonomi";$("#tabs").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tab===t));
+function setTab(t){TAB=t;$("#v-anv").hidden=t!=="anv";$("#v-ekonomi").hidden=t!=="ekonomi";$("#v-fel").hidden=t!=="fel";if(t==="fel")loadErr();$("#tabs").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tab===t));
   if(t==="ekonomi"){if(!FIN)loadFin();if(location.hash!=="#ekonomi")history.replaceState(null,"","#ekonomi")}else if(location.hash==="#ekonomi")history.replaceState(null,"",location.pathname)}
 $("#tabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)setTab(b.dataset.tab)});
 function demoFin(){const t=todayIso().slice(0,7);return {start_balance:2000,start_date:"2026-10-01",services:[{id:1,name:"Squarespace Domains",purpose:"Domänen",plan:"Årsvis",monthly_cost:17},{id:2,name:"Google Workspace",purpose:"E-post",plan:"Per användare",monthly_cost:150},{id:3,name:"Supabase",purpose:"Konton och databas",plan:"Free",monthly_cost:0}],

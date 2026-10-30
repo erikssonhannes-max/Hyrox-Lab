@@ -60,9 +60,13 @@ th{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.
 <tbody>
 <tr><td>E-postadress och lösenord</td><td>För att du ska kunna logga in. Lösenordet sparas krypterat och vi kan aldrig se det.</td><td>Avtal (art. 6.1 b)</td></tr>
 <tr><td>Namn, ålder och maxpuls, om du fyller i dem</td><td>För att visa din profil och räkna ut pulszoner och tempo.</td><td>Avtal (art. 6.1 b)</td></tr>
-<tr><td>Träningspass: datum, typ, minuter, känsla, stationer och anteckningar</td><td>För att visa din logg, din form och anpassa planen.</td><td>Ditt uttryckliga samtycke (art. 9.2 a), eftersom uppgifterna kan säga något om din hälsa</td></tr>
+<tr><td>Träningspass: datum, typ, minuter, känsla, övningar med set, meter, antal och vikt, stationer och anteckningar</td><td>För att visa din logg, din form och anpassa planen.</td><td>Ditt uttryckliga samtycke (art. 9.2 a), eftersom uppgifterna kan säga något om din hälsa</td></tr>
 <tr><td>Användarnamn, fyrsiffrig kod och profilbild</td><td>För att du ska synas för dina vänner och kunna läggas till som vän.</td><td>Avtal (art. 6.1 b)</td></tr>
 <tr><td>Profil: Hyrox-erfarenhet, antal tävlingar, bästa tid, rekord per station, nästa tävling, träningsstatistik och Doubles-partner</td><td>För att visa din profil för de vänner du har lagt till, eller för alla inloggade om du själv väljer det.</td><td>Ditt uttryckliga samtycke (art. 9.2 a)</td></tr>
+<tr><td>Aktivitet: att du har tränat eller tävlat, med typ av pass, minuter, de första övningarna eller din sluttid, och tummar upp du ger och får</td><td>För att visa det för de vänner du har lagt till och skicka dem en notis. Sparas i 60 dagar.</td><td>Ditt uttryckliga samtycke (art. 9.2 a)</td></tr>
+<tr><td>Notiser, om du slår på dem: en adress från din telefon eller webbläsare, din tidszon, vilken tid du vill ha påminnelser, vilka notiser du vill ha och dina kommande pass och ditt lopp</td><td>För att skicka påminnelser om dagens pass, nedräkning till loppet och notiser från vänner.</td><td>Ditt samtycke (art. 6.1 a och 9.2 a). Du stänger av det under Profil → Notiser.</td></tr>
+<tr><td>Kalender, om du lägger in planen i din kalender: dina kommande pass och ditt lopp, och en hemlig länk</td><td>För att din kalender ska kunna hämta planen och hålla den uppdaterad.</td><td>Avtal (art. 6.1 b)</td></tr>
+<tr><td>Felrapporter: felmeddelande, vilken del av appen det gällde, webbläsare och tidpunkt</td><td>För att hitta och rätta fel. Rapporterna innehåller inte din e-post eller dina pass och sparas i 30 dagar.</td><td>Berättigat intresse (art. 6.1 f)</td></tr>
 <tr><td>Vänner du har lagt till</td><td>För att visa dina vänner och låta dem se din profil.</td><td>Avtal (art. 6.1 b)</td></tr>
 <tr><td>Rekord, måltid, lopp och träningsdagar</td><td>För att bygga och följa din plan.</td><td>Avtal (art. 6.1 b)</td></tr>
 <tr><td>Ditt samtycke och när du gav det</td><td>För att kunna visa att du har godkänt villkoren och samtyckt.</td><td>Rättslig förpliktelse (art. 6.1 c)</td></tr>
@@ -76,14 +80,16 @@ th{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.
 <li><b>Supabase</b> lagrar ditt konto och dina träningsdata och skickar inloggningsmejl.</li>
 <li><b>GitHub Pages</b> levererar själva webbsidan och ser din IP-adress när sidan laddas.</li>
 <li><b>Google</b>, bara om du väljer att logga in med Google.</li>
+<li><b>Apple, Google och Mozilla</b> levererar notiser till din telefon eller webbläsare, bara om du har slagit på notiser. De ser innehållet i notisen men inte dina övriga uppgifter.</li>
 </ul>
 <p>Om uppgifter behandlas utanför EU skyddas de av EU-kommissionens standardavtalsklausuler eller EU–US Data Privacy Framework.</p>
 
 <h2>Vad andra användare ser</h2>
-<p>Din profil syns som standard bara för de vänner du själv har lagt till. Du kan välja att visa den för alla inloggade under Profil → Redigera profil. Den som söker på ditt exakta namn och din kod ser alltid ditt användarnamn och din profilbild, så att hen kan lägga till dig. E-postadress, anteckningar och enskilda pass visas aldrig för andra.</p>
+<p>Din profil syns som standard bara för de vänner du själv har lagt till. Du kan välja att visa den för alla inloggade under Profil → Redigera profil. Den som söker på ditt exakta namn och din kod ser alltid ditt användarnamn och din profilbild, så att hen kan lägga till dig.</p>
+<p>De vänner du har lagt till ser också hur många varv du har tränat den här veckan, ditt nästa lopp med klass och Doubles-partner, och när du har tränat eller tävlat, med typ av pass, minuter och sluttid. E-postadress och anteckningar visas aldrig för andra.</p>
 
 <h2>Hur länge vi sparar uppgifterna</h2>
-<p>Så länge du har ett konto. Raderar du kontot tas kontot och allt du loggat bort direkt ur databasen. Säkerhetskopior hos vår leverantör skrivs över inom 30 dagar.</p>
+<p>Så länge du har ett konto. Raderar du kontot tas kontot och allt du loggat bort direkt ur databasen. Säkerhetskopior hos vår leverantör skrivs över inom 30 dagar. Aktivitet som visas för vänner raderas efter 60 dagar och felrapporter efter 30 dagar.</p>
 
 <h2>Lagring på din enhet</h2>
 <p>Appen sparar inställningar, din inloggning och en kopia av dina pass i webbläsarens lagring (localStorage), så att appen fungerar snabbt och utan nät. Det är nödvändigt för tjänsten och kräver därför inget särskilt samtycke enligt lagen om elektronisk kommunikation. Vi använder inga kakor för spårning eller reklam.</p>

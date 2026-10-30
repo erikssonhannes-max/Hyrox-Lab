@@ -102,9 +102,20 @@ async function runActivity(id: number) {
   return sent;
 }
 
+async function runLike(activityId: number, liker: string) {
+  const { data: a } = await SB.from("activity").select("*").eq("id", activityId).maybeSingle();
+  if (!a || a.user_id === liker) return 0;
+  const { data: p } = await SB.from("profiles").select("username").eq("user_id", liker).maybeSingle();
+  const { data: subs } = await SB.from("push_subs").select("*").eq("user_id", a.user_id);
+  const m: Msg = { title: `${p?.username || "En vän"} gav dig tummen upp`, body: [a.title, a.detail].filter(Boolean).join(" · "), url: "/#vanner", tag: "like-" + a.id };
+  let sent = 0;
+  for (const s of (subs || []) as Sub[]) if (s.prefs?.friends !== false) { await send(s, m); sent++; }
+  return sent;
+}
+
 Deno.serve(async (req) => {
   if (req.headers.get("x-varv-secret") !== Deno.env.get("CRON_SECRET")) return new Response("Nej", { status: 401 });
   const b = await req.json().catch(() => ({}));
-  const n = b.kind === "daily" ? await runDaily() : b.kind === "activity" ? await runActivity(+b.id) : 0;
+  const n = b.kind === "daily" ? await runDaily() : b.kind === "activity" ? await runActivity(+b.id) : b.kind === "like" ? await runLike(+b.activity, String(b.user)) : 0;
   return Response.json({ sent: n });
 });

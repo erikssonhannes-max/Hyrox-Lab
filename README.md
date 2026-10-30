@@ -38,3 +38,14 @@ Notiser, vänners aktivitet och kalender att prenumerera på
     Skapa två Edge Functions i Supabase (Edge Functions → Deploy a new function → Via editor): varv-push med koden i supabase/functions/varv-push/index.ts och varv-cal med koden i supabase/functions/varv-cal/index.ts. Slå av "Enforce JWT verification" för båda.
     Lägg in hemligheterna under Edge Functions → Secrets: VAPID_PUBLIC_KEY (samma som pushKey i supabase-config.js), VAPID_PRIVATE_KEY och CRON_SECRET (samma som HEMLIG_NYCKEL). Den privata nyckeln får aldrig ligga i koden.
     På iPhone fungerar notiser bara när VARV. ligger på hemskärmen (iOS 16.4 eller senare).
+
+Tummar upp, loppkalender och felrapporter
+
+    Kör supabase/varv-2.sql i Supabase. Uppdatera sedan koden i funktionen varv-push med supabase/functions/varv-push/index.ts.
+    Lopp läggs till och ändras i Table Editor → events. Appen hämtar listan när den startar. Sätt hidden till true för att dölja ett lopp.
+    Felrapporter syns på teamets sida under fliken Fel.
+
+Kopplingar att ansöka om
+
+    Strava: skapa en app på strava.com/settings/api. Callback-domän varvtraining.com. Ge client id och secret till den som bygger kopplingen.
+    Garmin: ansök till Garmin Connect Developer Program (developer.garmin.com/gc-developer-program). Godkännande tar några veckor.
