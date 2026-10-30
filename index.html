@@ -789,6 +789,7 @@ a.row{color:inherit;text-decoration:none}
 .fr-reqcard{display:flex;justify-content:space-between;align-items:center;text-decoration:none;color:inherit;margin-bottom:14px;box-shadow:inset 0 0 0 2px var(--accent)}
 .fr-lb,.fr-race,.fr-act{cursor:pointer}.fr-lb:active,.fr-race:active,.fr-act:active{background:var(--card)}
 @media (hover:hover){.fr-lb:hover h3,.fr-race:hover h3,.fr-act:hover h3{color:var(--link)}}
+.nt-req,.nt-out{cursor:pointer}.nt-req:active,.nt-out:active{background:var(--card)}
 </style>
 
 <div id="gate" hidden role="dialog" aria-modal="true" aria-labelledby="gt-h">
@@ -3451,7 +3452,7 @@ function notiBadge(){const b=$("#nt-btn");if(!b)return;b.hidden=!SBUSER||locatio
 const NT_ICON={plan:"M3.5 5h17v15.5h-17zM3.5 10h17M8 3v4M16 3v4",race:"M7.5 2.5l4.5 8 4.5-8M12 10a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11z",test:"M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0"};
 function ntRow(n){const p=n.actor?NAMES[n.actor]:null,unread=!n.read_at;
   const ic=p?avImg(p.avatar_url,p.username):`<span class="nt-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${NT_ICON[n.kind]||NT_ICON.test}"/></svg></span>`;
-  return `<button class="row nt-row${unread?" unread":""}" data-nt="${n.id}" data-url="${esc(n.url||"")}">${ic}<div><h3>${esc(n.title)}</h3>${n.body?`<p>${esc(n.body)}</p>`:""}<p class="nt-ago">${agoTxt(n.created_at)}</p></div>${unread?'<span class="nt-dot" aria-label="Ny"></span>':"<span></span>"}</button>`}
+  return `<button class="row nt-row${unread?" unread":""}" data-nt="${n.id}" data-url="${esc(n.url||"")}"${n.actor?` data-actor="${esc(n.actor)}"`:""}>${ic}<div><h3>${esc(n.title)}</h3>${n.body?`<p>${esc(n.body)}</p>`:""}<p class="nt-ago">${agoTxt(n.created_at)}</p></div>${unread?'<span class="nt-dot" aria-label="Ny"></span>':"<span></span>"}</button>`}
 function renderNotiser(){const el=$("#nt-body");if(!el)return;
   if(!SBUSER){el.innerHTML=`<div class="card"><h3>Logga in för notiser</h3><p class="small">Här samlas vänförfrågningar, påminnelser och vad dina vänner gör.</p><button class="pill block" id="nt-login">Logga in</button></div>`;$("#nt-login").onclick=()=>openAuth();return}
   const td=today(),isToday=n=>iso(new Date(n.created_at))===td,list=NOTIS.filter(n=>!(n.kind==="request"&&FRQ_IN.some(r=>r.from_user===n.actor)));
@@ -3462,13 +3463,13 @@ function renderNotiser(){const el=$("#nt-body");if(!el)return;
    ${!NOTIS_OK?`<div class="card"><p class="small">Notiscentret är inte uppsatt än.</p></div>`
      :list.length?`${nyt.length?`<div class="sechead"><h2>I dag</h2></div><div class="group">${nyt.map(ntRow).join("")}</div>`:""}${old.length?`<div class="sechead"><h2>Tidigare</h2></div><div class="group">${old.map(ntRow).join("")}</div>`:""}`
      :FRQ_IN.length?"":`<div class="card nt-empty"><h3>Inga notiser än</h3><p class="small">Här samlas vänförfrågningar, påminnelser om dagens pass, nedräkningen till loppet och vad dina vänner gör.</p></div>`}
-   ${FRQ_OUT.length?`<div class="sechead"><h2>Skickade förfrågningar</h2></div><div class="group">${FRQ_OUT.map(r=>{const p=NAMES[r.to_user]||{username:"Okänd",tag:"0000"};return `<div class="row">${avImg(p.avatar_url,p.username)}<div><h3>${handleHtml(p)}</h3><p>Väntar på svar</p></div><button class="linkbtn" data-undo="${esc(r.to_user)}">Ångra</button></div>`}).join("")}</div>`:""}`;
-  el.onclick=async e=>{const b=e.target.closest("button");if(!b||b.disabled)return;
+   ${FRQ_OUT.length?`<div class="sechead"><h2>Skickade förfrågningar</h2></div><div class="group">${FRQ_OUT.map(r=>{const p=NAMES[r.to_user]||{username:"Okänd",tag:"0000"};return `<div class="row nt-out" data-req="${esc(r.to_user)}" role="button" tabindex="0">${avImg(p.avatar_url,p.username)}<div><h3>${handleHtml(p)}</h3><p>Väntar på svar</p></div><button class="linkbtn" data-undo="${esc(r.to_user)}">Ångra</button></div>`}).join("")}</div>`:""}`;
+  el.onclick=async e=>{const b=e.target.closest("button");
+    if(!b){const r=e.target.closest("[data-req]");if(r)viewProfile(r.dataset.req);return}if(b.disabled)return;
     if(b.dataset.yes){b.disabled=true;await answerFriend(b.dataset.yes,true);return}
     if(b.dataset.no){b.disabled=true;await answerFriend(b.dataset.no,false);return}
     if(b.dataset.undo){b.disabled=true;await cancelRequest(b.dataset.undo);return}
-    if(b.dataset.nt){const u=b.dataset.url;if(u&&u.startsWith("/#")&&u!=="/#notiser")location.hash=u.slice(1)}
-    const r=e.target.closest("[data-req]");if(r)viewProfile(r.dataset.req)};
+    if(b.dataset.nt){if(b.dataset.actor){viewProfile(b.dataset.actor);return}const u=b.dataset.url;if(u&&u.startsWith("/#")&&u!=="/#notiser")location.hash=u.slice(1)}};
   markNotisRead();
 }
 async function markNotisRead(){const ids=NOTIS.filter(n=>!n.read_at).map(n=>n.id);if(!ids.length)return;
